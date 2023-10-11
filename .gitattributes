@@ -1,0 +1,22 @@
+# These files are text and should be normalized (convert crlf -> lf)
+*.al            text
+*.rdl           text
+*.rdlc          text
+*.ps1           text
+*.json          text
+*.js            text
+*.css           text
+*.cfg           text
+*.xml           text
+*.md            text
+*.gitattributes text
+*.gitignore     text
+
+# Text files should only be normalixed if git does not classify it as binary
+*.txt           text=auto
+
+# These files should always be treated as binary
+*.app           binary
+*.tff           binary
+*.png           binary
+*.jpg           binary

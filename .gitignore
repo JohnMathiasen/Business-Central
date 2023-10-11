@@ -1,5 +1,7 @@
 *.app
 *.flf
+*.zip
+rad.json
 *.bclicense
 *.g.xlf
 .DS_Store
@@ -18,3 +20,11 @@ rad.json
 .snapshots/
 cache_*
 ~$*
+Derby/.vscode/launch.json
+Derby/.alcache/*.*
+Derby/.vscode/.alcache/*.*
+Derby/.altemplates/*.*
+Derby/.vscode/.altemplates/*.*
+Derby/.altestrunner/*.*
+Derby/.vscode/.altestrunner/*.*
+Derby/.snapshots/*.*
