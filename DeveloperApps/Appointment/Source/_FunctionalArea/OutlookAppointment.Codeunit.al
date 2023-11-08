@@ -1,0 +1,336 @@
+/// <summary>
+/// Codeunit Outlook Appointment_EVAS (ID 50300).
+/// </summary>
+codeunit 50300 "Outlook Appointment_EVAS"
+{
+    /// <summary>
+    /// CreateAppointment.
+    /// </summary>
+    /// <param name="CalenderMessage">VAR Codeunit "Outlook Calender Content_EVAS".</param>
+    /// <param name="HideMailDialog">Boolean.</param>
+    /// <param name="HideEmailSendingError">Boolean.</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure CreateAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean; HideEmailSendingError: Boolean): Boolean
+    begin
+        CalenderMessage.SetCreateAppointment(true);
+        exit(HandleAppointment(CalenderMessage, HideMailDialog, HideEmailSendingError));
+    end;
+
+    /// <summary>
+    /// UpdateAppointment.
+    /// </summary>
+    /// <param name="CalenderMessage">VAR Codeunit "Outlook Calender Content_EVAS".</param>
+    /// <param name="HideMailDialog">Boolean.</param>
+    /// <param name="HideEmailSendingError">Boolean.</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure UpdateAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean; HideEmailSendingError: Boolean): Boolean
+    begin
+        CalenderMessage.SetUpdateAppointment(true);
+        exit(HandleAppointment(CalenderMessage, HideMailDialog, HideEmailSendingError));
+    end;
+
+    /// <summary>
+    /// CancelAppointment.
+    /// </summary>
+    /// <param name="CalenderMessage">VAR Codeunit "Outlook Calender Content_EVAS".</param>
+    /// <param name="HideMailDialog">Boolean.</param>
+    /// <param name="HideEmailSendingError">Boolean.</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure CancelAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean; HideEmailSendingError: Boolean): Boolean
+    begin
+        CalenderMessage.SetCancelAppointment(true);
+        exit(HandleAppointment(CalenderMessage, HideMailDialog, HideEmailSendingError));
+    end;
+
+
+    /// <summary>
+    /// HandleAppointment.
+    /// </summary>
+    /// <param name="CalenderMessage">VAR Codeunit "Calender Message_EVAS".</param>
+    /// <param name="HideMailDialog">Boolean.</param>
+    /// <param name="HideEmailSendingError">Boolean.</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure HandleAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean; HideEmailSendingError: Boolean): Boolean
+    var
+        ErrorMessageManagement: Codeunit "Error Message Management";
+        AppointmentcreateErr: Label 'Appointment cancelled, due to error, when creating a new appointment', Comment = 'DAN="Aftalen er annulleret, som følge af fejl ved oprettelse af ny aftale"';
+        Cancelled: Boolean;
+        MailSent: Boolean;
+        CreateAppmnt, CancelAppmnt : Boolean;
+    begin
+        CreateAppmnt := CalenderMessage.GetCreateAppointment();
+        CancelAppmnt := CalenderMessage.GetCancelAppointment();
+
+        ClearLastError();
+        Cancelled := false;
+        UpdateSequence(CalenderMessage, CreateAppmnt, CancelAppmnt);
+        if not HideMailDialog then begin
+            Commit();
+            MailSent := OpenAppointmentEditor(CalenderMessage, true) = Enum::"Email Action"::Sent;
+            Cancelled := not MailSent;
+        end else
+            case true of
+                (CreateAppmnt) and (not CancelAppmnt):
+                    MailSent := CreateAndSendAppointment(CalenderMessage, HideMailDialog);
+                (not CreateAppmnt) and (CancelAppmnt):
+                    MailSent := CancelAndSendApppointment(CalenderMessage, HideMailDialog);
+                (CreateAppmnt) and (CancelAppmnt):
+                    if CreateAndSendAppointment(CalenderMessage, HideMailDialog) then
+                        exit(true)
+                    else
+                        Error(AppointmentcreateErr);
+            end;
+
+        if not MailSent and not Cancelled and not HideEmailSendingError then
+            ErrorMessageManagement.LogSimpleErrorMessage(GetLastErrorText());
+
+        exit(MailSent);
+    end;
+
+
+    local procedure CancelAndSendApppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean): Boolean
+    var
+        TempEmailItem: Record "Email Item" temporary;
+    begin
+        CalenderMessage.CheckMandatoryCalender();
+
+        if CreateCalenderCancellation(CalenderMessage) then
+            if CreateCancellation(TempEmailItem, CalenderMessage) then
+                exit(TempEmailItem.Send(HideMailDialog, CalenderMessage.GetEmailScenario()));
+        exit(false);
+    end;
+
+
+    local procedure CreateAndSendAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"; HideMailDialog: Boolean): Boolean
+    var
+        TempEmailItem: Record "Email Item" temporary;
+        OfficeAddinTelemetryCategoryTxt: Label 'AL Office Add-in', Locked = true;
+    begin
+        CalenderMessage.CheckMandatoryCalender();
+
+        if CreateCalenderAppointment(CalenderMessage) then
+            if CreateRequest(TempEmailItem, CalenderMessage) then begin
+                Session.LogMessage('0000ACX', CalenderMessage.GetTelemetryText(), Verbosity::Normal, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, 'Category', OfficeAddinTelemetryCategoryTxt);
+                exit(TempEmailItem.Send(HideMailDialog, CalenderMessage.GetEmailScenario()));
+            end;
+        exit(false);
+    end;
+
+    /// <summary>
+    /// CreateRequest.
+    /// </summary>
+    /// <param name="TempEmailItem">Temporary VAR Record "Email Item".</param>
+    /// <param name="CalenderMessage">Codeunit "Outlook Calender Content_EVAS".</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure CreateRequest(var TempEmailItem: Record "Email Item" temporary; CalenderMessage: Codeunit "Calender Message_EVAS"): Boolean
+    begin
+        if not CreateCalenderAppointment(CalenderMessage) then
+            exit;
+
+        CalenderMessage.CheckMandatoryCalender();
+
+        if CalenderMessage.GetFromEmail() <> '' then begin
+            GenerateEmail(TempEmailItem, false, CalenderMessage);
+            exit(true);
+        end;
+    end;
+
+    /// <summary>
+    /// CreateCancellation.
+    /// </summary>
+    /// <param name="TempEmailItem">Temporary VAR Record "Email Item".</param>
+    /// <param name="CalenderMessage">Codeunit "Outlook Calender Content_EVAS".</param>
+    /// <returns>Return value of type Boolean.</returns>
+    internal procedure CreateCancellation(var TempEmailItem: Record "Email Item" temporary; CalenderMessage: Codeunit "Calender Message_EVAS"): Boolean
+    begin
+
+        if not CreateCalenderCancellation(CalenderMessage) then
+            exit(false);
+
+        CalenderMessage.CheckMandatoryCalender();
+
+        if CalenderMessage.GetFromEmail() <> '' then begin
+            GenerateEmail(TempEmailItem, true, CalenderMessage);
+
+            exit(true);
+        end;
+    end;
+
+    internal procedure OpenAppointmentEditor(var CalenderMessage: Codeunit "Calender Message_EVAS"; IsModal: Boolean): Enum "Email Action"
+    var
+        OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS";
+    begin
+        OutlookCalenderEntry := CalenderMessage.GetCalenderEntry(CalenderMessage.GetUID());
+        exit(OpenAppointmentEditor(CalenderMessage, OutlookCalenderEntry, IsModal));
+    end;
+
+    internal procedure OpenAppointmentEditor(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS"; IsModal: Boolean): Enum "Email Action"
+    var
+        CalenderMessage: Codeunit "Calender Message_EVAS";
+    begin
+        CalenderMessage.GetCalenderMessage(OutlookCalenderEntry);
+        exit(OpenAppointmentEditor(CalenderMessage, OutlookCalenderEntry, IsModal));
+    end;
+
+    local procedure OpenAppointmentEditor(var CalenderMessage: Codeunit "Calender Message_EVAS"; var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS"; IsModal: Boolean): Enum "Email Action"
+    var
+        EmailEditorPage: Page "Appointment Email_EVAS";
+        EmailAction: Enum "Email Action";
+    begin
+        EmailEditorPage.SetTableView(OutlookCalenderEntry);
+        EmailEditorPage.SetCalenderMessage(CalenderMessage);
+        if OutlookCalenderEntry.id <> 0 then
+            EmailEditorPage.SetAsNew();
+
+        if IsModal then begin
+            Commit(); // Commit before opening modally
+            EmailEditorPage.RunModal();
+            EmailEditorPage.GetCalenderMessage(CalenderMessage);
+            OutlookCalenderEntry := CalenderMessage.GetCalenderEntry(CalenderMessage.GetUID());
+            EmailAction := EmailEditorPage.GetAction();
+            if EmailAction = EmailAction::"Saved As Draft" then
+                CalenderMessage.SaveCalenderEmailRecipients();
+            exit(EmailAction);
+        end
+        else
+            EmailEditorPage.Run();
+    end;
+
+    internal procedure GetEmailAccount(OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS") EmailAccount: Record "Email Account";
+    var
+        EmailAccounts: Codeunit "Email Account";
+    begin
+        EmailAccounts.GetAllAccounts(EmailAccount);
+
+        if not EmailAccount.Get(OutlookCalenderEntry."Account Id", OutlookCalenderEntry.Connector) then
+            Clear(EmailAccount);
+        exit(EmailAccount);
+    end;
+
+    local procedure GenerateEmail(var TempEmailItem: Record "Email Item" temporary; Cancel: Boolean; CalenderMessage: Codeunit "Calender Message_EVAS")
+    var
+        TempBlob: Codeunit "Temp Blob";
+        AttachFileNameTxt: Label '%1.ics', Comment = '%1= file name';
+        Stream: OutStream;
+        InStream: Instream;
+        ICS: Text;
+    begin
+        ICS := GenerateICS(Cancel, CalenderMessage);
+        TempBlob.CreateOutStream(Stream, TextEncoding::UTF8);
+        Stream.Write(ICS);
+        TempBlob.CreateInStream(InStream);
+
+        TempEmailItem.Initialize();
+        TempEmailItem."From Address" := CalenderMessage.GetFromEmail();
+        TempEmailItem."Send to" := CopyStr(CalenderMessage.GetSendToEmail(), 1, MaxStrLen(TempEmailItem."Send to"));
+        TempEmailItem."Send CC" := CopyStr(CalenderMessage.GetSendCcEmail(), 1, MaxStrLen(TempEmailItem."Send CC"));
+        TempEmailItem."Send BCC" := CopyStr(CalenderMessage.GetSendBccEmail(), 1, MaxStrLen(TempEmailItem."Send BCC"));
+        TempEmailItem.Subject := CalenderMessage.GetSubject();
+        TempEmailItem."Starting DateTime_EVAS" := CalenderMessage.GetStartDateTime();
+        TempEmailItem."Ending DateTime_EVAS" := CalenderMessage.GetEndDateTime();
+        TempEmailItem.AddAttachment(InStream, StrSubstNo(AttachFileNameTxt, CalenderMessage.GetAttachmentName()));
+        TempEmailItem.Location_EVAS := CopyStr(CalenderMessage.GetLocation(), 1, MaxStrLen(TempEmailItem.Location_EVAS));
+        TempEmailItem.SetBodyText(CalenderMessage.GetMessageBody());
+        TempEmailItem.Cancellation_EVAS := Cancel;
+    end;
+
+    local procedure GenerateICS(Cancel: Boolean; CalenderMessage: Codeunit "Calender Message_EVAS") ICS: Text
+    var
+        TextBuilder: TextBuilder;
+        Status: Text;
+        Method: Text;
+        ProdIDTxt: Label '//Microsoft Corporation//Dynamics 365//EN', Locked = true;
+    begin
+        if Cancel then begin
+            Method := 'CANCEL';
+            Status := 'CANCELLED';
+        end else begin
+            Method := 'REQUEST';
+            Status := 'CONFIRMED';
+        end;
+
+        TextBuilder.AppendLine('BEGIN:VCALENDAR');
+        TextBuilder.AppendLine('VERSION:2.0');
+        TextBuilder.AppendLine('PRODID:-' + ProdIDTxt);
+        TextBuilder.AppendLine('METHOD:' + Method);
+        TextBuilder.AppendLine('BEGIN:VEVENT');
+        TextBuilder.AppendLine('UID:' + DelChr(CalenderMessage.GetUID(), '<>', '{}'));
+        TextBuilder.AppendLine('ORGANIZER:' + CalenderMessage.GetFromEmail());
+        TextBuilder.AppendLine('LOCATION:' + CalenderMessage.GetLocation());
+        TextBuilder.AppendLine('DTSTART:' + CalenderMessage.GetStartDatetimeTxt());
+        TextBuilder.AppendLine('DTEND:' + CalenderMessage.GetEndDatetimeText());
+        TextBuilder.AppendLine('SUMMARY:' + CalenderMessage.GetSummery());
+        TextBuilder.AppendLine('DESCRIPTION:' + CalenderMessage.GetAppointmentDescription());
+        TextBuilder.AppendLine('X-ALT-DESC;FMTTYPE=' + GetHtmlDescription(CalenderMessage.GetAppointmentDescription()));
+        TextBuilder.AppendLine('SEQUENCE:' + Format(CalenderMessage.GetSequence()));
+        TextBuilder.AppendLine('STATUS:' + Status);
+        TextBuilder.AppendLine('END:VEVENT');
+        TextBuilder.AppendLine('END:VCALENDAR');
+        ICS := TextBuilder.ToText();
+    end;
+
+    local procedure GetHtmlDescription(Description: Text) HtmlAppointDescription: Text
+    var
+        Regex: Codeunit Regex;
+    begin
+        HtmlAppointDescription := Regex.Replace(Description, '\\r', '');
+        HtmlAppointDescription := Regex.Replace(HtmlAppointDescription, '\\n', '<br>');
+        HtmlAppointDescription := 'text/html:<html><body>' + HtmlAppointDescription + '</html></body>';
+    end;
+
+    local procedure CreateCalenderAppointment(var CalenderMessage: Codeunit "Calender Message_EVAS"): Boolean
+    var
+        UID: Guid;
+    begin
+        if not CalenderMessage.GetCreateAppointment() then
+            exit(false);
+
+        UID := CalenderMessage.GetUID();
+
+        if IsNullGuid(UID) then
+            CalenderMessage.SetUID(CreateGuid());
+        exit(true);
+    end;
+
+    local procedure CreateCalenderCancellation(var CalenderMessage: Codeunit "Calender Message_EVAS"): Boolean
+    var
+        MissingUIDTxt: Label 'Cannot cancel an appointment without af reference to the oulook appointment', Comment = 'DAN="Kan ikke annullere en aftale uden referencen til oulook aftalen"';
+        UID: Guid;
+    begin
+        if not CalenderMessage.GetCancelAppointment() then
+            exit(false);
+
+        UID := CalenderMessage.GetUID();
+        if IsNullGuid(UID) then
+            error(MissingUIDTxt);
+        exit(true);
+    end;
+
+    local procedure UpdateSequence(var CalenderMessage: Codeunit "Calender Message_EVAS"; CreateAppmnt: Boolean; CancelAppmnt: Boolean)
+    var
+        Sequence: Integer;
+    begin
+        Sequence := CalenderMessage.GetSequence();
+        case true of
+            (CreateAppmnt) and (not CancelAppmnt):
+                if Sequence = 0 then
+                    Sequence := 1;
+            (not CreateAppmnt) and (CancelAppmnt):
+                Sequence += 1;
+            (CreateAppmnt) and (CancelAppmnt):
+                Sequence += 1;
+        end;
+        CalenderMessage.SetSequence(Sequence);
+    end;
+
+    internal procedure DiscardAppointment(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS"; Confirm: Boolean): Boolean
+    var
+        ConfirmDiscardEmailQst: Label 'Go ahead and discard?', Comment = 'DAN="Slet aftale mail?"';
+    begin
+        if Confirm then
+            if not Confirm(ConfirmDiscardEmailQst, true) then
+                exit(false);
+
+        exit(OutlookCalenderEntry.Delete(true));
+    end;
+}
