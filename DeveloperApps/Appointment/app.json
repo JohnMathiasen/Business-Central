@@ -1,0 +1,33 @@
+{
+  "id": "90d0b35f-ade9-4367-af4c-2088ff8c535a",
+  "name": "Appointment",
+  "publisher": "Elbek & Vejrup A/S",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "20.0.0.0",
+  "idRanges": [
+    {
+      "from": 50300,
+      "to": 50320
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "target": "Cloud",
+  "runtime": "9.0",
+  "features": [
+    "TranslationFile"
+  ]
+}
