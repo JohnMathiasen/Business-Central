@@ -257,8 +257,8 @@ codeunit 50300 "Outlook Appointment_EVAS"
         TextBuilder.AppendLine('UID:' + DelChr(CalenderMessage.GetUID(), '<>', '{}'));
         TextBuilder.AppendLine('ORGANIZER:' + CalenderMessage.GetFromEmail());
         TextBuilder.AppendLine('LOCATION:' + CalenderMessage.GetLocation());
-        TextBuilder.AppendLine('DTSTART:' + CalenderMessage.GetStartDatetimeTxt());
-        TextBuilder.AppendLine('DTEND:' + CalenderMessage.GetEndDatetimeText());
+        TextBuilder.AppendLine('DTSTART:' + GetStartDatetimeTxt(CalenderMessage));
+        TextBuilder.AppendLine('DTEND:' + GetEndDatetimeText(CalenderMessage));
         TextBuilder.AppendLine('SUMMARY:' + CalenderMessage.GetSummery());
         TextBuilder.AppendLine('DESCRIPTION:' + CalenderMessage.GetAppointmentDescription());
         TextBuilder.AppendLine('X-ALT-DESC;FMTTYPE=' + GetHtmlDescription(CalenderMessage.GetAppointmentDescription()));
@@ -267,6 +267,20 @@ codeunit 50300 "Outlook Appointment_EVAS"
         TextBuilder.AppendLine('END:VEVENT');
         TextBuilder.AppendLine('END:VCALENDAR');
         ICS := TextBuilder.ToText();
+    end;
+
+    local procedure GetEndDatetimeText(CalenderMessage: Codeunit "Calender Message_EVAS") EndDateTime: Text
+    var
+        DateTimeFormatTxt: Label '<Year4><Month,2><Day,2>T<Hours24,2><Minutes,2><Seconds,2>', Locked = true;
+    begin
+        EndDateTime := Format(CalenderMessage.GetEndDateTime(), 0, DateTimeFormatTxt);
+    end;
+
+    local procedure GetStartDatetimeTxt(CalenderMessage: Codeunit "Calender Message_EVAS") StartDateTime: Text
+    var
+        DateTimeFormatTxt: Label '<Year4><Month,2><Day,2>T<Hours24,2><Minutes,2><Seconds,2>', Locked = true;
+    begin
+        StartDateTime := Format(CalenderMessage.GetStartDateTime(), 0, DateTimeFormatTxt);
     end;
 
     local procedure GetHtmlDescription(Description: Text) HtmlAppointDescription: Text

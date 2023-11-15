@@ -20,6 +20,22 @@
             "schemaUpdateMode": "ForceSync"
         },
         {
+            "name": "Attach BC-22-CU2-DK",
+            "request": "attach",
+            "type": "al",
+            "server": "http://BC-22-CU2-DK",
+            "serverInstance": "BC",
+            "tenant": "default",
+            "authentication": "UserPassword",
+            "breakOnError": true,
+            "breakOnRecordWrite": false,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "longRunningSqlStatementsThreshold": 500,
+            "numberOfSqlStatements": 10,
+            "breakOnNext": "WebServiceClient"
+        },
+        {
             "type": "al",
             "request": "launch",
             "name": "Dev CACBC-22-CU2-DK Container",
