@@ -101,17 +101,6 @@ codeunit 50301 "Calender Message_EVAS"
     end;
 
     /// <summary>
-    /// Get Calender StartDate.
-    /// </summary>
-    /// <returns>Return variable StartDateTime of type Text.</returns>
-    internal procedure GetStartDatetimeTxt() StartDateTime: Text
-    var
-        DateTimeFormatTxt: Label '<Year4><Month,2><Day,2>T<Hours24,2><Minutes,2><Seconds,2>', Locked = true;
-    begin
-        StartDateTime := Format(GetStartDateTime(), 0, DateTimeFormatTxt);
-    end;
-
-    /// <summary>
     /// GetStartDateTime.
     /// </summary>
     /// <returns>Return variable StartDateTime of type DateTime.</returns>
@@ -150,17 +139,6 @@ codeunit 50301 "Calender Message_EVAS"
         SetGlobalCalenderEntry();
         GlobalCalenderEntry."Ending Datetime" := EndDateTime;
         CheckAppointmentDates();
-    end;
-
-    /// <summary>
-    /// Get Calender EndDate.
-    /// </summary>
-    /// <returns>Return variable EndDateTime of type Text.</returns>
-    internal procedure GetEndDatetimeText() EndDateTime: Text
-    var
-        DateTimeFormatTxt: Label '<Year4><Month,2><Day,2>T<Hours24,2><Minutes,2><Seconds,2>', Locked = true;
-    begin
-        EndDateTime := Format(GetEndDateTime(), 0, DateTimeFormatTxt);
     end;
 
     /// <summary>
@@ -501,10 +479,10 @@ codeunit 50301 "Calender Message_EVAS"
         if GetSendToEmail() = '' then
             Error(TilEmailErr);
 
-        if GetStartDatetimeTxt() = '' then
+        if GetStartDateTime() = 0DT then
             Error(MissingStartDateErr);
 
-        if GetEndDatetimeText() = '' then
+        if GetEndDateTime() = 0DT then
             Error(MissingEndDateErr);
 
         if SendCancellation then
@@ -519,8 +497,8 @@ codeunit 50301 "Calender Message_EVAS"
         if RecRef.Number = 0 then
             Error(TableOriginationErr);
 
-        if not EmailScenarisSpecified then
-            Error(ScenarioErr);
+        //if not EmailScenarisSpecified then
+        //    Error(ScenarioErr);
     end;
 
     internal procedure AddEmailAddressForLookup(Name: Text[250]; EmailAddress: Text[250])
@@ -626,6 +604,7 @@ codeunit 50301 "Calender Message_EVAS"
         EmailAccount := GetFromAddress(GetEmailScenario());
         OutlookCalenderEntry."Account Id" := EmailAccount."Account Id";
         OutlookCalenderEntry.Connector := EmailAccount.Connector;
+        OutlookCalenderEntry."From Address" := EmailAccount."Email Address";
     end;
 
     local procedure GetFromAddress(EmailScenario: Enum "Email Scenario"): Record "Email Account" temporary;

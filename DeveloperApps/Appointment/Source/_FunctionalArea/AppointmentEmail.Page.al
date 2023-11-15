@@ -17,7 +17,6 @@ page 50302 "Appointment Email_EVAS"
     layout
     {
 
-
         area(Content)
         {
             group("Email Details")
