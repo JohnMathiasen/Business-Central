@@ -254,13 +254,20 @@ page 50302 "Appointment Email_EVAS"
                 }
             }
 
-            part(Attachments; "Email Attachments")
+            part(CalAttachments; "Calender Msg. Attachment_EVAS")
             {
                 ApplicationArea = All;
-                SubPageLink = "Email Message Id" = field(UID);
-                UpdatePropagation = SubPart;
+                SubPageLink = "Calender Message Id" = field(UID);
+                UpdatePropagation = Both;
                 Caption = 'Attachments';
             }
+            // part(Attachments; "Email Attachments")
+            // {
+            //     ApplicationArea = All;
+            //     SubPageLink = "Email Message Id" = field(UID);
+            //     UpdatePropagation = SubPart;
+            //     Caption = 'Attachments';
+            // }
         }
     }
 
@@ -328,6 +335,7 @@ page 50302 "Appointment Email_EVAS"
             CurrPage.Caption(EmailSubject)
         else
             CurrPage.Caption(PageCaptionTxt); // fallback to default caption
+        CurrPage.CalAttachments.Page.UpdateValues(CalenderMessage, true);
     end;
 
     trigger OnOpenPage()
@@ -347,6 +355,7 @@ page 50302 "Appointment Email_EVAS"
         end;
 
         DefaultExitOption := 1;
+
     end;
 
     trigger OnQueryClosePage(CloseAction: Action): Boolean
