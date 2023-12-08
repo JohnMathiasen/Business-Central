@@ -209,6 +209,7 @@ codeunit 50300 "Outlook Appointment_EVAS"
 
     local procedure GenerateEmail(var TempEmailItem: Record "Email Item" temporary; Cancel: Boolean; CalenderMessage: Codeunit "Calender Message_EVAS")
     var
+
         TempBlob: Codeunit "Temp Blob";
         AttachFileNameTxt: Label '%1.ics', Comment = '%1= file name';
         Stream: OutStream;
@@ -232,8 +233,26 @@ codeunit 50300 "Outlook Appointment_EVAS"
         TempEmailItem.Location_EVAS := CopyStr(CalenderMessage.GetLocation(), 1, MaxStrLen(TempEmailItem.Location_EVAS));
         TempEmailItem.SetBodyText(CalenderMessage.GetMessageBody());
         TempEmailItem.Cancellation_EVAS := Cancel;
+        AddCalenderAttachmentToEmail(TempEmailItem, CalenderMessage);
     end;
 
+    local procedure AddCalenderAttachmentToEmail(var TempEmailItem: Record "Email Item" temporary; CalenderMessage: Codeunit "Calender Message_EVAS")
+    var
+        CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS";
+        TempBlob: Codeunit "Temp Blob";
+        Outstream: OutStream;
+        Instream: InStream;
+    begin
+        CalenderMsgAttachment.SetRange("Calender Message Id", CalenderMessage.GetUID());
+        if CalenderMsgAttachment.FindSet() then
+            repeat
+                TempBlob.CreateOutStream(Outstream);
+                CalenderMsgAttachment.Data.ExportStream(Outstream);
+                TempBlob.CreateInStream(Instream);
+                TempEmailItem.AddAttachment(InStream, CalenderMsgAttachment."Attachment Name");
+            until CalenderMsgAttachment.Next() = 0;
+        CalenderMsgAttachment.DeleteAll();
+    end;
     local procedure GenerateICS(Cancel: Boolean; CalenderMessage: Codeunit "Calender Message_EVAS") ICS: Text
     var
         TextBuilder: TextBuilder;
@@ -346,5 +365,50 @@ codeunit 50300 "Outlook Appointment_EVAS"
                 exit(false);
 
         exit(OutlookCalenderEntry.Delete(true));
+    end;
+
+
+
+
+    /// <summary>
+    /// UploadAttachment.
+    /// </summary>
+    /// <param name="CalenderMsgAttachment">Record "Calender Msg. Attachment_EVAS".</param>
+    internal procedure UploadAttachment(CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS");
+    var
+        FileName: Text;
+        Instream: Instream;
+        AttachmentName, ContentType : Text[250];
+        AttachamentSize: Integer;
+        UploadingAttachmentMsg: Label 'Attached file with size: %1, Content type: %2', Comment = '%1 - File size, %2 - Content type', Locked = true;
+        EmailCategoryLbl: Label 'Email', Locked = true;
+    begin
+        UploadIntoStream('', '', '', FileName, Instream);
+        if FileName = '' then
+            exit;
+
+        AttachmentName := CopyStr(FileName, 1, 250);
+        ContentType := CalenderMsgAttachment.GetContentTypeFromFilename(Filename);
+        //AttachamentSize := EmailMessageImpl.AddAttachmentInternal(AttachmentName, ContentType, Instream);
+        AttachamentSize := CalenderMsgAttachment.AddAttachmentInternal(AttachmentName, ContentType, Instream, CalenderMsgAttachment."Calender Message Id");
+        Session.LogMessage('0000CTX', StrSubstNo(UploadingAttachmentMsg, AttachamentSize, ContentType), Verbosity::Normal, DataClassification::SystemMetadata, TelemetryScope::ExtensionPublisher, 'Category', EmailCategoryLbl);
+    end;
+
+    /// <summary>
+    /// DownloadAttachment.
+    /// </summary>
+    /// <param name="MediaID">Guid.</param>
+    /// <param name="FileName">Text.</param>
+    internal procedure DownloadAttachment(MediaID: Guid; FileName: Text)
+    var
+        TenantMedia: Record "Tenant Media";
+        MediaInStream: InStream;
+    begin
+        TenantMedia.Get(MediaID);
+        TenantMedia.CalcFields(Content);
+
+        if TenantMedia.Content.HasValue() then
+            TenantMedia.Content.CreateInStream(MediaInStream);
+        DownloadFromStream(MediaInStream, '', '', '', FileName);
     end;
 }
