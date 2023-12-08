@@ -438,7 +438,9 @@ codeunit 50301 "Calender Message_EVAS"
     internal procedure SetEmailScenario(EmailScenario: Enum "Email Scenario")
     begin
         GlobalCalenderEntry."Email Scenario" := EmailScenario;
+#pragma warning disable AA0206
         EmailScenarisSpecified := true;
+#pragma warning restore AA0206
     end;
 
     /// <summary>
@@ -465,7 +467,6 @@ codeunit 50301 "Calender Message_EVAS"
         MissingEndDateErr: Label 'You must specify a End date for the appointment', Comment = 'DAN="Du skal angive Slut dato for aftalen"';
         MissingSubjectErr: Label 'You must specify a Subject for the appointment', Comment = 'DAN="Du skal angive et emne for aftalen"';
         TableOriginationErr: Label 'You must specify a Record for the appointment - Which record that the appointment is referenced to.', Comment = 'DAN="Du skal angive en oprindelses tabel for aftalen - Den konkrete record aftalen er opstået fra."';
-        ScenarioErr: Label 'You must specify a Email scenario', Comment = 'DAN="Du skal angive et Email scenarie"';
     begin
         SendCancellation := GetCancelAppointment();
         SendAppointment := GetCreateAppointment();
@@ -496,9 +497,6 @@ codeunit 50301 "Calender Message_EVAS"
         GetRecord(RecRef);
         if RecRef.Number = 0 then
             Error(TableOriginationErr);
-
-        //if not EmailScenarisSpecified then
-        //    Error(ScenarioErr);
     end;
 
     internal procedure AddEmailAddressForLookup(Name: Text[250]; EmailAddress: Text[250])
