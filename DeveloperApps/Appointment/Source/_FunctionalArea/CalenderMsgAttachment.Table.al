@@ -18,7 +18,7 @@ table 50302 "Calender Msg. Attachment_EVAS"
         field(2; "Calender Message Id"; Guid)
         {
             DataClassification = SystemMetadata;
-            //TableRelation = "Email Message".Id;
+            TableRelation = "Outlook Calender Entry_EVAS".UID;
         }
         field(4; "Attachment Name"; Text[250])
         {
@@ -145,22 +145,22 @@ table 50302 "Calender Msg. Attachment_EVAS"
         exit(AddAttachmentInternal(AttachmentName, ContentType, AttachmentInStream, false, NullGuid, MessageId));
     end;
 
-    internal procedure AddAttachmentInternal(AttachmentName: Text[250]; ContentType: Text[250]; AttachmentInStream: InStream; InLine: Boolean; ContentId: Text[40]; MessageId: Guid) Size: Integer
+    internal procedure AddAttachmentInternal(AttachmentName: Text[250]; ContentType: Text[250]; AttachmentInStream: InStream; InLineValue: Boolean; ContentId: Text[40]; MessageId: Guid) Size: Integer
     var
         CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS";
     begin
-        AddAttachment(AttachmentName, ContentType, InLine, ContentId, MessageId, CalenderMsgAttachment);
+        AddAttachment(AttachmentName, ContentType, InLineValue, ContentId, MessageId, CalenderMsgAttachment);
         InsertAttachment(CalenderMsgAttachment, AttachmentInStream, '');
         exit(CalenderMsgAttachment.Length);
     end;
 
 
-    local procedure AddAttachment(AttachmentName: Text[250]; ContentType: Text[250]; InLine: Boolean; ContentId: Text[40]; MessageId: Guid; var CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS")
+    local procedure AddAttachment(AttachmentName: Text[250]; ContentType: Text[250]; InLineValue: Boolean; ContentId: Text[40]; MessageId: Guid; var CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS")
     begin
         CalenderMsgAttachment."Calender Message Id" := MessageId;
         CalenderMsgAttachment."Attachment Name" := AttachmentName;
         CalenderMsgAttachment."Content Type" := ContentType;
-        CalenderMsgAttachment.InLine := InLine;
+        CalenderMsgAttachment.InLine := InLineValue;
         CalenderMsgAttachment."Content Id" := ContentId;
     end;
 
@@ -174,6 +174,5 @@ table 50302 "Calender Msg. Attachment_EVAS"
         TenantMedia.CalcFields(Content);
         CalenderMsgAttachment.Length := TenantMedia.Content.Length;
         CalenderMsgAttachment.Insert();
-        //Modify();
     end;
 }
