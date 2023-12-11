@@ -168,6 +168,17 @@ page 50302 "Appointment Email_EVAS"
                                 ShowCaption = false;
                                 Importance = Promoted;
 
+                                trigger OnAssistEdit()
+                                var
+                                    RetText: Text;
+                                begin
+                                    if Lookuptime(RetText) then
+                                        evaluate(StartTime, RetText);
+
+                                    ValidateTimes(true);
+                                    CalenderMessage.SetStartDateTime(CreateDateTime(StartDate, StartTime));
+                                end;
+
                                 trigger OnValidate()
                                 begin
                                     ValidateTimes(true);
@@ -203,6 +214,17 @@ page 50302 "Appointment Email_EVAS"
                                 ToolTip = 'Specifies ending time for the appointment.', Comment = 'DAN="Angiver aftalens slut tidspunkt."';
                                 ShowCaption = false;
                                 Importance = Promoted;
+
+                                trigger OnAssistEdit()
+                                var
+                                    RetText: Text;
+                                begin
+                                    if Lookuptime(RetText) then
+                                        evaluate(EndTime, RetText);
+
+                                    ValidateTimes(false);
+                                    CalenderMessage.SetEndDateTime(CreateDateTime(EndDate, EndTime));
+                                end;
 
                                 trigger OnValidate()
                                 begin
@@ -472,16 +494,29 @@ page 50302 "Appointment Email_EVAS"
             exit;
     end;
 
+    /// <summary>
+    /// SetCalenderMessage.
+    /// </summary>
+    /// <param name="NewCalenderMessage">Codeunit "Calender Message_EVAS".</param>
     internal procedure SetCalenderMessage(NewCalenderMessage: Codeunit "Calender Message_EVAS")
     begin
         CalenderMessage := NewCalenderMessage;
     end;
 
+    /// <summary>
+    /// GetCalenderMessage.
+    /// </summary>
+    /// <param name="NewCalenderMessage">VAR Codeunit "Calender Message_EVAS".</param>
     internal procedure GetCalenderMessage(var NewCalenderMessage: Codeunit "Calender Message_EVAS")
     begin
         NewCalenderMessage := CalenderMessage;
     end;
 
+    /// <summary>
+    /// ChangeEmailAccount.
+    /// </summary>
+    /// <param name="OutlookCalenderEntry">VAR Record "Outlook Calender Entry_EVAS".</param>
+    /// <param name="ChosenEmailAccount">VAR Record "Email Account".</param>
     internal procedure ChangeEmailAccount(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS"; var ChosenEmailAccount: Record "Email Account")
     var
         EmailAccounts: Page "Email Accounts";
@@ -500,9 +535,36 @@ page 50302 "Appointment Email_EVAS"
         end;
     end;
 
+    /// <summary>
+    /// SetHTMLFormatted.
+    /// </summary>
     internal procedure SetHTMLFormatted()
     begin
         IsHTMLFormatted := true;
+    end;
+
+    local procedure LookupTime(var Text: Text): Boolean
+    var
+        OptionLookupBuffer: Record "Option Lookup Buffer";
+        I: Integer;
+        LDateTime: DateTime;
+    begin
+        Text := '';
+        LDateTime := CreateDateTime(today, 0T);
+
+        for I := 10 to 57 do begin
+            OptionLookupBuffer.Init();
+            OptionLookupBuffer.ID := I;
+            OptionLookupBuffer."Option Caption" := format(DT2Time(LDateTime));
+            OptionLookupBuffer."Lookup Type" := OptionLookupBuffer."Lookup Type"::Permissions;
+            OptionLookupBuffer.Insert();
+            LDateTime := LDateTime + 1800000;
+        end;
+
+        if Page.RunModal(Page::"Option Lookup List", OptionLookupBuffer) = Action::LookupOK then
+            Text := OptionLookupBuffer."Option Caption";
+
+        exit(Text <> '');
     end;
 
     var
