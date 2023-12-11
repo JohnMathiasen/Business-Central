@@ -4,14 +4,7 @@
 codeunit 50301 "Calender Message_EVAS"
 {
     var
-        TempCalenderEmailRecipient: Record "Calender Email Recipient_EVAS" temporary;
-        GlobalCalenderEntry: Record "Outlook Calender Entry_EVAS";
-        EmailScenarisSpecified: Boolean;
-        SendToCalendarTelemetryDefaultTxt: Label 'Business Central Sending to calendar.', Comment = 'DAN="Business Central Sender til kalendar."', Locked = true;
-        SendToCalendarTelemetryTxt: Label 'Sending %1 to calendar.', Comment = 'Sender %1 til kalendar.', Locked = true;
-        CalenderAttchmentName, CalenderMessageBody, CalenderTelemetryText : Text;
-        OriginRecordVariant: Variant;
-        UID: Guid;
+        CalenderMessageImplEVAS: Codeunit "Calender Message Impl._EVAS";
 
     /// <summary>
     /// Set FromEmail(Organizer)
@@ -19,8 +12,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="FromEmail">Text.</param>
     internal procedure SetFromEmail(FromEmail: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."From Address" := FromEmail;
+        CalenderMessageImplEVAS.SetFromEmail(FromEmail);
     end;
 
     /// <summary>
@@ -29,7 +21,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetFromEmail(): Text
     begin
-        exit(GlobalCalenderEntry."From Address");
+        exit(CalenderMessageImplEVAS.GetFromEmail());
     end;
 
     /// <summary>
@@ -38,8 +30,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="SendToEmail">Text.</param>
     internal procedure SetSendToEmail(SendToEmail: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Send to" := SendToEmail;
+        CalenderMessageImplEVAS.SetSendToEmail(SendToEmail);
     end;
 
     /// <summary>
@@ -48,7 +39,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetSendToEmail(): Text
     begin
-        exit(GlobalCalenderEntry."Send to");
+        exit(CalenderMessageImplEVAS.GetSendToEmail());
     end;
 
     /// <summary>
@@ -57,8 +48,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="SendCcEmail">Text.</param>
     internal procedure SetSendCcEmail(SendCcEmail: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Send CC" := SendCcEmail;
+        CalenderMessageImplEVAS.SetSendCcEmail(SendCcEmail);
     end;
 
     /// <summary>
@@ -67,7 +57,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetSendCcEmail(): Text
     begin
-        exit(GlobalCalenderEntry."Send CC");
+        exit(CalenderMessageImplEVAS.GetSendCcEmail());
     end;
 
     /// <summary>
@@ -76,8 +66,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="SendBccEmail">Text.</param>
     internal procedure SetSendBccEmail(SendBccEmail: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Send BCC" := SendBccEmail;
+        CalenderMessageImplEVAS.SetSendBccEmail(SendBccEmail);
     end;
 
     /// <summary>
@@ -86,7 +75,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetSendBccEmail(): Text
     begin
-        exit(GlobalCalenderEntry."Send BCC");
+        exit(CalenderMessageImplEVAS.GetSendBccEmail());
     end;
 
     /// <summary>
@@ -95,9 +84,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="StartDateTime">DateTime.</param>
     internal procedure SetStartDateTime(StartDateTime: DateTime)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Starting Datetime" := StartDateTime;
-        CheckAppointmentDates();
+        CalenderMessageImplEVAS.SetStartDateTime(StartDateTime);
     end;
 
     /// <summary>
@@ -106,7 +93,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return variable StartDateTime of type DateTime.</returns>
     internal procedure GetStartDateTime() StartDateTime: DateTime
     begin
-        exit(GlobalCalenderEntry."Starting Datetime");
+        exit(CalenderMessageImplEVAS.GetStartDateTime());
     end;
 
     /// <summary>
@@ -114,20 +101,9 @@ codeunit 50301 "Calender Message_EVAS"
     /// </summary>
     /// <param name="StartDate">Date.</param>
     /// <param name="Duration">Decimal.</param>
-    /// <returns>Return variable EndDateTime of type DateTime.</returns>
-    internal procedure SetEndDate(StartDate: Date; Duration: Decimal) EndDateTime: DateTime
-    var
-        EndTime: Time;
-        Days: Integer;
+    internal procedure SetEndDate(StartDate: Date; Duration: Decimal)
     begin
-        SetGlobalCalenderEntry();
-        if Duration < 12 then
-            Evaluate(EndTime, Format(8 + Duration))
-        else
-            Days := Round(Duration / 24, 1, '>');
-
-        EndDateTime := CreateDateTime(StartDate + Days, EndTime);
-        SetEndDateTime(EndDateTime);
+        CalenderMessageImplEVAS.SetEndDate(StartDate, Duration);
     end;
 
     /// <summary>
@@ -136,9 +112,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="EndDateTime">DateTime.</param>
     internal procedure SetEndDateTime(EndDateTime: DateTime)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Ending Datetime" := EndDateTime;
-        CheckAppointmentDates();
+        CalenderMessageImplEVAS.SetEndDateTime(EndDateTime);
     end;
 
     /// <summary>
@@ -147,7 +121,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return variable EndDateTime of type DateTime.</returns>
     internal procedure GetEndDateTime() EndDateTime: DateTime
     begin
-        exit(GlobalCalenderEntry."Ending Datetime");
+        exit(CalenderMessageImplEVAS.GetEndDateTime());
     end;
 
     /// <summary>
@@ -156,8 +130,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="DescriptionIn">Text.</param>
     internal procedure SetAppointmentDescription(DescriptionIn: Text)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry.Description := DescriptionIn;
+        CalenderMessageImplEVAS.SetAppointmentDescription(DescriptionIn);
     end;
 
     /// <summary>
@@ -166,7 +139,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetAppointmentDescription(): Text
     begin
-        exit(GlobalCalenderEntry.Description);
+        exit(CalenderMessageImplEVAS.GetAppointmentDescription());
     end;
 
     /// <summary>
@@ -175,25 +148,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="Subject">Text.</param>
     internal procedure SetSubject(Subject: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry.Subject := Subject;
-    end;
-
-    local procedure SetDefaultSubject()
-    var
-        DefaultCreateSubjectTxt: Label 'Create appointment', Comment = 'DAN="Lav aftale"';
-        DefaultCancelSubjectTxt: Label 'Cancel appointment', Comment = 'DAN="Annullér aftale"';
-        DefaultUpdateSubjectTxt: Label 'Update appointment', Comment = 'DAN="Opdatér aftale"';
-    begin
-        if GlobalCalenderEntry.Subject = '' then
-            case true of
-                (GlobalCalenderEntry."Create Appointment") and (not GlobalCalenderEntry."Cancel Appointment"):
-                    GlobalCalenderEntry.Subject := DefaultCreateSubjectTxt;
-                (not GlobalCalenderEntry."Create Appointment") and (GlobalCalenderEntry."Cancel Appointment"):
-                    GlobalCalenderEntry.Subject := DefaultCancelSubjectTxt;
-                (GlobalCalenderEntry."Create Appointment") and (GlobalCalenderEntry."Cancel Appointment"):
-                    GlobalCalenderEntry.Subject := DefaultUpdateSubjectTxt;
-            end;
+        CalenderMessageImplEVAS.SetSubject(Subject);
     end;
 
     /// <summary>
@@ -202,7 +157,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetSubject(): Text
     begin
-        exit(GlobalCalenderEntry.Subject);
+        exit(CalenderMessageImplEVAS.GetSubject());
     end;
 
     /// <summary>
@@ -211,8 +166,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="Location">Text.</param>
     internal procedure SetLocation(Location: Text[250])
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry.Location := Location;
+        CalenderMessageImplEVAS.SetLocation(Location);
     end;
 
     /// <summary>
@@ -221,7 +175,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetLocation(): Text
     begin
-        exit(GlobalCalenderEntry.Location);
+        exit(CalenderMessageImplEVAS.GetLocation());
     end;
 
     /// <summary>
@@ -230,8 +184,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="Summery">text.</param>
     internal procedure SetSummery(Summery: text)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry.Summery := Summery;
+        CalenderMessageImplEVAS.SetSummery(Summery);
     end;
 
     /// <summary>
@@ -240,7 +193,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type text.</returns>
     internal procedure GetSummery(): text
     begin
-        exit(GlobalCalenderEntry.Summery);
+        exit(CalenderMessageImplEVAS.GetSummery());
     end;
 
     /// <summary>
@@ -249,9 +202,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="UIDIn">Guid.</param>
     internal procedure SetUID(UIDIn: Guid)
     begin
-        SetGlobalCalenderEntry();
-        UID := UIDIn;
-        GlobalCalenderEntry.UID := UIDIn;
+        CalenderMessageImplEVAS.SetUID(UIDIn);
     end;
 
     /// <summary>
@@ -260,7 +211,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Guid.</returns>
     internal procedure GetUID(): Guid
     begin
-        exit(GlobalCalenderEntry.UID);
+        exit(CalenderMessageImplEVAS.GetUID());
     end;
 
     /// <summary>
@@ -269,8 +220,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="Sequence">Integer.</param>
     internal procedure SetSequence(Sequence: Integer)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry.Sequence := Sequence;
+        CalenderMessageImplEVAS.SetSequence(Sequence);
     end;
 
     /// <summary>
@@ -279,7 +229,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Integer.</returns>
     internal procedure GetSequence(): Integer
     begin
-        exit(GlobalCalenderEntry.Sequence);
+        exit(CalenderMessageImplEVAS.GetSequence());
     end;
 
     /// <summary>
@@ -288,9 +238,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="CreateAppointment">Boolean.</param>
     internal procedure SetCreateAppointment(CreateAppointment: Boolean)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Create Appointment" := CreateAppointment;
-        SetDefaultSubject();
+        CalenderMessageImplEVAS.SetCreateAppointment(CreateAppointment);
     end;
 
     /// <summary>
@@ -299,7 +247,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Boolean.</returns>
     internal procedure GetCreateAppointment(): Boolean
     begin
-        exit(GlobalCalenderEntry."Create Appointment");
+        exit(CalenderMessageImplEVAS.GetCreateAppointment());
     end;
 
     /// <summary>
@@ -308,9 +256,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="CancelAppointment">Boolean.</param>
     internal procedure SetCancelAppointment(CancelAppointment: Boolean)
     begin
-        SetGlobalCalenderEntry();
-        GlobalCalenderEntry."Cancel Appointment" := CancelAppointment;
-        SetDefaultSubject();
+        CalenderMessageImplEVAS.SetCancelAppointment(CancelAppointment);
     end;
 
     /// <summary>
@@ -319,7 +265,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Boolean.</returns>
     internal procedure GetCancelAppointment(): Boolean
     begin
-        exit(GlobalCalenderEntry."Cancel Appointment");
+        exit(CalenderMessageImplEVAS.GetCancelAppointment());
     end;
 
     /// <summary>
@@ -328,9 +274,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="UpdateAppointment">Boolean.</param>
     internal procedure SetUpdateAppointment(UpdateAppointment: Boolean)
     begin
-        SetCreateAppointment(UpdateAppointment);
-        SetCancelAppointment(UpdateAppointment);
-        SetDefaultSubject();
+        CalenderMessageImplEVAS.SetUpdateAppointment(UpdateAppointment);
     end;
 
     /// <summary>
@@ -339,7 +283,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Boolean.</returns>
     internal procedure GetUpdateAppointment(): Boolean
     begin
-        exit(GlobalCalenderEntry."Create Appointment" and GlobalCalenderEntry."Cancel Appointment");
+        exit(CalenderMessageImplEVAS.GetUpdateAppointment());
     end;
 
 
@@ -349,7 +293,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="AttchmentName">Text.</param>
     internal procedure SetAttachmentName(AttchmentName: Text)
     begin
-        CalenderAttchmentName := AttchmentName;
+        CalenderMessageImplEVAS.SetAttachmentName(AttchmentName);
     end;
 
     /// <summary>
@@ -358,7 +302,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetAttachmentName(): Text
     begin
-        exit(CalenderAttchmentName);
+        exit(CalenderMessageImplEVAS.GetAttachmentName());
     end;
 
     /// <summary>
@@ -367,9 +311,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="MessageBody">Text.</param>
     internal procedure SetMessageBody(MessageBody: Text)
     begin
-        SetGlobalCalenderEntry();
-        CalenderMessageBody := MessageBody;
-        GlobalCalenderEntry.AddBody(MessageBody);
+        CalenderMessageImplEVAS.SetMessageBody(MessageBody);
     end;
 
     /// <summary>
@@ -378,7 +320,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetMessageBody(): Text
     begin
-        exit(CalenderMessageBody);
+        exit(CalenderMessageImplEVAS.GetMessageBody());
     end;
 
     /// <summary>
@@ -386,17 +328,8 @@ codeunit 50301 "Calender Message_EVAS"
     /// </summary>
     /// <param name="RecordVariant">Variant.</param>
     internal procedure SetRecord(RecordVariant: Variant)
-    var
-        DataTypeManagement: Codeunit "Data Type Management";
-        RecRef: RecordRef;
     begin
-        DataTypeManagement.GetRecordRef(RecordVariant, RecRef);
-        OriginRecordVariant := RecRef;
-        if RecRef.Name <> '' then
-            CalenderTelemetryText := StrSubstNo(SendToCalendarTelemetryTxt, RecRef.Name)
-        else
-            CalenderTelemetryText := SendToCalendarTelemetryDefaultTxt;
-        GlobalCalenderEntry."Record ID" := RecRef.RecordId;
+        CalenderMessageImplEVAS.SetRecord(RecordVariant);
     end;
 
     /// <summary>
@@ -404,11 +337,8 @@ codeunit 50301 "Calender Message_EVAS"
     /// </summary>
     /// <param name="RecRef">VAR RecordRef.</param>
     internal procedure GetRecord(var RecRef: RecordRef)
-    var
-        DataTypeManagement: Codeunit "Data Type Management";
-
     begin
-        DataTypeManagement.GetRecordRef(OriginRecordVariant, RecRef);
+        CalenderMessageImplEVAS.GetRecord(RecRef);
     end;
 
     /// <summary>
@@ -417,7 +347,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="TelemetryText">Text.</param>
     internal procedure SetTelemetryText(TelemetryText: Text)
     begin
-        CalenderTelemetryText := TelemetryText;
+        CalenderMessageImplEVAS.SetTelemetryText(TelemetryText);
     end;
 
     /// <summary>
@@ -426,9 +356,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Text.</returns>
     internal procedure GetTelemetryText(): Text
     begin
-        if CalenderTelemetryText = '' then
-            CalenderTelemetryText := SendToCalendarTelemetryDefaultTxt;
-        exit(CalenderTelemetryText);
+        exit(CalenderMessageImplEVAS.GetTelemetryText());
     end;
 
     /// <summary>
@@ -437,10 +365,7 @@ codeunit 50301 "Calender Message_EVAS"
     /// <param name="EmailScenario">Enum "Email Scenario".</param>
     internal procedure SetEmailScenario(EmailScenario: Enum "Email Scenario")
     begin
-        GlobalCalenderEntry."Email Scenario" := EmailScenario;
-#pragma warning disable AA0206
-        EmailScenarisSpecified := true;
-#pragma warning restore AA0206
+        CalenderMessageImplEVAS.SetEmailScenario(EmailScenario);
     end;
 
     /// <summary>
@@ -449,253 +374,103 @@ codeunit 50301 "Calender Message_EVAS"
     /// <returns>Return value of type Enum "Email Scenario".</returns>
     internal procedure GetEmailScenario(): Enum "Email Scenario"
     begin
-        exit(GlobalCalenderEntry."Email Scenario");
+        exit(CalenderMessageImplEVAS.GetEmailScenario());
     end;
 
     /// <summary>
     /// CheckMandatoryCalender.
     /// </summary>
     internal procedure CheckMandatoryCalender()
-    var
-        RecRef: RecordRef;
-        SendCancellation, SendAppointment : Boolean;
-        AppointmentErr: Label 'You must either specify a new appointment or a cancellation of a existing appointment - Specify SetCreateAppointment or SetCancelAppointment', Comment = 'DAN="Du skal angive om det drejer sig om en oprettelse aller annullering af en aftale - Angiv SetCreateAppointment eller SetCancelAppointment"';
-        MissingUIDErr: Label 'A reference to an appointment is required for a cancellation - Specify SetUID', Comment = 'DAN="Der kræves en reference til annullering af en Kalender aftale - Angiv SetUID"';
-        FromEmailErr: Label 'You must specify From Email', Comment = 'DAN="Du skal angive From Email"';
-        TilEmailErr: Label 'You must specify Recipient Email', Comment = 'DAN="Du skal angive Recipient Email"';
-        MissingStartDateErr: Label 'You must specify a Start date for the appointment', Comment = 'DAN="Du skal angive Start dato for aftalen"';
-        MissingEndDateErr: Label 'You must specify a End date for the appointment', Comment = 'DAN="Du skal angive Slut dato for aftalen"';
-        MissingSubjectErr: Label 'You must specify a Subject for the appointment', Comment = 'DAN="Du skal angive et emne for aftalen"';
-        TableOriginationErr: Label 'You must specify a Record for the appointment - Which record that the appointment is referenced to.', Comment = 'DAN="Du skal angive en oprindelses tabel for aftalen - Den konkrete record aftalen er opstået fra."';
     begin
-        SendCancellation := GetCancelAppointment();
-        SendAppointment := GetCreateAppointment();
-
-        if not SendAppointment and not SendCancellation then
-            Error(AppointmentErr);
-
-        if GetFromEmail() = '' then
-            Error(FromEmailErr);
-
-        if GetSendToEmail() = '' then
-            Error(TilEmailErr);
-
-        if GetStartDateTime() = 0DT then
-            Error(MissingStartDateErr);
-
-        if GetEndDateTime() = 0DT then
-            Error(MissingEndDateErr);
-
-        if SendCancellation then
-            if IsNullGuid(GetUID()) then
-                Error(MissingUIDErr);
-
-        if SendAppointment then
-            if GetSubject() = '' then
-                Error(MissingSubjectErr);
-
-        GetRecord(RecRef);
-        if RecRef.Number = 0 then
-            Error(TableOriginationErr);
+        CalenderMessageImplEVAS.CheckMandatoryCalender();
     end;
 
+    /// <summary>
+    /// AddEmailAddressForLookup.
+    /// </summary>
+    /// <param name="Name">Text[250].</param>
+    /// <param name="EmailAddress">Text[250].</param>
     internal procedure AddEmailAddressForLookup(Name: Text[250]; EmailAddress: Text[250])
     begin
-        AddEmailAddressForLookup(Name, EmailAddress, Enum::"Email Recipient Type"::"To");
+        CalenderMessageImplEVAS.AddEmailAddressForLookup(Name, EmailAddress);
     end;
 
+    /// <summary>
+    /// AddEmailAddressForLookup.
+    /// </summary>
+    /// <param name="Name">Text[250].</param>
+    /// <param name="EmailAddress">Text[250].</param>
+    /// <param name="EmailRecipientType">Enum "Email Recipient Type".</param>
     internal procedure AddEmailAddressForLookup(Name: Text[250]; EmailAddress: Text[250]; EmailRecipientType: Enum "Email Recipient Type")
     begin
-        if EmailAddress = '' then
-            exit;
-
-        TempCalenderEmailRecipient.SetRange("E-Mail Address", EmailAddress);
-        if Name <> '' then
-            TempCalenderEmailRecipient.SetRange(Name, Name);
-        if not TempCalenderEmailRecipient.IsEmpty then
-            exit;
-        TempCalenderEmailRecipient.Reset();
-        TempCalenderEmailRecipient."Calender Entry UID" := GetUID();
-        TempCalenderEmailRecipient."E-Mail Address" := EmailAddress;
-        TempCalenderEmailRecipient.Name := Name;
-        TempCalenderEmailRecipient."Email Recipient Type" := EmailRecipientType;
-        if TempCalenderEmailRecipient.Insert() then;
+        CalenderMessageImplEVAS.AddEmailAddressForLookup(Name, EmailAddress, EmailRecipientType);
     end;
 
+    /// <summary>
+    /// LookupAllRecipients.
+    /// </summary>
+    /// <param name="CalenderEntryID">Guid.</param>
+    /// <param name="Text">VAR Text.</param>
+    /// <returns>Return value of type Boolean.</returns>
     internal procedure LookupAllRecipients(CalenderEntryID: Guid; var Text: Text): Boolean
-    var
-        EmailRecipientType: Enum "Email Recipient Type";
     begin
-        exit(LookupRecipients(CalenderEntryID, EmailRecipientType, true, Text));
+        exit(CalenderMessageImplEVAS.LookupAllRecipients(CalenderEntryID, Text));
     end;
 
+    /// <summary>
+    /// LookupRecipients.
+    /// </summary>
+    /// <param name="CalenderEntryID">Guid.</param>
+    /// <param name="EmailRecipientType">Enum "Email Recipient Type".</param>
+    /// <param name="Text">VAR Text.</param>
+    /// <returns>Return value of type Boolean.</returns>
     internal procedure LookupRecipients(CalenderEntryID: Guid; EmailRecipientType: Enum "Email Recipient Type"; var Text: Text): Boolean
     begin
-        exit(LookupRecipients(CalenderEntryID, EmailRecipientType, Text));
+        exit(CalenderMessageImplEVAS.LookupRecipients(CalenderEntryID, EmailRecipientType, Text));
     end;
 
-    local procedure LookupRecipients(CalenderEntryID: Guid; EmailRecipientType: Enum "Email Recipient Type"; AllMailRecipients: Boolean; var Text: Text): Boolean
-    var
-        TempSuggestedCalenderEmailRecipient: Record "Calender Email Recipient_EVAS" temporary;
-        CalenderEmailRecipientsPage: Page "Calender Email Recipients_EVAS";
-    begin
-        TempCalenderEmailRecipient.SetRange("Calender Entry UID", CalenderEntryID);
-        if not AllMailRecipients then
-            TempCalenderEmailRecipient.SetRange("Email Recipient Type", EmailRecipientType);
-        if TempCalenderEmailRecipient.IsEmpty then
-            exit;
-
-        TempCalenderEmailRecipient.FindSet(false);
-        repeat
-            CalenderEmailRecipientsPage.AddSuggestions(TempCalenderEmailRecipient);
-        until TempCalenderEmailRecipient.Next() = 0;
-
-        CalenderEmailRecipientsPage.LookupMode(true);
-        if (CalenderEmailRecipientsPage.RunModal() = Action::LookupOK) then begin
-            CalenderEmailRecipientsPage.GetSelectedSuggestions(TempSuggestedCalenderEmailRecipient);
-
-            if TempSuggestedCalenderEmailRecipient.FindSet() then begin
-                if (Text <> '') and (not Text.EndsWith(';')) then
-                    Text += ';';
-                Text += CalenderEmailRecipientsPage.GetSelectedSuggestionsAsText(TempSuggestedCalenderEmailRecipient);
-
-                // Added recipients is added as related entities on the email
-                //AddRelatedRecordsFromEmailAddress(MessageID, SuggestedEmailAddressLookup);
-                exit(true);
-            end;
-        end;
-        exit(false);
-    end;
-
-    local procedure SetGlobalCalenderEntry()
-    begin
-        if IsNullGuid(GlobalCalenderEntry."Account Id") then
-            InitializeGlobalCelenderEntry(GlobalCalenderEntry);
-
-        if IsNullGuid(GlobalCalenderEntry.UID) then begin
-            GlobalCalenderEntry.UID := CreateGuid();
-            UID := GlobalCalenderEntry.UID;
-        end;
-    end;
-
+    /// <summary>
+    /// CreateNewCalenderEntry.
+    /// </summary>
+    /// <param name="OutlookCalenderEntry">VAR Record "Outlook Calender Entry_EVAS".</param>
     internal procedure CreateNewCalenderEntry(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS")
     begin
-        if OutlookCalenderEntry.UID = GlobalCalenderEntry.UID then
-            if GlobalCalenderEntry.Id = 0 then
-                GlobalCalenderEntry.Insert(true);
-
-        OutlookCalenderEntry := GlobalCalenderEntry;
+        CalenderMessageImplEVAS.CreateNewCalenderEntry(OutlookCalenderEntry);
     end;
 
+    /// <summary>
+    /// SetCalenderEntry.
+    /// </summary>
+    /// <param name="OutlookCalenderEntry">VAR Record "Outlook Calender Entry_EVAS".</param>
     internal procedure SetCalenderEntry(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS")
     begin
-        if OutlookCalenderEntry.UID = GlobalCalenderEntry.UID then begin
-            GlobalCalenderEntry.Modify();
-            OutlookCalenderEntry := GlobalCalenderEntry;
-        end;
+        CalenderMessageImplEVAS.SetCalenderEntry(OutlookCalenderEntry);
     end;
 
-    local procedure InitializeGlobalCelenderEntry(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS")
-    var
-        EmailAccount: Record "Email Account";
-    begin
-        EmailAccount := GetFromAddress(GetEmailScenario());
-        OutlookCalenderEntry."Account Id" := EmailAccount."Account Id";
-        OutlookCalenderEntry.Connector := EmailAccount.Connector;
-        OutlookCalenderEntry."From Address" := EmailAccount."Email Address";
-    end;
-
-    local procedure GetFromAddress(EmailScenario: Enum "Email Scenario"): Record "Email Account" temporary;
-    var
-        TempEmailModuleAccount: Record "Email Account" temporary;
-        EmailScenarios: Codeunit "Email Scenario";
-        NoDefaultScenarioDefinedErr: Label 'The default account is not selected. Please, register an account on the ''Email Accounts'' page and mark it as the default account on the ''Email Scenario Setup'' page.', Comment = 'Standard konto er ikke valgt. Angiv venligst en konto på ''Mmail konti'' side og  markér den som standard konto på ''Tildeling af mailscenarie'' side."';
-        NoScenarioDefinedErr: Label 'No email account defined for the scenario ''%1''. Please, register an account on the ''Email Accounts'' page and assign scenario ''%1'' to it on the ''Email Scenario Setup'' page. Mark one of the accounts as the default account to use it for all scenarios that are not explicitly defined.', Comment = 'DAN="Ingen email konto er defineret for scenarie ''%1''. Angiv venligst en konto på ''Mail konto'' side og tildel et scenarie ''%1'' til det på ''Tildeling af mailscenarie'' side. Markér en konto som standard konto tl anvendelse for alle scenarioer, der ikke er eksplicit defineret."';
-    begin
-        // Try get the email account to use by the provided scenario
-        if not EmailScenarios.GetEmailAccount(EmailScenario, TempEmailModuleAccount) then
-            if EmailScenario = Enum::"Email Scenario"::Default then
-                Error(NoDefaultScenarioDefinedErr)
-            else
-                Error(NoScenarioDefinedErr, EmailScenario);
-        exit(TempEmailModuleAccount);
-    end;
-
+    /// <summary>
+    /// GetCalenderMessage.
+    /// </summary>
+    /// <param name="OutlookCalenderEntry">Record "Outlook Calender Entry_EVAS".</param>
     internal procedure GetCalenderMessage(OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS")
-    var
-        IStream: InStream;
     begin
-        GlobalCalenderEntry := OutlookCalenderEntry;
-        GlobalCalenderEntry.CalcFields(Body);
-        GlobalCalenderEntry.Body.CreateInStream(IStream);
-        IStream.Read(CalenderMessageBody);
-        EmailScenarisSpecified := true;
-        SetReferencedRecord();
-        GetTempEmailRecipients()
+        CalenderMessageImplEVAS.GetCalenderMessage(OutlookCalenderEntry);
     end;
 
-    local procedure SetReferencedRecord(): Boolean
-    var
-        RecRef: RecordRef;
-    begin
-        if GlobalCalenderEntry."Record ID".TableNo = 0 then
-            exit(false);
-        RecRef.Get(GlobalCalenderEntry."Record ID");
-        OriginRecordVariant := RecRef;
-        exit(true);
-    end;
-
-    local procedure GetTempEmailRecipients()
-    var
-        CalenderEmailRecipient: Record "Calender Email Recipient_EVAS";
-    begin
-        if not TempCalenderEmailRecipient.IsEmpty then
-            exit;
-        CalenderEmailRecipient.SetRange("Calender Entry UID", GetUid());
-        if CalenderEmailRecipient.IsEmpty then
-            exit;
-        CalenderEmailRecipient.FindSet(false);
-        repeat
-            TempCalenderEmailRecipient := CalenderEmailRecipient;
-            TempCalenderEmailRecipient.Insert();
-        until CalenderEmailRecipient.Next() = 0;
-    end;
-
+    /// <summary>
+    /// SaveCalenderEmailRecipients.
+    /// </summary>
     internal procedure SaveCalenderEmailRecipients()
-    var
-        CalenderEmailRecipient: Record "Calender Email Recipient_EVAS";
     begin
-        TempCalenderEmailRecipient.Reset();
-        TempCalenderEmailRecipient.SetRange("Calender Entry UID", GetUid());
-        if TempCalenderEmailRecipient.IsEmpty then
-            exit;
-
-        CalenderEmailRecipient.SetRange("Calender Entry UID", GetUid());
-        CalenderEmailRecipient.DeleteAll();
-
-        TempCalenderEmailRecipient.FindSet(false);
-        repeat
-            CalenderEmailRecipient := TempCalenderEmailRecipient;
-            CalenderEmailRecipient.Insert();
-        until TempCalenderEmailRecipient.Next() = 0;
+        CalenderMessageImplEVAS.SaveCalenderEmailRecipients();
     end;
 
+    /// <summary>
+    /// GetCalenderEntry.
+    /// </summary>
+    /// <param name="UIDin">Guid.</param>
+    /// <returns>Return value of type Record "Outlook Calender Entry_EVAS".</returns>
     internal procedure GetCalenderEntry(UIDin: Guid): Record "Outlook Calender Entry_EVAS"
     begin
-        if GlobalCalenderEntry.UID = UIDin then
-            exit(GlobalCalenderEntry);
+        exit(CalenderMessageImplEVAS.GetCalenderEntry(UIDin));
     end;
-
-    local procedure CheckAppointmentDates()
-    var
-        DateErr: Label 'The appointment starting date must be before ending date.', Comment = 'DAN"Aftalens startdato skal være før slutdato."';
-    begin
-        if (GlobalCalenderEntry."Starting Datetime" = 0DT) and
-            (GlobalCalenderEntry."Ending Datetime" = 0DT) then
-            exit;
-        if GlobalCalenderEntry."Ending Datetime" <> 0DT then
-            if GlobalCalenderEntry."Starting Datetime" > GlobalCalenderEntry."Ending Datetime" then
-                Error(DateErr);
-    end;
-
 }
