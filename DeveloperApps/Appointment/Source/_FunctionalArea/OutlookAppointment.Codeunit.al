@@ -226,7 +226,7 @@ codeunit 50300 "Outlook Appointment_EVAS"
         TempEmailItem."Send to" := CopyStr(CalenderMessage.GetSendToEmail(), 1, MaxStrLen(TempEmailItem."Send to"));
         TempEmailItem."Send CC" := CopyStr(CalenderMessage.GetSendCcEmail(), 1, MaxStrLen(TempEmailItem."Send CC"));
         TempEmailItem."Send BCC" := CopyStr(CalenderMessage.GetSendBccEmail(), 1, MaxStrLen(TempEmailItem."Send BCC"));
-        TempEmailItem.Subject := CalenderMessage.GetSubject();
+        TempEmailItem.Subject := SetEmailSubject(CalenderMessage);
         TempEmailItem."Starting DateTime_EVAS" := CalenderMessage.GetStartDateTime();
         TempEmailItem."Ending DateTime_EVAS" := CalenderMessage.GetEndDateTime();
         TempEmailItem.AddAttachment(InStream, StrSubstNo(AttachFileNameTxt, CalenderMessage.GetAttachmentName()));
@@ -354,6 +354,26 @@ codeunit 50300 "Outlook Appointment_EVAS"
                 Sequence += 1;
         end;
         CalenderMessage.SetSequence(Sequence);
+    end;
+
+    local procedure SetEmailSubject(CalenderMessage: Codeunit "Calender Message_EVAS"): Text[250]
+    var
+        CreateAppmnt, CancelAppmnt : Boolean;
+        CreateTxt: Label 'Appointment:', Comment = 'DAN="Aftale:"';
+        ModifyTxt: Label 'Appointment Change:', Comment = 'DAN="Aftale ændring:"';
+        CancelTxt: Label 'Cancel:', Comment = 'DAN="Aflyse aftale:"';
+    begin
+        CreateAppmnt := CalenderMessage.GetCreateAppointment();
+        CancelAppmnt := CalenderMessage.GetCancelAppointment();
+        case true of
+            (CreateAppmnt) and (not CancelAppmnt):
+                exit(StrSubstNo('%1 %2', CreateTxt, CalenderMessage.GetSubject()));
+            (not CreateAppmnt) and (CancelAppmnt):
+                exit(StrSubstNo('%1 %2', CancelTxt, CalenderMessage.GetSubject()));
+            (CreateAppmnt) and (CancelAppmnt):
+                exit(StrSubstNo('%1 %2', ModifyTxt, CalenderMessage.GetSubject()));
+        end;
+
     end;
 
     internal procedure DiscardAppointment(var OutlookCalenderEntry: Record "Outlook Calender Entry_EVAS"; Confirm: Boolean): Boolean
