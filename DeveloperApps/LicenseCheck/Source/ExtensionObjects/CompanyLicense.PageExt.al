@@ -120,9 +120,11 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
     var
         AllObjWithCaption: Record AllObjWithCaption;
         TempAllObjWithCaption: Record AllObjWithCaption temporary;
+        AppNotFoundErr: Label 'An app with %1 %2 is not installed', Comment = 'DAN="En app med %1 %2 er ikke installeret"';
         BlankAppErr: Label 'You must Select an App', Comment = 'DAN="Du skal vælge en App"';
         SelectOneAppErr: Label 'You can only select one app', Comment = 'DAN="Du kan kun vælge en app"';
         LicensePermissionView: Text;
+        FilterObjErr: Label 'There´s no object within the filter', Comment = 'DAN="Der er ingen objekter indfor filteret"';
     begin
         if not RunAppFilterPage(LicensePermissionView) then
             exit;
@@ -132,8 +134,11 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
             Error(BlankAppErr);
         if AllObjWithCaption.GetRangeMin("App Package ID") <> AllObjWithCaption.GetRangeMin("App Package ID") then
             Error(SelectOneAppErr);
+        if not AppExist(AllObjWithCaption) then
+            Error(AppNotFoundErr, AllObjWithCaption.FieldCaption("App Package ID"), AllObjWithCaption.GetFilter("App Package ID"));
+
         if not AllObjWithCaption.FindFirst() then
-            exit;
+            Error(FilterObjErr);
 
         TempAllObjWithCaption.DeleteAll();
 
@@ -386,5 +391,13 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         TempAllObjWithCaption.FindFirst();
         Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
+    end;
+
+    local procedure AppExist(AllObjWithCaption: Record AllObjWithCaption): Boolean
+    var
+        AllObjWithCaption2: Record AllObjWithCaption;
+    begin
+        AllObjWithCaption.SetFilter("App Package ID", AllObjWithCaption.GetFilter("App Package ID"));
+        exit(not AllObjWithCaption2.IsEmpty);
     end;
 }
