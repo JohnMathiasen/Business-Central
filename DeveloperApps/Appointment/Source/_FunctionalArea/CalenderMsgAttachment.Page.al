@@ -101,6 +101,11 @@ page 50303 "Calender Msg. Attachment_EVAS"
         DeleteQst: Label 'Go ahead and delete?', Comment = 'DAN="Slet valgte vedhæftede file?"';
         AttachmentFileSize: Text;
 
+    /// <summary>
+    /// UpdateValues.
+    /// </summary>
+    /// <param name="SourceCalenderMessage">Codeunit "Calender Message_EVAS".</param>
+    /// <param name="CalenderEmailEditable">Boolean.</param>
     internal procedure UpdateValues(SourceCalenderMessage: Codeunit "Calender Message_EVAS"; CalenderEmailEditable: Boolean)
     begin
         CalenderMessageId := SourceCalenderMessage.GetUID();

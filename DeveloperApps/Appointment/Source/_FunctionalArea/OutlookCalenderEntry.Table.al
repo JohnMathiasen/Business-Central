@@ -14,7 +14,6 @@ table 50300 "Outlook Calender Entry_EVAS"
             DataClassification = SystemMetadata;
             AutoIncrement = true;
         }
-
         field(2; UID; Guid)
         {
             Caption = 'UID', Comment = 'DAN="UID"';
@@ -160,7 +159,7 @@ table 50300 "Outlook Calender Entry_EVAS"
     /// Get the message id of the outbox email.
     /// </summary>
     /// <returns>Message id.</returns>
-    procedure GetUID(): Guid
+    internal procedure GetUID(): Guid
     begin
         exit(Rec.UID);
     end;
@@ -169,7 +168,7 @@ table 50300 "Outlook Calender Entry_EVAS"
     /// Get the account id of the outbox email.
     /// </summary>
     /// <returns>Account id.</returns>
-    procedure GetAccountId(): Guid
+    internal procedure GetAccountId(): Guid
     begin
         exit(Rec."Account Id");
     end;
@@ -178,18 +177,9 @@ table 50300 "Outlook Calender Entry_EVAS"
     /// The email connector of the outbox email.
     /// </summary>
     /// <returns>Email connector</returns>
-    procedure GetConnector(): Enum "Email Connector"
+    internal procedure GetConnector(): Enum "Email Connector"
     begin
         exit(Rec.Connector);
-    end;
-
-    local procedure CorrectAndValidateEmailList(var EmailAddresses: Text[250])
-    var
-        MailManagement: Codeunit "Mail Management";
-    begin
-        EmailAddresses := ConvertStr(EmailAddresses, ',', ';');
-        EmailAddresses := DelChr(EmailAddresses, '<>');
-        MailManagement.CheckValidEmailAddresses(EmailAddresses);
     end;
 
     /// <summary>
@@ -203,5 +193,14 @@ table 50300 "Outlook Calender Entry_EVAS"
         Clear(Body);
         Body.CreateOutStream(OutStream);
         OutStream.Write(MessageBody);
+    end;
+
+    local procedure CorrectAndValidateEmailList(var EmailAddresses: Text[250])
+    var
+        MailManagement: Codeunit "Mail Management";
+    begin
+        EmailAddresses := ConvertStr(EmailAddresses, ',', ';');
+        EmailAddresses := DelChr(EmailAddresses, '<>');
+        MailManagement.CheckValidEmailAddresses(EmailAddresses);
     end;
 }

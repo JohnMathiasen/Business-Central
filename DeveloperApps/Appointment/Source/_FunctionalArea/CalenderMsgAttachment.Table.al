@@ -53,7 +53,7 @@ table 50302 "Calender Msg. Attachment_EVAS"
 
     keys
     {
-        key(PK; Id)
+        key(Key1; Id)
         {
             Clustered = true;
         }
@@ -64,7 +64,12 @@ table 50302 "Calender Msg. Attachment_EVAS"
         }
     }
 
-    // Used for formatting a filesize in KB or MB (only)
+    /// <summary>
+    /// FormatFileSize.
+    /// Used for formatting a filesize in KB or MB (only)
+    /// </summary>
+    /// <param name="SizeInBytes">Integer.</param>
+    /// <returns>Return value of type Text.</returns>
     internal procedure FormatFileSize(SizeInBytes: Integer): Text
     var
         FileSizeConverted: Decimal;
@@ -81,6 +86,11 @@ table 50302 "Calender Msg. Attachment_EVAS"
         exit(StrSubstNo(FileSizeTxt, Round(FileSizeConverted, 1, '>'), FileSizeUnit));
     end;
 
+    /// <summary>
+    /// GetContentTypeFromFilename.
+    /// </summary>
+    /// <param name="FileName">Text.</param>
+    /// <returns>Return value of type Text[250].</returns>
     internal procedure GetContentTypeFromFilename(FileName: Text): Text[250]
     begin
         if FileName.EndsWith('.graphql') or FileName.EndsWith('.gql') then
@@ -138,6 +148,14 @@ table 50302 "Calender Msg. Attachment_EVAS"
         exit('');
     end;
 
+    /// <summary>
+    /// AddAttachmentInternal.
+    /// </summary>
+    /// <param name="AttachmentName">Text[250].</param>
+    /// <param name="ContentType">Text[250].</param>
+    /// <param name="AttachmentInStream">InStream.</param>
+    /// <param name="MessageId">Guid.</param>
+    /// <returns>Return variable Size of type Integer.</returns>
     internal procedure AddAttachmentInternal(AttachmentName: Text[250]; ContentType: Text[250]; AttachmentInStream: InStream; MessageId: Guid) Size: Integer
     var
         NullGuid: Guid;
@@ -145,6 +163,16 @@ table 50302 "Calender Msg. Attachment_EVAS"
         exit(AddAttachmentInternal(AttachmentName, ContentType, AttachmentInStream, false, NullGuid, MessageId));
     end;
 
+    /// <summary>
+    /// AddAttachmentInternal.
+    /// </summary>
+    /// <param name="AttachmentName">Text[250].</param>
+    /// <param name="ContentType">Text[250].</param>
+    /// <param name="AttachmentInStream">InStream.</param>
+    /// <param name="InLineValue">Boolean.</param>
+    /// <param name="ContentId">Text[40].</param>
+    /// <param name="MessageId">Guid.</param>
+    /// <returns>Return variable Size of type Integer.</returns>
     internal procedure AddAttachmentInternal(AttachmentName: Text[250]; ContentType: Text[250]; AttachmentInStream: InStream; InLineValue: Boolean; ContentId: Text[40]; MessageId: Guid) Size: Integer
     var
         CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS";
@@ -153,7 +181,6 @@ table 50302 "Calender Msg. Attachment_EVAS"
         InsertAttachment(CalenderMsgAttachment, AttachmentInStream, '');
         exit(CalenderMsgAttachment.Length);
     end;
-
 
     local procedure AddAttachment(AttachmentName: Text[250]; ContentType: Text[250]; InLineValue: Boolean; ContentId: Text[40]; MessageId: Guid; var CalenderMsgAttachment: Record "Calender Msg. Attachment_EVAS")
     begin

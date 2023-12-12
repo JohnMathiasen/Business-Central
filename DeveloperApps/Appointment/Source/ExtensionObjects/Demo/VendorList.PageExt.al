@@ -27,10 +27,7 @@ pageextension 50300 "VendorList_EVAS" extends "Vendor List"
                     //CalenderMessage.AddEmailAddressForLookup('Per Jensen', 'pjensen@ghks.dk', Enum::"Email Recipient Type"::Cc);
                     //CalenderMessage.AddEmailAddressForLookup('Pia Gregersen', 'pgregersen@ghks.dk', Enum::"Email Recipient Type"::Cc);
 
-                    if OutlookAppointment.CreateAppointment(CalenderMessage, false, false) then begin
-                        //  JobTodo."Outlook Calendar Event ID" := GetOutlookEventID(CalenderMessage.GetUID());
-                        //  JobTodo.Modify();
-                    end;
+                    OutlookAppointment.CreateAppointment(CalenderMessage, false, false);
                 end;
             }
 
@@ -43,35 +40,13 @@ pageextension 50300 "VendorList_EVAS" extends "Vendor List"
 
                 trigger OnAction()
                 var
-                    // JobTodo: Record "Job To-do_FPS";
                     OutlookAppointment: Codeunit "Outlook Appointment_EVAS";
                     CalenderMessage: Codeunit "Calender Message_EVAS";
-                // StdStatusChangeFunct: Codeunit "Std. Status Change Funct._FPS";
                 begin
                     ScheduleAppointment(CalenderMessage, '<+14D>');
                     SetCalenderDemoDetails(CalenderMessage);
 
-                    //     JobTodo.Get(1);
-
-                    //     if (JobTodo."Outlook Calendar Event ID" = '') then
-                    //         exit;
-
-
-                    //     CalenderMessage.SetRecord(JobTodo);
-                    //     CalenderMessage.SetEmailScenario(Enum::"Email Scenario"::"Job To-do");
-                    //     CalenderMessage.SetUID(JobTodo."Outlook Calendar Event ID");
-                    //     CalenderMessage.SetStartDateTime(JobTodo."Scheduled Start");
-                    //     CalenderMessage.SetEndDateTime(JobTodo."Scheduled End");
-                    //     CalenderMessage.SetFromEmail(JobTodo."Executer e-mail");
-                    //     CalenderMessage.SetSendToEmail('jnm@elbek-vejrup.dk');  //TODO
-                    //     CalenderMessage.SetSubject(JobTodo.Title);
-                    //     // CalenderMessage.SetMessageBody('');
-                    //     // CalenderMessage.SetSummery(JobTodo."Job No." + ' ' + JobTodo.Description);
-                    //     // CalenderMessage.SetAppointmentDescription(StdStatusChangeFunct.GetAppoinmentDescription(JobTodo));
-                    if OutlookAppointment.CancelAppointment(CalenderMessage, false, false) then begin
-                        //         JobTodo."Outlook Calendar Event ID" := '';
-                        //         JobTodo.Modify();
-                    end;
+                    OutlookAppointment.CancelAppointment(CalenderMessage, false, false);
                 end;
 
             }
@@ -90,26 +65,8 @@ pageextension 50300 "VendorList_EVAS" extends "Vendor List"
 
                     ScheduleAppointment(CalenderMessage, '<+21D>');
                     SetCalenderDemoDetails(CalenderMessage);
-                    // JobTodo.Get(1);
-                    //     if (JobTodo."Outlook Calendar Event ID" = '') then
-                    //         exit;
-                    //     JobTodo."Scheduled Start" := CreateDateTime(CalcDate('<+20D>', today), DT2Time(JobTodo."Scheduled Start"));
-                    //     JobTodo."Scheduled End" := CreateDateTime(CalcDate('<+21D>', today), DT2Time(JobTodo."Scheduled End"));
 
-                    //     CalenderMessage.SetRecord(JobTodo);
-                    //     CalenderMessage.SetEmailScenario(Enum::"Email Scenario"::"Job To-do");
-                    //     CalenderMessage.SetUID(JobTodo."Outlook Calendar Event ID");
-                    //     CalenderMessage.SetStartDateTime(JobTodo."Scheduled Start");
-                    //     CalenderMessage.SetEndDateTime(JobTodo."Scheduled End");
-                    //     CalenderMessage.SetFromEmail(JobTodo."Executer e-mail");
-                    //     CalenderMessage.SetSubject(JobTodo.Title);
-                    //     CalenderMessage.SetSendToEmail('jnm@elbek-vejrup.dk');  //TODO
-                    //     CalenderMessage.SetSummery(JobTodo."Job No." + ' ' + JobTodo.Description);
-                    //     CalenderMessage.SetAppointmentDescription(JobTodo.Title + ' for sag ' + JobTodo."Job No.");
-                    if OutlookAppointment.UpdateAppointment(CalenderMessage, false, false) then begin
-                        //         JobTodo."Outlook Calendar Event ID" := GetOutlookEventID(CalenderMessage.GetUID());
-                        //         JobTodo.Modify();
-                    end;
+                    OutlookAppointment.UpdateAppointment(CalenderMessage, false, false);
                 end;
             }
         }
