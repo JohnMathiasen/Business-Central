@@ -77,42 +77,16 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                         ProcessFind(ObjSearchType::All);
                     end;
                 }
-                group(App_EVAS)
+                action(FindApp_EVAS)
                 {
-                    Caption = 'App', comment = 'DAN="App"';
-                    action(FindAppUsed_EVAS)
-                    {
-                        ApplicationArea = all;
-                        Caption = 'Find Used', Comment = 'DAN="Find anvendte"';
-                        ToolTip = 'Find Used', Comment = 'DAN="Find anvendte"';
-                        Image = Process;
-                        trigger OnAction()
-                        begin
-                            ProcessAppFind(ObjSearchType::Used);
-                        end;
-                    }
-                    action(FindAppUnused_EVAS)
-                    {
-                        ApplicationArea = all;
-                        Caption = 'Find Unused', Comment = 'DAN="Find ledige"';
-                        ToolTip = 'Find Unused', Comment = 'DAN="Find ledige"';
-                        Image = Process;
-                        trigger OnAction()
-                        begin
-                            ProcessAppFind(ObjSearchType::Free);
-                        end;
-                    }
-                    action(FindAppAll_EVAS)
-                    {
-                        ApplicationArea = all;
-                        Caption = 'Find All', Comment = 'DAN="Find alle"';
-                        ToolTip = 'Find All', Comment = 'DAN="Find alle"';
-                        Image = Process;
-                        trigger OnAction()
-                        begin
-                            ProcessAppFind(ObjSearchType::All);
-                        end;
-                    }
+                    ApplicationArea = all;
+                    Caption = 'Show App Objects', Comment = 'DAN="Vis App objekter"';
+                    ToolTip = 'Show App Objects', Comment = 'DAN="Vis App objekter"';
+                    Image = Process;
+                    trigger OnAction()
+                    begin
+                        ProcessAppFind();
+                    end;
                 }
             }
         }
@@ -130,7 +104,6 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
     local procedure ProcessFind(ObjSearch: Option All,Used,Free)
     var
         TempAllObjWithCaption: Record AllObjWithCaption temporary;
-        NoObjectsErr: Label 'Did not find any objects within the filter', Comment = 'DAN="Der blev ikke fundet objekter indenfor filteret."';
         LicensePermissionView: Text;
     begin
         if not RunFilterPage(LicensePermissionView) then
@@ -140,22 +113,14 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         FindObjects(ObjSearch, TempAllObjWithCaption, LicensePermissionView);
 
-        TempAllObjWithCaption.Reset();
-        if TempAllObjWithCaption.IsEmpty then begin
-            Message(NoObjectsErr);
-            exit;
-        end;
-
-        TempAllObjWithCaption.FindFirst();
-        Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
+        ShowObjects(TempAllObjWithCaption);
     end;
 
-    local procedure ProcessAppFind(ObjSearch: Option All,Used,Free)
+    local procedure ProcessAppFind()
     var
         AllObjWithCaption: Record AllObjWithCaption;
         TempAllObjWithCaption: Record AllObjWithCaption temporary;
         BlankAppErr: Label 'You must Select an App', Comment = 'DAN="Du skal vælge en App"';
-        NoObjectsErr: Label 'Did not find any objects within the filter', Comment = 'DAN="Der blev ikke fundet objekter indenfor filteret."';
         SelectOneAppErr: Label 'You can only select one app', Comment = 'DAN="Du kan kun vælge en app"';
         LicensePermissionView: Text;
     begin
@@ -172,17 +137,9 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         TempAllObjWithCaption.DeleteAll();
 
-        FindAppObjects(AllObjWithCaption."App Package ID", ObjSearch, TempAllObjWithCaption, LicensePermissionView);
+        FindAppObjects(AllObjWithCaption."App Package ID", TempAllObjWithCaption, LicensePermissionView);
 
-        TempAllObjWithCaption.Reset();
-        if TempAllObjWithCaption.IsEmpty then begin
-            Message(NoObjectsErr);
-            exit;
-        end;
-
-        TempAllObjWithCaption.FindFirst();
-        Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
-
+        ShowObjects(TempAllObjWithCaption);
     end;
 
     local procedure RunFilterPage(var ObjectInLicenseView: Text): Boolean
@@ -231,7 +188,6 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         FilterPage2.AddField(AllObjWithCaption.TableCaption, AllObjWithCaption."Object Type");
         FilterPage2.AddField(AllObjWithCaption.TableCaption, AllObjWithCaption."Object ID");
     end;
-
 
     local procedure GetLicenseinfo(): Text
     var
@@ -288,15 +244,17 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         CloseProgressIndicator(NoofRecords, Counter);
     end;
 
-    local procedure FindAppObjects(PackageID: Guid; ObjSearch: Option All,Used,Free; var TempAllObjWithCaption: Record AllObjWithCaption temporary; LicensePermissionView: Text)
+    local procedure FindAppObjects(PackageID: Guid; var TempAllObjWithCaption: Record AllObjWithCaption temporary; LicensePermissionView: Text)
     var
         AllObjWithCaption: Record AllObjWithCaption;
         LicensePermission: Record "License Permission";
         NoofRecords, Counter, Step : Integer;
     begin
-        if LicensePermissionView <> '' then
-            AllObjWithCaption.SetView(LicensePermissionView)
-        else
+        if LicensePermissionView <> '' then begin
+            AllObjWithCaption.SetView(LicensePermissionView);
+            if AllObjWithCaption.GetFilter("Object Type") = '' then
+                AllObjWithCaption.SetFilter("Object Type", ObjecttypeFilterTxt);
+        end else
             AllObjWithCaption.SetFilter("Object Type", ObjecttypeFilterTxt);
 
         NoofRecords := AllObjWithCaption.Count;
@@ -308,25 +266,14 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 Counter += 1;
                 ShowProgressIndicator(NoofRecords, Counter, Step);
 
-                GetLicensePermission(AllObjWithCaption, LicensePermission);
-
-                TempAllObjWithCaption.Init();
-                TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
-                TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
-                TempAllObjWithCaption."Object Subtype" := 'Lic';
-
-                case ObjSearch of
-                    ObjSearch::Free:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" = '') then
-                            TempAllObjWithCaption.Insert();
-                    ObjSearch::Used:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" <> '') then
-                            TempAllObjWithCaption.Insert();
-                    ObjSearch::All:
-                        if Permitted(LicensePermission) then
-                            TempAllObjWithCaption.Insert();
+                if GetLicensePermission(AllObjWithCaption, LicensePermission) then begin
+                    TempAllObjWithCaption.Init();
+                    TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
+                    TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
+                    TempAllObjWithCaption."Object Name" := AllObjWithCaption."Object Name";
+                    TempAllObjWithCaption."Object Subtype" := 'Lic';
+                    TempAllObjWithCaption.Insert();
                 end;
-
             until AllObjWithCaption.Next() = 0;
 
         CloseProgressIndicator(NoofRecords, Counter);
@@ -425,5 +372,19 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
     begin
         if Counter = NoofRecords then
             Window.Close();
+    end;
+
+    local procedure ShowObjects(var TempAllObjWithCaption: Record AllObjWithCaption temporary)
+    var
+        NoObjectsErr: Label 'Did not find any objects within the filter', Comment = 'DAN="Der blev ikke fundet objekter indenfor filteret."';
+    begin
+        TempAllObjWithCaption.Reset();
+        if TempAllObjWithCaption.IsEmpty then begin
+            Message(NoObjectsErr);
+            exit;
+        end;
+
+        TempAllObjWithCaption.FindFirst();
+        Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
     end;
 }
