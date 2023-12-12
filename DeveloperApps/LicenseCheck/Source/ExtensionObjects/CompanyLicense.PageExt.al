@@ -397,7 +397,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
     var
         AllObjWithCaption2: Record AllObjWithCaption;
     begin
-        AllObjWithCaption.SetFilter("App Package ID", AllObjWithCaption.GetFilter("App Package ID"));
+        AllObjWithCaption2.SetFilter("App Package ID", AllObjWithCaption.GetFilter("App Package ID"));
         exit(not AllObjWithCaption2.IsEmpty);
     end;
 }
