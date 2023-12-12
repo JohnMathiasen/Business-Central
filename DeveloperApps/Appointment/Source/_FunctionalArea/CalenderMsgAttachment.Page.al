@@ -3,7 +3,7 @@
 /// </summary>
 page 50303 "Calender Msg. Attachment_EVAS"
 {
-    Caption = 'Calender Msg. Attachment';
+    Caption = 'Appointment Attachment', Comment = 'DAN="Aftale vedhæftning"';
     PageType = ListPart;
     SourceTable = "Calender Msg. Attachment_EVAS";
 
@@ -16,8 +16,8 @@ page 50303 "Calender Msg. Attachment_EVAS"
                 field(FileName; Rec."Attachment Name")
                 {
                     ApplicationArea = All;
-                    Caption = 'File Name';
-                    ToolTip = 'Specifies the name of the attachment';
+                    Caption = 'File Name', Comment = 'DAN="Filnavn"';
+                    ToolTip = 'Specifies the name of the attachment', Comment = 'DAN="Angiver navn på vedhæftning"';
 
                     trigger OnDrillDown()
                     var
@@ -31,8 +31,8 @@ page 50303 "Calender Msg. Attachment_EVAS"
                 {
                     ApplicationArea = All;
                     Width = 10;
-                    Caption = 'File Size';
-                    ToolTip = 'Specifies the size of the attachment';
+                    Caption = 'File Size', Comment = 'DAN="Fil størrelse"';
+                    ToolTip = 'Specifies the size of the attachment', Comment = 'DAN="Angiver størrelse på vedhæftning"';
                 }
             }
         }
@@ -46,8 +46,8 @@ page 50303 "Calender Msg. Attachment_EVAS"
             {
                 ApplicationArea = All;
                 Image = Attach;
-                Caption = 'Add file';
-                ToolTip = 'Attach files, such as documents or images, to the email.';
+                Caption = 'Add file', Comment = 'DAN="Tilføj fil"';
+                ToolTip = 'Attach files, such as documents or images, to the email.', Comment = 'DAN="vedhæft filer, såsom dokumenter eller billeder til aftale emailen."';
                 Scope = Page;
                 Visible = IsCalenderEmailEditable;
 
@@ -64,8 +64,8 @@ page 50303 "Calender Msg. Attachment_EVAS"
                 ApplicationArea = All;
                 Enabled = DeleteActionEnabled;
                 Image = Delete;
-                Caption = 'Delete';
-                ToolTip = 'Delete the selected row.';
+                Caption = 'Delete', Comment = 'DAN="Slet"';
+                ToolTip = 'Delete the selected row.', Comment = 'DAN="Slet den valgte linje."';
                 Scope = Repeater;
                 Visible = IsCalenderEmailEditable;
 
@@ -101,6 +101,11 @@ page 50303 "Calender Msg. Attachment_EVAS"
         DeleteQst: Label 'Go ahead and delete?', Comment = 'DAN="Slet valgte vedhæftede file?"';
         AttachmentFileSize: Text;
 
+    /// <summary>
+    /// UpdateValues.
+    /// </summary>
+    /// <param name="SourceCalenderMessage">Codeunit "Calender Message_EVAS".</param>
+    /// <param name="CalenderEmailEditable">Boolean.</param>
     internal procedure UpdateValues(SourceCalenderMessage: Codeunit "Calender Message_EVAS"; CalenderEmailEditable: Boolean)
     begin
         CalenderMessageId := SourceCalenderMessage.GetUID();

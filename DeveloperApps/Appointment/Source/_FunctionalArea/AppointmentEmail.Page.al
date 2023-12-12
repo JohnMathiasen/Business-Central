@@ -21,7 +21,7 @@ page 50302 "Appointment Email_EVAS"
         {
             group("Email Details")
             {
-                Caption = 'Email Details';
+                Caption = 'Email Details', Comment = 'DAN="Email detaljer"';
 
                 grid("Email Details Grid")
                 {
@@ -244,7 +244,7 @@ page 50302 "Appointment Email_EVAS"
 
                 field("Email Editor"; EmailBody)
                 {
-                    Caption = 'Message';
+                    Caption = 'Message', Comment = 'DAN="Besked"';
                     ApplicationArea = All;
                     ToolTip = 'Specifies the content of the email.', Comment = 'DAN="Angiver indholdet af mailen."';
                     MultiLine = true;
@@ -264,7 +264,7 @@ page 50302 "Appointment Email_EVAS"
 
                 field(BodyField; EmailBody)
                 {
-                    Caption = 'Message Raw';
+                    Caption = 'Message', Comment = 'DAN="Besked"';
                     ApplicationArea = All;
                     ToolTip = 'Specifies the content of the email.', Comment = 'DAN="Angiver indholdet af mailen."';
                     MultiLine = true;
@@ -281,15 +281,8 @@ page 50302 "Appointment Email_EVAS"
                 ApplicationArea = All;
                 SubPageLink = "Calender Message Id" = field(UID);
                 UpdatePropagation = Both;
-                Caption = 'Attachments';
+                Caption = 'Attachments', comment = 'DAN="Vedhæftninger"';
             }
-            // part(Attachments; "Email Attachments")
-            // {
-            //     ApplicationArea = All;
-            //     SubPageLink = "Email Message Id" = field(UID);
-            //     UpdatePropagation = SubPart;
-            //     Caption = 'Attachments';
-            // }
         }
     }
 
@@ -302,8 +295,8 @@ page 50302 "Appointment Email_EVAS"
                 Promoted = true;
                 PromotedOnly = true;
                 PromotedCategory = Process;
-                Caption = 'Send Email';
-                ToolTip = 'Send the email.';
+                Caption = 'Send Email', Comment = 'DAN="Send Email"';
+                ToolTip = 'Send the email.', Comment = 'DAN="Send Email"';
                 ApplicationArea = All;
                 Image = SendMail;
 
@@ -321,8 +314,8 @@ page 50302 "Appointment Email_EVAS"
                 Promoted = true;
                 PromotedOnly = true;
                 PromotedCategory = Process;
-                Caption = 'Discard Draft';
-                ToolTip = 'Discard the draft email and close the page.';
+                Caption = 'Discard Draft', Comment = 'DAN="Slet udkast"';
+                ToolTip = 'Discard the draft email and close the page.', Comment = 'DAN="Slet email udkast og luk siden."';
                 ApplicationArea = All;
                 Image = Delete;
 
@@ -338,6 +331,25 @@ page 50302 "Appointment Email_EVAS"
             }
         }
     }
+
+    trigger OnOpenPage()
+    begin
+        Rec := CalenderMessage.GetCalenderEntry(CalenderMessage.GetUID());
+        CurrPage.SetTableView(Rec);
+
+        if not IsNewCalenderEntry then begin
+            IsNewCalenderEntry := Rec.Id = 0;
+            if IsNewCalenderEntry then
+                CalenderMessage.CreateNewCalenderEntry(Rec);
+        end;
+
+        if IsNewCalenderEntry then begin
+            Rec.SetRange(Id, Rec.Id);
+            CurrPage.SetTableView(Rec);
+        end;
+
+        DefaultExitOption := 1;
+    end;
 
     trigger OnAfterGetRecord()
     begin
@@ -358,26 +370,6 @@ page 50302 "Appointment Email_EVAS"
         else
             CurrPage.Caption(PageCaptionTxt); // fallback to default caption
         CurrPage.CalAttachments.Page.UpdateValues(CalenderMessage, true);
-    end;
-
-    trigger OnOpenPage()
-    begin
-        Rec := CalenderMessage.GetCalenderEntry(CalenderMessage.GetUID());
-        CurrPage.SetTableView(Rec);
-
-        if not IsNewCalenderEntry then begin
-            IsNewCalenderEntry := Rec.Id = 0;
-            if IsNewCalenderEntry then
-                CalenderMessage.CreateNewCalenderEntry(Rec);
-        end;
-
-        if IsNewCalenderEntry then begin
-            Rec.SetRange(Id, Rec.Id);
-            CurrPage.SetTableView(Rec);
-        end;
-
-        DefaultExitOption := 1;
-
     end;
 
     trigger OnQueryClosePage(CloseAction: Action): Boolean
@@ -428,6 +420,11 @@ page 50302 "Appointment Email_EVAS"
         exit(true);
     end;
 
+    /// <summary>
+    /// LookupRecipients.
+    /// </summary>
+    /// <param name="Text">VAR Text.</param>
+    /// <returns>Return value of type Boolean.</returns>
     internal procedure LookupRecipients(var Text: Text): Boolean
     var
         IsSuccess: Boolean;
@@ -436,11 +433,18 @@ page 50302 "Appointment Email_EVAS"
         exit(IsSuccess);
     end;
 
+    /// <summary>
+    /// GetAction.
+    /// </summary>
+    /// <returns>Return value of type Enum "Email Action".</returns>
     internal procedure GetAction(): Enum "Email Action"
     begin
         exit(EmailAction);
     end;
 
+    /// <summary>
+    /// SetAsNew.
+    /// </summary>
     internal procedure SetAsNew()
     begin
         IsNewCalenderEntry := true;
