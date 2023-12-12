@@ -77,6 +77,43 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                         ProcessFind(ObjSearchType::All);
                     end;
                 }
+                group(App_EVAS)
+                {
+                    Caption = 'App', comment = 'DAN="App"';
+                    action(FindAppUsed_EVAS)
+                    {
+                        ApplicationArea = all;
+                        Caption = 'Find Used', Comment = 'DAN="Find anvendte"';
+                        ToolTip = 'Find Used', Comment = 'DAN="Find anvendte"';
+                        Image = Process;
+                        trigger OnAction()
+                        begin
+                            ProcessAppFind(ObjSearchType::Used);
+                        end;
+                    }
+                    action(FindAppUnused_EVAS)
+                    {
+                        ApplicationArea = all;
+                        Caption = 'Find Unused', Comment = 'DAN="Find ledige"';
+                        ToolTip = 'Find Unused', Comment = 'DAN="Find ledige"';
+                        Image = Process;
+                        trigger OnAction()
+                        begin
+                            ProcessAppFind(ObjSearchType::Free);
+                        end;
+                    }
+                    action(FindAppAll_EVAS)
+                    {
+                        ApplicationArea = all;
+                        Caption = 'Find All', Comment = 'DAN="Find alle"';
+                        ToolTip = 'Find All', Comment = 'DAN="Find alle"';
+                        Image = Process;
+                        trigger OnAction()
+                        begin
+                            ProcessAppFind(ObjSearchType::All);
+                        end;
+                    }
+                }
             }
         }
     }
@@ -101,7 +138,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         TempAllObjWithCaption.DeleteAll();
 
-        FindObjects(ObjSearch, TempAllObjWithCaption,LicensePermissionView);
+        FindObjects(ObjSearch, TempAllObjWithCaption, LicensePermissionView);
 
         TempAllObjWithCaption.Reset();
         if TempAllObjWithCaption.IsEmpty then begin
@@ -111,6 +148,41 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         TempAllObjWithCaption.FindFirst();
         Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
+    end;
+
+    local procedure ProcessAppFind(ObjSearch: Option All,Used,Free)
+    var
+        AllObjWithCaption: Record AllObjWithCaption;
+        TempAllObjWithCaption: Record AllObjWithCaption temporary;
+        BlankAppErr: Label 'You must Select an App', Comment = 'DAN="Du skal vælge en App"';
+        NoObjectsErr: Label 'Did not find any objects within the filter', Comment = 'DAN="Der blev ikke fundet objekter indenfor filteret."';
+        SelectOneAppErr: Label 'You can only select one app', Comment = 'DAN="Du kan kun vælge en app"';
+        LicensePermissionView: Text;
+    begin
+        if not RunAppFilterPage(LicensePermissionView) then
+            exit;
+
+        AllObjWithCaption.SetView(LicensePermissionView);
+        if AllObjWithCaption.GetFilter("App Package ID") = '' then
+            Error(BlankAppErr);
+        if AllObjWithCaption.GetRangeMin("App Package ID") <> AllObjWithCaption.GetRangeMin("App Package ID") then
+            Error(SelectOneAppErr);
+        if not AllObjWithCaption.FindFirst() then
+            exit;
+
+        TempAllObjWithCaption.DeleteAll();
+
+        FindAppObjects(AllObjWithCaption."App Package ID", ObjSearch, TempAllObjWithCaption, LicensePermissionView);
+
+        TempAllObjWithCaption.Reset();
+        if TempAllObjWithCaption.IsEmpty then begin
+            Message(NoObjectsErr);
+            exit;
+        end;
+
+        TempAllObjWithCaption.FindFirst();
+        Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
+
     end;
 
     local procedure RunFilterPage(var ObjectInLicenseView: Text): Boolean
@@ -136,6 +208,31 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         FilterPage2.AddField(LicensePermission.TableCaption, LicensePermission."Object Number");
     end;
 
+    local procedure RunAppFilterPage(var ObjectInLicenseView: Text): Boolean
+    var
+        AllObjWithCaption: Record AllObjWithCaption;
+        FilterPage: FilterPageBuilder;
+    begin
+        ObjectInLicenseView := AllObjWithCaption.GetView();
+        SetAppObjectInLicenseFilterPage(FilterPage);
+
+        if FilterPage.RunModal() then begin
+            ObjectInLicenseView := FilterPage.GetView(AllObjWithCaption.TableCaption);
+            exit(true);
+        end;
+    end;
+
+    local procedure SetAppObjectInLicenseFilterPage(var FilterPage2: FilterPageBuilder)
+    var
+        AllObjWithCaption: Record AllObjWithCaption;
+    begin
+        FilterPage2.AddTable(AllObjWithCaption.TableCaption, Database::AllObjWithCaption);
+        FilterPage2.AddField(AllObjWithCaption.TableCaption, AllObjWithCaption."App Package ID");
+        FilterPage2.AddField(AllObjWithCaption.TableCaption, AllObjWithCaption."Object Type");
+        FilterPage2.AddField(AllObjWithCaption.TableCaption, AllObjWithCaption."Object ID");
+    end;
+
+
     local procedure GetLicenseinfo(): Text
     var
         LicenseInformation: Record "License Information";
@@ -151,15 +248,15 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         exit(LicText);
     end;
 
-    local procedure FindObjects(ObjSearch: Option All,Used,Free; var TempAllObjWithCaption: Record AllObjWithCaption temporary;LicensePermissionView: Text)
+    local procedure FindObjects(ObjSearch: Option All,Used,Free; var TempAllObjWithCaption: Record AllObjWithCaption temporary; LicensePermissionView: Text)
     var
         AllObjWithCaption: Record AllObjWithCaption;
         LicensePermission: Record "License Permission";
         NoofRecords, Counter, Step : Integer;
-    begin        
+    begin
         if LicensePermissionView <> '' then
-            LicensePermission.SetView(LicensePermissionView)            
-        else 
+            LicensePermission.SetView(LicensePermissionView)
+        else
             LicensePermission.SetFilter("Object Type", ObjecttypeFilterTxt);
 
         NoofRecords := LicensePermission.Count;
@@ -173,7 +270,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
                 TempAllObjWithCaption."Object Subtype" := 'Lic';
 
-                if GetObject(LicensePermission, AllObjWithCaption) then
+                if GetAllObjectWithPermission(LicensePermission, AllObjWithCaption) then
                     TempAllObjWithCaption."Object Name" := AllObjWithCaption."Object Name";
 
                 case ObjSearch of
@@ -191,9 +288,58 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         CloseProgressIndicator(NoofRecords, Counter);
     end;
 
-    local procedure GetObject(LicensePermission: Record "License Permission"; var AllObjWithCaption1: Record AllObjWithCaption): Boolean
+    local procedure FindAppObjects(PackageID: Guid; ObjSearch: Option All,Used,Free; var TempAllObjWithCaption: Record AllObjWithCaption temporary; LicensePermissionView: Text)
+    var
+        AllObjWithCaption: Record AllObjWithCaption;
+        LicensePermission: Record "License Permission";
+        NoofRecords, Counter, Step : Integer;
+    begin
+        if LicensePermissionView <> '' then
+            AllObjWithCaption.SetView(LicensePermissionView)
+        else
+            AllObjWithCaption.SetFilter("Object Type", ObjecttypeFilterTxt);
+
+        NoofRecords := AllObjWithCaption.Count;
+        Step := StartProgressIndicator(NoofRecords);
+
+        AllObjWithCaption.SetRange("App Package ID", PackageID);
+        if AllObjWithCaption.FindSet() then
+            repeat
+                Counter += 1;
+                ShowProgressIndicator(NoofRecords, Counter, Step);
+
+                GetLicensePermission(AllObjWithCaption, LicensePermission);
+
+                TempAllObjWithCaption.Init();
+                TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
+                TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
+                TempAllObjWithCaption."Object Subtype" := 'Lic';
+
+                case ObjSearch of
+                    ObjSearch::Free:
+                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" = '') then
+                            TempAllObjWithCaption.Insert();
+                    ObjSearch::Used:
+                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" <> '') then
+                            TempAllObjWithCaption.Insert();
+                    ObjSearch::All:
+                        if Permitted(LicensePermission) then
+                            TempAllObjWithCaption.Insert();
+                end;
+
+            until AllObjWithCaption.Next() = 0;
+
+        CloseProgressIndicator(NoofRecords, Counter);
+    end;
+
+    local procedure GetAllObjectWithPermission(LicensePermission: Record "License Permission"; var AllObjWithCaption1: Record AllObjWithCaption): Boolean
     begin
         exit(AllObjWithCaption1.Get(GetObjTypeAllObjWithCaption(LicensePermission), LicensePermission."Object Number"));
+    end;
+
+    local procedure GetLicensePermission(AllObjWithCaption1: Record AllObjWithCaption; var LicensePermission: Record "License Permission"): Boolean
+    begin
+        exit(LicensePermission.Get(GetObjTypeLicensePermission(AllObjWithCaption1), AllObjWithCaption1."Object ID"));
     end;
 
     local procedure GetObjTypeAllObjWithCaption(LicensePermission: Record "License Permission"): option TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber,,,"PageExtension","TableExtension",Enum,EnumExtension,Profile,"ProfileExtension",PermissionSet,PermissionSetExtension,ReportExtension
@@ -219,6 +365,32 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 exit(AllObjWithCaption1."Object Type"::"TableExtension");
             LicensePermission."Object Type"::ReportExtension:
                 exit(AllObjWithCaption1."Object Type"::ReportExtension);
+        end;
+    end;
+
+    local procedure GetObjTypeLicensePermission(AllObjWithCaption: Record AllObjWithCaption): option TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber,,,"PageExtension","TableExtension",Enum,EnumExtension,Profile,"ProfileExtension",PermissionSet,PermissionSetExtension,ReportExtension
+    var
+        LicensePermission: Record "License Permission";
+    begin
+        case AllObjWithCaption."Object Type" of
+            AllObjWithCaption."Object Type"::Table:
+                exit(LicensePermission."Object Type"::Table);
+            AllObjWithCaption."Object Type"::Report:
+                exit(LicensePermission."Object Type"::Report);
+            AllObjWithCaption."Object Type"::Codeunit:
+                exit(LicensePermission."Object Type"::Codeunit);
+            AllObjWithCaption."Object Type"::XMLport:
+                exit(LicensePermission."Object Type"::XMLport);
+            AllObjWithCaption."Object Type"::Page:
+                exit(LicensePermission."Object Type"::Page);
+            AllObjWithCaption."Object Type"::Query:
+                exit(LicensePermission."Object Type"::Query);
+            AllObjWithCaption."Object Type"::"PageExtension":
+                exit(LicensePermission."Object Type"::"PageExtension");
+            AllObjWithCaption."Object Type"::"TableExtension":
+                exit(LicensePermission."Object Type"::"TableExtension");
+            AllObjWithCaption."Object Type"::ReportExtension:
+                exit(LicensePermission."Object Type"::ReportExtension);
         end;
     end;
 
