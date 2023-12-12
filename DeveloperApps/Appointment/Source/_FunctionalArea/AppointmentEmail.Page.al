@@ -21,7 +21,7 @@ page 50302 "Appointment Email_EVAS"
         {
             group("Email Details")
             {
-                Caption = 'Email Details';
+                Caption = 'Email Details', Comment = 'DAN="Email detaljer"';
 
                 grid("Email Details Grid")
                 {
@@ -244,7 +244,7 @@ page 50302 "Appointment Email_EVAS"
 
                 field("Email Editor"; EmailBody)
                 {
-                    Caption = 'Message';
+                    Caption = 'Message', Comment = 'DAN="Besked"';
                     ApplicationArea = All;
                     ToolTip = 'Specifies the content of the email.', Comment = 'DAN="Angiver indholdet af mailen."';
                     MultiLine = true;
@@ -264,7 +264,7 @@ page 50302 "Appointment Email_EVAS"
 
                 field(BodyField; EmailBody)
                 {
-                    Caption = 'Message Raw';
+                    Caption = 'Message', Comment = 'DAN="Besked"';
                     ApplicationArea = All;
                     ToolTip = 'Specifies the content of the email.', Comment = 'DAN="Angiver indholdet af mailen."';
                     MultiLine = true;
@@ -281,7 +281,7 @@ page 50302 "Appointment Email_EVAS"
                 ApplicationArea = All;
                 SubPageLink = "Calender Message Id" = field(UID);
                 UpdatePropagation = Both;
-                Caption = 'Attachments';
+                Caption = 'Attachments', comment = 'DAN="Vedhæftninger"';
             }
         }
     }
@@ -295,8 +295,8 @@ page 50302 "Appointment Email_EVAS"
                 Promoted = true;
                 PromotedOnly = true;
                 PromotedCategory = Process;
-                Caption = 'Send Email';
-                ToolTip = 'Send the email.';
+                Caption = 'Send Email', Comment = 'DAN="Send Email"';
+                ToolTip = 'Send the email.', Comment = 'DAN="Send Email"';
                 ApplicationArea = All;
                 Image = SendMail;
 
@@ -314,8 +314,8 @@ page 50302 "Appointment Email_EVAS"
                 Promoted = true;
                 PromotedOnly = true;
                 PromotedCategory = Process;
-                Caption = 'Discard Draft';
-                ToolTip = 'Discard the draft email and close the page.';
+                Caption = 'Discard Draft', Comment = 'DAN="Slet udkast"';
+                ToolTip = 'Discard the draft email and close the page.', Comment = 'DAN="Slet email udkast og luk siden."';
                 ApplicationArea = All;
                 Image = Delete;
 

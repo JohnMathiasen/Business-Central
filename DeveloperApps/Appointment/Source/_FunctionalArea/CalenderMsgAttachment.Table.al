@@ -3,7 +3,7 @@
 /// </summary>
 table 50302 "Calender Msg. Attachment_EVAS"
 {
-    Caption = 'Calender Message Attachment';
+    Caption = 'Calender Message Attachment', Comment = 'DAN=""';
     DataClassification = CustomerContent;
 
     fields
@@ -11,42 +11,50 @@ table 50302 "Calender Msg. Attachment_EVAS"
 
         field(1; Id; BigInteger)
         {
+            Caption = 'ID', Comment = 'DAN="Id"';
             DataClassification = SystemMetadata;
             AutoIncrement = true;
         }
 
         field(2; "Calender Message Id"; Guid)
         {
+            Caption = 'Calender Message ID', Comment = 'DAN="Kalender besked id"';
             DataClassification = SystemMetadata;
             TableRelation = "Outlook Calender Entry_EVAS".UID;
         }
         field(4; "Attachment Name"; Text[250])
         {
+            Caption = 'Attachment Name', Comment = 'DAN="Vedhæftning navn"';
             DataClassification = CustomerContent;
         }
 
         field(5; "Content Type"; Text[250])
         {
+            Caption = 'Content Type', Comment = 'DAN="Indholdstype"';
             DataClassification = SystemMetadata;
         }
 
         field(6; InLine; Boolean)
         {
+            Caption = 'InLine', Comment = 'DAN="I linje"';
             DataClassification = SystemMetadata;
         }
 
         field(7; "Content Id"; Text[40])
         {
+            Caption = 'Content Id', Comment = 'DAN="Indholds-id"';
             DataClassification = SystemMetadata;
         }
 
         field(8; Length; Integer)
         {
+            Caption = 'Length', Comment = 'DAN="Længde"';
             DataClassification = SystemMetadata;
         }
 
         field(9; Data; Media)
         {
+            Caption = 'Data', Comment = 'DAN="Data"';
             DataClassification = CustomerContent;
         }
     }
