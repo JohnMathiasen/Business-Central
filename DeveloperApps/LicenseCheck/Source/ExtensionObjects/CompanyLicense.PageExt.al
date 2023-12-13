@@ -229,21 +229,26 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 TempAllObjWithCaption.Init();
                 TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
                 TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
-                TempAllObjWithCaption."Object Subtype" := 'Lic';
 
                 if GetAllObjectWithPermission(LicensePermission, AllObjWithCaption) then
                     TempAllObjWithCaption."Object Name" := AllObjWithCaption."Object Name";
 
                 case ObjSearch of
                     ObjSearch::Free:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" = '') then
+                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" = '') then begin
+                            TempAllObjWithCaption."Object Subtype" := 'Lic';
                             TempAllObjWithCaption.Insert();
+                        end;
                     ObjSearch::Used:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" <> '') then
+                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" <> '') then begin
+                            TempAllObjWithCaption."Object Subtype" := 'Lic';
                             TempAllObjWithCaption.Insert();
+                        end;
                     ObjSearch::All:
-                        if Permitted(LicensePermission) then
+                        if Permitted(LicensePermission) then begin
+                            TempAllObjWithCaption."Object Subtype" := 'Lic';
                             TempAllObjWithCaption.Insert();
+                        end;
                 end;
             until LicensePermission.Next() = 0;
         CloseProgressIndicator(NoofRecords, Counter);
@@ -276,7 +281,8 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                     TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
                     TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
                     TempAllObjWithCaption."Object Name" := AllObjWithCaption."Object Name";
-                    TempAllObjWithCaption."Object Subtype" := 'Lic';
+                    if Permitted(LicensePermission) then
+                        TempAllObjWithCaption."Object Subtype" := 'Lic';
                     TempAllObjWithCaption.Insert();
                 end;
             until AllObjWithCaption.Next() = 0;
@@ -393,7 +399,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         Page.RunModal(Page::"All Objects with Caption", TempAllObjWithCaption);
     end;
 
-    local procedure AppExist(AllObjWithCaption: Record AllObjWithCaption): Boolean
+    local procedure AppExist(var AllObjWithCaption: Record AllObjWithCaption): Boolean
     var
         AllObjWithCaption2: Record AllObjWithCaption;
     begin

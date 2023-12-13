@@ -5,6 +5,7 @@ pageextension 50101 "All Objects with Caption_EVAS" extends "All Objects with Ca
 {        
     layout
     {
+
         addbefore(Control1102601000)
         {
             group(LicenseCheck_EVAS)
@@ -19,6 +20,18 @@ pageextension 50101 "All Objects with Caption_EVAS" extends "All Objects with Ca
                     ApplicationArea = All;
                     Editable = false;
                     Visible = PerformLicenseCheck;
+                }
+
+                field(FilterInLicense_EVAS; FilterNotInLicense)
+                {
+                    Caption = 'Show';
+                    trigger OnValidate()
+                    begin
+                        if FilterNotInLicense then
+                            Rec.SetFilter("Object Subtype", '=%1', '')
+                        else
+                            Rec.SetRange("Object Subtype");
+                    end;
                 }
             }
 
@@ -69,10 +82,11 @@ pageextension 50101 "All Objects with Caption_EVAS" extends "All Objects with Ca
             ObjectUsed := Rec."Object Name" <> '';
             InLicense := Permitted();
         end;
+
     end;
 
     var
-    ObjectUsed, InLicense,PerformLicenseCheck: Boolean;
+        ObjectUsed, InLicense, PerformLicenseCheck, FilterNotInLicense : Boolean;
         LicenseText: Text;
 
 
