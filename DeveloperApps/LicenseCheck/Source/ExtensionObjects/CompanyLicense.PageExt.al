@@ -213,6 +213,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         AllObjWithCaption: Record AllObjWithCaption;
         LicensePermission: Record "License Permission";
         NoofRecords, Counter, Step : Integer;
+        InLicense: Boolean;
     begin
         if LicensePermissionView <> '' then begin
             LicensePermission.SetView(LicensePermissionView);
@@ -225,6 +226,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         Step := StartProgressIndicator(NoofRecords);
         if LicensePermission.FindSet() then
             repeat
+                InLicense := Permitted(LicensePermission);
                 Counter += 1;
                 ShowProgressIndicator(NoofRecords, Counter, Step);
                 TempAllObjWithCaption.Init();
@@ -236,25 +238,18 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                     TempAllObjWithCaption."App Package ID" := AllObjWithCaption."App Package ID";
                     TempAllObjWithCaption."App Runtime Package ID" := AllObjWithCaption."App Runtime Package ID";
                 end;
+                TempAllObjWithCaption."Object Subtype" := SetObjectType(InLicense);
 
                 case ObjSearch of
                     ObjSearch::Free:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" = '') then
-                            TempAllObjWithCaption."Object Subtype" := GetLicensedTxt()
-                        else
-                            TempAllObjWithCaption."Object Subtype" := GetNotLicensedTxt();
+                        if InLicense and (TempAllObjWithCaption."Object Name" = '') then
+                            TempAllObjWithCaption.Insert();
                     ObjSearch::Used:
-                        if Permitted(LicensePermission) and (TempAllObjWithCaption."Object Name" <> '') then
-                            TempAllObjWithCaption."Object Subtype" := GetLicensedTxt()
-                        else
-                            TempAllObjWithCaption."Object Subtype" := GetNotLicensedTxt();
+                        if InLicense and (TempAllObjWithCaption."Object Name" <> '') then
+                            TempAllObjWithCaption.Insert();
                     ObjSearch::All:
-                        if Permitted(LicensePermission) then
-                            TempAllObjWithCaption."Object Subtype" := GetLicensedTxt()
-                        else
-                            TempAllObjWithCaption."Object Subtype" := GetNotLicensedTxt();
+                        TempAllObjWithCaption.Insert();
                 end;
-                TempAllObjWithCaption.Insert();
 
             until LicensePermission.Next() = 0;
         CloseProgressIndicator(NoofRecords, Counter);
@@ -265,6 +260,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         AllObjWithCaption: Record AllObjWithCaption;
         LicensePermission: Record "License Permission";
         NoofRecords, Counter, Step : Integer;
+        InLicense: Boolean;
     begin
         if LicensePermissionView <> '' then begin
             AllObjWithCaption.SetView(LicensePermissionView);
@@ -283,16 +279,14 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 ShowProgressIndicator(NoofRecords, Counter, Step);
 
                 if GetLicensePermission(AllObjWithCaption, LicensePermission) then begin
+                    InLicense := Permitted(LicensePermission);
                     TempAllObjWithCaption.Init();
                     TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
                     TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
                     TempAllObjWithCaption."Object Name" := AllObjWithCaption."Object Name";
                     TempAllObjWithCaption."App Package ID" := AllObjWithCaption."App Package ID";
                     TempAllObjWithCaption."App Runtime Package ID" := AllObjWithCaption."App Runtime Package ID";
-                    if Permitted(LicensePermission) then
-                        TempAllObjWithCaption."Object Subtype" := GetLicensedTxt()
-                    else
-                        TempAllObjWithCaption."Object Subtype" := GetNotLicensedTxt();
+                    TempAllObjWithCaption."Object Subtype" := SetObjectType(InLicense);
                     TempAllObjWithCaption.Insert();
                 end;
             until AllObjWithCaption.Next() = 0;
@@ -422,6 +416,18 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         exit(not AllObjWithCaption2.IsEmpty);
     end;
 
+    local procedure SetObjectType(HasPermission: Boolean): Text[30]
+    begin
+        if HasPermission then
+            exit(GetLicensedTxt())
+        else
+            exit(GetNotLicensedTxt());
+    end;
+
+    /// <summary>
+    /// GetLicensedTxt.
+    /// </summary>
+    /// <returns>Return value of type Text[30].</returns>
     internal procedure GetLicensedTxt(): Text[30]
     var
         LicensedTxt: Label 'Yes';
@@ -429,6 +435,10 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         exit(LicensedTxt);
     end;
 
+    /// <summary>
+    /// GetNotLicensedTxt.
+    /// </summary>
+    /// <returns>Return value of type Text[30].</returns>
     internal procedure GetNotLicensedTxt(): Text[30]
     var
         NotLicensedTxt: Label 'No';
