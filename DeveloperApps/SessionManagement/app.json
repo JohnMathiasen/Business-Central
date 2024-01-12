@@ -1,8 +1,8 @@
 {
-  "id": "8132774b-8676-4af8-9bbf-7e7416c35714",
-  "name": "License Check",
+  "id": "80d3ce60-ea50-4bbb-8ef4-746a1af5ad13",
+  "name": "SessionManagement",
   "publisher": "Elbek & Vejrup A/S",
-  "version": "1.0.0.6",
+  "version": "1.0.0.0",
   "brief": "",
   "description": "",
   "privacyStatement": "",
@@ -12,12 +12,12 @@
   "logo": "",
   "dependencies": [],
   "screenshots": [],
-  "platform": "15.0.0.0",
+  "platform": "1.0.0.0",
   "application": "20.0.0.0",
   "idRanges": [
     {
-      "from": 50100,
-      "to": 50349
+      "from": 98100,
+      "to": 98149
     }
   ],
   "resourceExposurePolicy": {
@@ -25,7 +25,6 @@
     "allowDownloadingSource": true,
     "includeSourceInSymbolFile": true
   },
-  "target": "Cloud",
   "runtime": "9.0",
   "features": [
     "TranslationFile"

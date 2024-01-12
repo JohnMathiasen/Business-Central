@@ -58,8 +58,8 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
                 action(FindUnused_EVAS)
                 {
                     ApplicationArea = all;
-                    Caption = 'Find Unused', Comment = 'DAN="Find ledige"';
-                    ToolTip = 'Find Unused', Comment = 'DAN="Find ledige"';
+                    Caption = 'Find Unused in License', Comment = 'DAN="Find ledige i licensen"';
+                    ToolTip = 'Find Unused in License', Comment = 'DAN="Find ledige i licensen"';
                     Image = Process;
                     trigger OnAction()
                     begin
@@ -95,7 +95,6 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
     var
         Window: Dialog;
-        ObjecttypeFilterTxt: Label 'Table|Report|Codeunit|XMLport|Page|Query|PageExtension|TableExtension|ReportExtension';
         PctTxt: Label '%1 Pct.', Comment = '%1= Percentage';
         ObjSearchType: Option All,Used,Free;
         LicenseText: Text;
@@ -110,10 +109,14 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
 
         TempAllObjWithCaption.DeleteAll();
 
-        FindObjects(ObjSearch, TempAllObjWithCaption, LicensePermissionView);
+        if ObjSearch = ObjSearch::Free then
+            FindFreeObjectsInLicense(TempAllObjWithCaption, LicensePermissionView)
+        else
+            FindObjects(ObjSearch, TempAllObjWithCaption, LicensePermissionView);
 
         ShowObjects(TempAllObjWithCaption);
     end;
+
 
     local procedure ProcessAppFind()
     var
@@ -215,12 +218,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         NoofRecords, Counter, Step : Integer;
         InLicense: Boolean;
     begin
-        if LicensePermissionView <> '' then begin
-            LicensePermission.SetView(LicensePermissionView);
-            if LicensePermission.GetFilter("Object Type") = '' then
-                LicensePermission.SetFilter("Object Type", ObjecttypeFilterTxt);
-        end else
-            LicensePermission.SetFilter("Object Type", ObjecttypeFilterTxt);
+        SetRequestFilter(LicensePermissionView, LicensePermission);
 
         NoofRecords := LicensePermission.Count;
         Step := StartProgressIndicator(NoofRecords);
@@ -262,12 +260,7 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         NoofRecords, Counter, Step : Integer;
         InLicense: Boolean;
     begin
-        if LicensePermissionView <> '' then begin
-            AllObjWithCaption.SetView(LicensePermissionView);
-            if AllObjWithCaption.GetFilter("Object Type") = '' then
-                AllObjWithCaption.SetFilter("Object Type", ObjecttypeFilterTxt);
-        end else
-            AllObjWithCaption.SetFilter("Object Type", ObjecttypeFilterTxt);
+        SetRequestFilter(LicensePermissionView, LicensePermission);
 
         NoofRecords := AllObjWithCaption.Count;
         Step := StartProgressIndicator(NoofRecords);
@@ -446,4 +439,47 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         exit(NotLicensedTxt);
     end;
 
+    local procedure FindFreeObjectsInLicense(var TempAllObjWithCaption: Record AllObjWithCaption temporary; LicensePermissionView: Text): Boolean
+    var
+        AllObjWithCaption: Record AllObjWithCaption;
+        LicensePermission: Record "License Permission";
+        InLicense: Boolean;
+        Counter, NoofRecords, Step : Integer;
+    begin
+        SetRequestFilter(LicensePermissionView, LicensePermission);
+
+        LicensePermission.SetFilter("Read Permission", '<>%1', LicensePermission."Read Permission"::" ");
+        LicensePermission.SetFilter("Execute Permission", '<>%1', LicensePermission."Execute Permission"::" ");
+        LicensePermission.SetFilter("Insert Permission", '<>%1', LicensePermission."Insert Permission"::" ");
+
+        NoofRecords := LicensePermission.Count;
+        Step := StartProgressIndicator(NoofRecords);
+        if LicensePermission.FindSet() then
+            repeat
+                InLicense := Permitted(LicensePermission);
+                Counter += 1;
+                ShowProgressIndicator(NoofRecords, Counter, Step);
+                TempAllObjWithCaption.Init();
+                TempAllObjWithCaption."Object ID" := LicensePermission."Object Number";
+                TempAllObjWithCaption."Object Type" := LicensePermission."Object Type";
+
+                TempAllObjWithCaption."Object Subtype" := SetObjectType(InLicense);
+                if not GetAllObjectWithPermission(LicensePermission, AllObjWithCaption) then
+                    TempAllObjWithCaption.Insert();
+
+            until LicensePermission.Next() = 0;
+        CloseProgressIndicator(NoofRecords, Counter);
+    end;
+
+    local procedure SetRequestFilter(LicensePermissionView: Text; var LicensePermission: Record "License Permission")
+    var
+        LcenseObjectTypeFilterTxt: Label 'Table|Report|Codeunit|XMLport|Page|Query';
+    begin
+        if LicensePermissionView <> '' then begin
+            LicensePermission.SetView(LicensePermissionView);
+            if LicensePermission.GetFilter("Object Type") = '' then
+                LicensePermission.SetFilter("Object Type", LcenseObjectTypeFilterTxt);
+        end else
+            LicensePermission.SetFilter("Object Type", LcenseObjectTypeFilterTxt);
+    end;
 }
