@@ -48,6 +48,23 @@ pageextension 50101 "All Objects with Caption_EVAS" extends "All Objects with Ca
         }
     }
 
+    actions
+    {
+        addlast(Processing)
+        {
+            action(GetSourceApp_EVAS)
+            {
+                Caption = 'Download App source file', Comment = 'DAN="Gem App filer"';
+                ToolTip = 'Download App source file', Comment = 'DAN="Gem App filer"';
+                ApplicationArea = all;
+                Image = Download;
+                trigger OnAction()
+                begin
+                    GetAppSource(Rec);
+                end;
+            }
+        }
+    }
     trigger OnOpenPage()
     begin
         if rec. FindFirst() then begin
@@ -90,4 +107,10 @@ pageextension 50101 "All Objects with Caption_EVAS" extends "All Objects with Ca
         exit(LicText);
     end;
 
+    local procedure GetAppSource(AllObjWithCaption: Record AllObjWithCaption)
+    var
+        ExtensionManagement: Codeunit "Extension Management";
+    begin
+        ExtensionManagement.DownloadExtensionSource(AllObjWithCaption."App Package ID");
+    end;
 }
