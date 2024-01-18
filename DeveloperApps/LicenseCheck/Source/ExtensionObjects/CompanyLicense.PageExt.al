@@ -260,12 +260,13 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         NoofRecords, Counter, Step : Integer;
         InLicense: Boolean;
     begin
-        SetRequestFilter(LicensePermissionView, LicensePermission);
+        SetAppRequestFilter(LicensePermissionView, AllObjWithCaption);
+
+        AllObjWithCaption.SetRange("App Package ID", PackageID);
 
         NoofRecords := AllObjWithCaption.Count;
         Step := StartProgressIndicator(NoofRecords);
 
-        AllObjWithCaption.SetRange("App Package ID", PackageID);
         if AllObjWithCaption.FindSet() then
             repeat
                 Counter += 1;
@@ -482,4 +483,18 @@ pageextension 50149 "Company License_EVAS" extends "Company Information"
         end else
             LicensePermission.SetFilter("Object Type", LcenseObjectTypeFilterTxt);
     end;
+
+    local procedure SetAppRequestFilter(LicensePermissionView: Text; var AllObjWithCaption: Record AllObjWithCaption)
+    var
+        LcenseObjectTypeFilterTxt: Label 'Table|Report|Codeunit|XMLport|Page|Query';
+    begin
+        if LicensePermissionView <> '' then begin
+            AllObjWithCaption.SetView(LicensePermissionView);
+
+            if AllObjWithCaption.GetFilter("Object Type") = '' then
+                AllObjWithCaption.SetFilter("Object Type", LcenseObjectTypeFilterTxt);
+        end else
+            AllObjWithCaption.SetFilter("Object Type", LcenseObjectTypeFilterTxt);
+    end;
+
 }
