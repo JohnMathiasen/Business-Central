@@ -1,6 +1,6 @@
 {
-  "id": "90d0b35f-ade9-4367-af4c-2088ff8c535a",
-  "name": "Appointment",
+  "id": "eeeff0e0-7160-47ee-a487-40005b99c8f8",
+  "name": "SMS",
   "publisher": "Elbek & Vejrup A/S",
   "version": "1.0.0.0",
   "brief": "",
@@ -10,21 +10,14 @@
   "help": "",
   "url": "",
   "logo": "",
-  "dependencies": [
-    {
-      "id": "d2f7572e-2cb3-4d61-a96f-f02b8ad74702",
-      "name": "EV Integration Toolbox",
-      "publisher": "Elbek & Vejrup A/S",
-      "version": "1.0.0.6"
-    }
-  ],
+  "dependencies": [],
   "screenshots": [],
-  "platform": "1.0.0.0",
+  "platform": "15.0.0.0",
   "application": "20.0.0.0",
   "idRanges": [
     {
-      "from": 50300,
-      "to": 50320
+      "from": 52000,
+      "to": 52149
     }
   ],
   "resourceExposurePolicy": {
@@ -32,7 +25,6 @@
     "allowDownloadingSource": true,
     "includeSourceInSymbolFile": true
   },
-  "target": "Cloud",
   "runtime": "9.0",
   "features": [
     "TranslationFile"
