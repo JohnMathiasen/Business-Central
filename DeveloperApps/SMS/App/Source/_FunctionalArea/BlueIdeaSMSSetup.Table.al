@@ -84,12 +84,12 @@ table 52001 "BlueIdea SMS Setup_EVAS"
             exit('')
     end;
 
-    local procedure GetRequestAcessTokenUri(): Text[250]
+    internal procedure GetRequestAcessTokenUri(): Text[250]
     begin
         exit('https://api.sms-service.dk/User/Login');
     end;
 
-    local procedure GetRequestSendSMSUri(): Text[250]
+    internal procedure GetRequestSendSMSUri(): Text[250]
     begin
         exit('https://api.sms-service.dk/Message/SendSingle');
     end;

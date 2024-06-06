@@ -25,6 +25,13 @@
     "allowDownloadingSource": true,
     "includeSourceInSymbolFile": true
   },
+  "internalsVisibleTo": [
+    {
+      "id": "6cde3cff-2763-4fd2-b3cd-c0da99a17177",
+      "name": "Test",
+      "publisher": "Elbek & Vejrup A/S"    
+    }
+  ],
   "runtime": "9.0",
   "features": [
     "TranslationFile"
