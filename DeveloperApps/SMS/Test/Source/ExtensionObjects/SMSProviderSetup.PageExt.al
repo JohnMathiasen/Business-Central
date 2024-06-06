@@ -1,7 +1,7 @@
 /// <summary>
-/// PageExtension SMS Provider Setup_EVAS (ID 50101) extends Record SMS Provider Setup_EVAS.
+/// PageExtension SMS Provider Setup_EVAS (ID 50100) extends Record SMS Provider Setup_EVAS.
 /// </summary>
-pageextension 50101 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
+pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
 {
     actions
     {
