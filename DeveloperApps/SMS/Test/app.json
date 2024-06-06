@@ -1,0 +1,40 @@
+{
+  "id": "6cde3cff-2763-4fd2-b3cd-c0da99a17177",
+  "name": "Test",
+  "publisher": "Elbek & Vejrup A/S",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    
+    {
+      "id": "eeeff0e0-7160-47ee-a487-40005b99c8f8",
+      "name": "SMS",
+      "publisher": "Elbek & Vejrup A/S",
+      "version": "1.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "15.0.0.0",
+  "application": "20.0.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "9.0",
+  "features": [
+    "TranslationFile"
+  ]
+}

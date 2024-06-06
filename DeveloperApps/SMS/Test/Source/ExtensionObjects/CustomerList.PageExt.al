@@ -1,13 +1,13 @@
 /// <summary>
 /// PageExtension Customer List_EVAS (ID 50301) extends Record Customer List.
 /// </summary>
-pageextension 52000 "Customer List_EVAS" extends "Customer List"
+pageextension 50100 "Customer List_EVAS" extends "Customer List"
 {
     actions
     {
         addfirst(processing)
         {
-            action(TestSMSAuth_FPS_EVAS)
+            action(TestSMSAuth_EVAS)
             {
                 Caption = 'TEST AUTH';
                 ApplicationArea = all;
@@ -22,7 +22,7 @@ pageextension 52000 "Customer List_EVAS" extends "Customer List"
                     Message('Retur : %1', TokenText);
                 end;
             }
-            action(TestSMS_FPS_EVAS)
+            action(TestSMS_EVAS)
             {
                 Caption = 'TEST SMS';
                 ApplicationArea = all;
