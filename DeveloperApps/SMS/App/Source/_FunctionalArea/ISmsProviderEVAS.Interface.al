@@ -18,4 +18,10 @@ interface "ISmsProvider_EVAS"
     /// <param name="ReturnValue">VAR Text.</param>
     /// <returns>Return value of type Boolean.</returns>
     procedure SendTextMessage(MessageText: Text; Recipient: Text; ReferenceId: Integer; var ReturnValue: Text): Boolean;
+
+    /// <summary>
+    /// openSMSProviderSetup.
+    /// </summary>
+    /// <param name="SMSProviderCode">Code[20].</param>
+    procedure openSMSProviderSetup(SMSProviderCode: Code[20]);
 }

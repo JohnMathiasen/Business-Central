@@ -4,7 +4,7 @@
 codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
 {
     var
-        BlueIdeaSMSSteupEVAS: Record "BlueIdea SMS Setup_EVAS";
+        BlueIdeaSMSSetupEVAS: Record "BlueIdea SMS Setup_EVAS";
         HttpClient: HttpClient;
         NoResponseTxt: Label 'Could not read response', Comment = 'DAN="kunne ikke løse svar"';
         SendFailureErr: Label 'Unable to request access token. Error Code %1\Message: %2', Comment = 'DAN="Access Token kunne ikke hentes. Fejlkode %1\Besked: %2"';
@@ -77,6 +77,24 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         ReturnValue := ResponseTxt;
 
         exit(true);
+    end;
+
+    /// <summary>
+    /// openSMSProviderSetup.
+    /// </summary>
+    /// <param name="SMSProviderCode">Code[20].</param>
+    procedure openSMSProviderSetup(SMSProviderCode: Code[20])
+    begin
+        if SMSProviderCode = '' then
+            exit;
+        if not BlueIdeaSMSSetupEVAS.Get(SMSProviderCode) then begin
+            BlueIdeaSMSSetupEVAS.Init();
+            BlueIdeaSMSSetupEVAS.Code := SMSProviderCode;
+            BlueIdeaSMSSetupEVAS.Insert(true);
+            Commit();
+        end;
+        BlueIdeaSMSSetupEVAS.SetRange(Code, SMSProviderCode);
+        Page.RunModal(Page::"BlueIdea SMS Setup_EVAS", BlueIdeaSMSSetupEVAS);
     end;
 
     local procedure Initialize(var HttpRequest: HttpRequestMessage)
@@ -177,19 +195,19 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     local procedure GetRequestAcessTokenUri(): Text
     begin
         GetSetup();
-        exit(BlueIdeaSMSSteupEVAS."Access Token Endpoint");
+        exit(BlueIdeaSMSSetupEVAS."Access Token Endpoint");
     end;
 
     local procedure GetRequestSendSMSUri(): Text
     begin
-        exit(BlueIdeaSMSSteupEVAS.Endpoint);
+        exit(BlueIdeaSMSSetupEVAS.Endpoint);
     end;
 
     local procedure GetUserNameAndCredentials(var UserName: Text; var UserPassword: Text)
     begin
         GetSetup();
-        UserName := BlueIdeaSMSSteupEVAS.Username;
-        UserPassword := BlueIdeaSMSSteupEVAS.GetPassword();
+        UserName := BlueIdeaSMSSetupEVAS.Username;
+        UserPassword := BlueIdeaSMSSetupEVAS.GetPassword();
         // UserName := 'krk@elbek-vejrup.dk';
         // UserPassword := 'ITA4ever?';
     end;
@@ -197,13 +215,13 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     local procedure GetNameOfSender(): Text
     begin
         GetSetup();
-        exit(BlueIdeaSMSSteupEVAS."Name of Sender");
+        exit(BlueIdeaSMSSetupEVAS."Name of Sender");
     end;
 
     local procedure GetTestMode(): Text
     begin
         GetSetup();
-        if BlueIdeaSMSSteupEVAS."Test Mode" then
+        if BlueIdeaSMSSetupEVAS."Test Mode" then
             exit('true')
         else
             exit('false');
@@ -213,7 +231,7 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     local procedure GetProfileID(): Code[10]
     begin
         GetSetup();
-        exit(BlueIdeaSMSSteupEVAS."BlueIdea Profile ID");
+        exit(BlueIdeaSMSSetupEVAS."BlueIdea Profile ID");
         // exit('5221');
     end;
 
@@ -222,7 +240,7 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         if SetupRead then
             exit;
 
-        BlueIdeaSMSSteupEVAS.Get();
+        BlueIdeaSMSSetupEVAS.Get();
         SetupRead := true;
     end;
 }

@@ -1,13 +1,12 @@
 /// <summary>
 /// Page BlueIdea SMS Setup_EVAS (ID 52000).
 /// </summary>
-page 52000 "BlueIdea SMS Setup_EVAS"
+page 52001 "BlueIdea SMS Setup_EVAS"
 {
-    Caption = 'BlueIdea SMS Setup';
+    Caption = 'BlueIdea SMS Setup', Comment = 'DAN="BlueIdea SMS opsætning"';
     PageType = Card;
     SourceTable = "BlueIdea SMS Setup_EVAS";
-    UsageCategory = Administration;
-    ApplicationArea = All;
+    UsageCategory = None;
 
     layout
     {
@@ -15,9 +14,7 @@ page 52000 "BlueIdea SMS Setup_EVAS"
         {
             group(General)
             {
-                Caption = 'General';
-
-
+                Caption = 'General', Comment = 'DAN="Generelt"';
                 field("BlueIdea Profile ID"; Rec."BlueIdea Profile ID")
                 {
                     ApplicationArea = All;
@@ -45,6 +42,16 @@ page 52000 "BlueIdea SMS Setup_EVAS"
                         CurrPage.Update(true);
                     end;
                 }
+                field("Access Token Endpoint"; Rec."Access Token Endpoint")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Accecss Token Endpoint field.', Comment = '%DAN="Adgangstoken Endpoint"';
+                }
+                field(Endpoint; Rec.Endpoint)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the Endpoint field.', Comment = '%DAN="Endpoint"';
+                }
                 field("Test Mode"; Rec."Test Mode")
                 {
                     ApplicationArea = All;
@@ -54,14 +61,6 @@ page 52000 "BlueIdea SMS Setup_EVAS"
         }
     }
 
-    trigger OnOpenPage()
-    begin
-        Rec.Iniitialize();
-    end;
-
     var
         PasswordText: Text;
-
-
-
 }
