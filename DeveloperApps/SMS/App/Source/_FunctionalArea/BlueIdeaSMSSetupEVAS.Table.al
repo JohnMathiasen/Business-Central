@@ -51,16 +51,6 @@ table 52001 "BlueIdea SMS Setup_EVAS"
         }
     }
 
-    // internal procedure Iniitialize()
-    // begin
-    //     if not Get() then begin
-    //         Init();
-    //         "Access Token Endpoint" := GetRequestAcessTokenUri();
-    //         Endpoint := GetRequestSendSMSUri();
-    //         Insert();
-    //     end;
-    // end;
-
     internal procedure SetPassword(Value: Text)
     var
         OutStream: OutStream;

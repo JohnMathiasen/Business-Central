@@ -208,8 +208,6 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         GetSetup();
         UserName := BlueIdeaSMSSetupEVAS.Username;
         UserPassword := BlueIdeaSMSSetupEVAS.GetPassword();
-        // UserName := 'krk@elbek-vejrup.dk';
-        // UserPassword := 'ITA4ever?';
     end;
 
     local procedure GetNameOfSender(): Text
@@ -219,12 +217,15 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     end;
 
     local procedure GetTestMode(): Text
+    var
+        TrueTxt: Label 'true', Locked = true;
+        FalseTxt: Label 'false', Locked = true;
     begin
         GetSetup();
         if BlueIdeaSMSSetupEVAS."Test Mode" then
-            exit('true')
+            exit(TrueTxt)
         else
-            exit('false');
+            exit(FalseTxt);
     end;
 
 
@@ -232,7 +233,6 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     begin
         GetSetup();
         exit(BlueIdeaSMSSetupEVAS."BlueIdea Profile ID");
-        // exit('5221');
     end;
 
     local procedure GetSetup()
