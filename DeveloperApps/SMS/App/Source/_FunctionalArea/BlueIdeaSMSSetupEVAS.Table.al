@@ -1,25 +1,21 @@
 /// <summary>
-/// Table BlueIdea SMS Steup_EVAS (ID 52000).
+/// Table BlueIdea SMS Steup_EVAS (ID 52001).
 /// </summary>
-table 52000 "BlueIdea SMS Setup_EVAS"
+table 52001 "BlueIdea SMS Setup_EVAS"
 {
 
-    Caption = 'BlueIdea SMS Steup', Comment = 'DAN="BlueIdea SMS Opsætning"';
+    Caption = 'BlueIdea SMS Setup', Comment = 'DAN="BlueIdea SMS Opsætning"';
     DataClassification = CustomerContent;
 
     fields
     {
-        field(1; "Primary Key"; Code[50])
+        field(1; "Code"; Code[50])
         {
-            Caption = 'Primary Key', Comment = 'DAN="Primærnøgle"';
+            Caption = 'Code', Comment = 'DAN="Kode"';
         }
         field(2; "Test Mode"; Boolean)
         {
             Caption = 'Test mode', Comment = 'DAN="Testtilstand"';
-        }
-        field(3; "Interface for Text Messages"; Enum "SMS Provider_EVAS")
-        {
-            Caption = 'Interface for Text Messages', Comment = 'DAN="Interface for tekst beskeder"';
         }
         field(4; "Name of Sender"; Text[11])
         {
@@ -47,16 +43,13 @@ table 52000 "BlueIdea SMS Setup_EVAS"
         }
 
     }
-
-    internal procedure Iniitialize()
-    begin
-        if not Get() then begin
-            Init();
-            "Access Token Endpoint" := GetRequestAcessTokenUri();
-            Endpoint := GetRequestSendSMSUri();
-            Insert();
-        end;
-    end;
+    keys
+    {
+        key(Key1; Code)
+        {
+            Clustered = true;
+        }
+    }
 
     internal procedure SetPassword(Value: Text)
     var
@@ -81,12 +74,12 @@ table 52000 "BlueIdea SMS Setup_EVAS"
             exit('')
     end;
 
-    local procedure GetRequestAcessTokenUri(): Text[250]
+    internal procedure GetRequestAcessTokenUri(): Text[250]
     begin
         exit('https://api.sms-service.dk/User/Login');
     end;
 
-    local procedure GetRequestSendSMSUri(): Text[250]
+    internal procedure GetRequestSendSMSUri(): Text[250]
     begin
         exit('https://api.sms-service.dk/Message/SendSingle');
     end;
