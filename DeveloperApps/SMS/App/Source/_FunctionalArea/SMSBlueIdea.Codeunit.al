@@ -8,13 +8,15 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         HttpClient: HttpClient;
         NoResponseTxt: Label 'Could not read response', Comment = 'DAN="kunne ikke løse svar"';
         SendFailureErr: Label 'Unable to request access token. Error Code %1\Message: %2', Comment = 'DAN="Access Token kunne ikke hentes. Fejlkode %1\Besked: %2"';
+        GlobalSMSProviderCode: Code[20];
         SetupRead: Boolean;
 
     /// <summary>
-    /// GetAccessToken.        
+    /// GetAccessToken.
     /// </summary>
+    /// <param name="SMSProviderCode">Code[20].</param>
     /// <returns>Return value of type Text.</returns>
-    procedure GetAccessToken(): Text
+    procedure GetAccessToken(SMSProviderCode: Code[20]): Text
     var
         HttpRequest: HttpRequestMessage;
         HttpContent: HttpContent;
@@ -23,6 +25,7 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         UserPassword: Text;
         ResponseTxt: Text;
     begin
+        GlobalSMSProviderCode := SMSProviderCode;
         GetUserNameAndCredentials(UserName, UserPassword);
 
         Initialize(HttpRequest);
@@ -42,12 +45,13 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     /// <summary>
     /// SendTextMessage.
     /// </summary>
+    /// <param name="SMSProviderCode">Code[20].</param>
     /// <param name="MessageText">Text.</param>
     /// <param name="Recipient">Text.</param>
     /// <param name="ReferenceId">Integer.</param>
     /// <param name="ReturnValue">VAR Text.</param>
     /// <returns>Return value of type Boolean.</returns>
-    procedure SendTextMessage(MessageText: Text; Recipient: Text; ReferenceId: Integer; var ReturnValue: Text): Boolean;
+    procedure SendTextMessage(SMSProviderCode: Code[20]; MessageText: Text; Recipient: Text; ReferenceId: Integer; var ReturnValue: Text): Boolean;
     var
         HttpContent: HttpContent;
         HttpRequest: HttpRequestMessage;
@@ -57,9 +61,10 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         RequestBody: Text;
         ResponseTxt: Text;
     begin
+        GlobalSMSProviderCode := SMSProviderCode;
         CheckPhoneNo(Recipient);
 
-        AccessTokentxt := StrSubstNo(BearerLbl, GetAccessToken());
+        AccessTokentxt := StrSubstNo(BearerLbl, GetAccessToken(SMSProviderCode));
         Initialize(HttpRequest);
         HttpRequest.SetRequestUri(GetRequestSendSMSUri());
         HttpRequest.Method := Format(Enum::"Http Request Type"::POST);
@@ -83,8 +88,9 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
     /// openSMSProviderSetup.
     /// </summary>
     /// <param name="SMSProviderCode">Code[20].</param>
-    procedure openSMSProviderSetup(SMSProviderCode: Code[20])
+    procedure openSMSProviderSetupPage(SMSProviderCode: Code[20])
     begin
+        GlobalSMSProviderCode := SMSProviderCode;
         if SMSProviderCode = '' then
             exit;
         if not BlueIdeaSMSSetupEVAS.Get(SMSProviderCode) then begin
@@ -240,7 +246,7 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
         if SetupRead then
             exit;
 
-        BlueIdeaSMSSetupEVAS.Get();
+        BlueIdeaSMSSetupEVAS.Get(GlobalSMSProviderCode);
         SetupRead := true;
     end;
 }

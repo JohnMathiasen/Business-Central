@@ -50,6 +50,6 @@ page 52000 "SMS Provider Setup_EVAS"
         ISmsProvider: Interface ISmsProvider_EVAS;
     begin
         ISmsProvider := Rec."SMS Provider";
-        ISmsProvider.openSMSProviderSetup(Rec.Code);
+        ISmsProvider.openSMSProviderSetupPage(Rec.Code);
     end;
 }
