@@ -29,7 +29,7 @@ pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
                     TokenText: Text;
                 begin
                     ISmsProvider := Enum::"SMS Provider_EVAS"::Blueidea;
-                    TokenText := ISmsProvider.GetAccessToken();
+                    TokenText := ISmsProvider.GetAccessToken(Rec.Code);
                     Message(TokentReturnMsg, TokenText);
                 end;
             }
@@ -51,7 +51,7 @@ pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
                     RecipientTxt := '+4527271632';
                     ReferenceId := 301;
                     ISmsProvider := Enum::"SMS Provider_EVAS"::Blueidea;
-                    ISmsProvider.SendTextMessage(SMSText, RecipientTxt, ReferenceID, ReturnValue);
+                    ISmsProvider.SendTextMessage(Rec.Code, SMSText, RecipientTxt, ReferenceID, ReturnValue);
                     Message(ReturnMsg, ReturnValue);
                 end;
             }
