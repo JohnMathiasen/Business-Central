@@ -9,7 +9,7 @@ pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
         {
             action(SetupSMSProvider_EVAS)
             {
-                Caption = 'Setup SMS Provider';
+                Caption = 'Setup SMS Provider', Comment = 'DAN="Opsætning SMS udbyder"';
                 ApplicationArea = All;
                 Image = Setup;
                 trigger OnAction()
@@ -19,38 +19,40 @@ pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
             }
             action(TestSMSAuth_EVAS)
             {
-                Caption = 'TEST AUTH';
+                Caption = 'Test Authentication', Comment = 'DAN=Test Authentication"';
                 ApplicationArea = all;
                 Image = TestReport;
                 trigger OnAction()
                 var
                     ISmsProvider: Interface "ISmsProvider_EVAS";
+                    TokentReturnMsg: Label 'Token Returnvalue :\%1', Comment = 'DAN="Token returværdi:\%1"';
                     TokenText: Text;
                 begin
                     ISmsProvider := Enum::"SMS Provider_EVAS"::Blueidea;
                     TokenText := ISmsProvider.GetAccessToken();
-                    Message('Retur : %1', TokenText);
+                    Message(TokentReturnMsg, TokenText);
                 end;
             }
             action(TestSMS_EVAS)
             {
-                Caption = 'TEST SMS';
+                Caption = 'Test Send SMS', Comment = 'DAN=Test Send SMS';
                 ApplicationArea = all;
                 Image = TestReport;
                 trigger OnAction()
                 var
-                    ISmsProvider: Interface "ISmsProvider_EVAS";
-                    SMSText: Text;
-                    RecipientTxt: Text;
                     ReferenceID: Integer;
+                    ISmsProvider: Interface "ISmsProvider_EVAS";
+                    ReturnMsg: Label 'Returnvalue :\%1', Comment = 'DAN="Returværdi:\%1"';
+                    RecipientTxt: Text;
                     ReturnValue: Text;
+                    SMSText: Text;
                 begin
                     SMSText := 'Dette er EV test';
                     RecipientTxt := '+4527271632';
                     ReferenceId := 301;
                     ISmsProvider := Enum::"SMS Provider_EVAS"::Blueidea;
                     ISmsProvider.SendTextMessage(SMSText, RecipientTxt, ReferenceID, ReturnValue);
-                    Message('Retur : %1', ReturnValue);
+                    Message(ReturnMsg, ReturnValue);
                 end;
             }
         }
