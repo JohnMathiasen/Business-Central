@@ -69,13 +69,21 @@ pageextension 50100 "SMS Provider Setup_EVAS" extends "SMS Provider Setup_EVAS"
     var
         BlueIdeaSMSSetupEVAS: Record "BlueIdea SMS Setup_EVAS";
     begin
-        BlueIdeaSMSSetupEVAS.Init();
-        BlueIdeaSMSSetupEVAS.Code := SMSProviderSetupEVAS.Code;
-        BlueIdeaSMSSetupEVAS."BlueIdea Profile ID" := '5221';
-        BlueIdeaSMSSetupEVAS.Username := 'krk@elbek-vejrup.dk';
-        BlueIdeaSMSSetupEVAS.setPassword('ITA4ever?');
-        BlueIdeaSMSSetupEVAS."Access Token Endpoint" := BlueIdeaSMSSetupEVAS.GetRequestAcessTokenUri();
-        BlueIdeaSMSSetupEVAS.Endpoint := BlueIdeaSMSSetupEVAS.GetRequestSendSMSUri();
-        BlueIdeaSMSSetupEVAS.Insert();
+        if not BlueIdeaSMSSetupEVAS.Get(SMSProviderSetupEVAS.Code) then begin
+            BlueIdeaSMSSetupEVAS.Init();
+            BlueIdeaSMSSetupEVAS.Code := SMSProviderSetupEVAS.Code;
+            BlueIdeaSMSSetupEVAS.Insert();
+        end;
+        if BlueIdeaSMSSetupEVAS."BlueIdea Profile ID" = '' then
+            BlueIdeaSMSSetupEVAS."BlueIdea Profile ID" := '5221';
+        if BlueIdeaSMSSetupEVAS.Username = '' then
+            BlueIdeaSMSSetupEVAS.Username := 'krk@elbek-vejrup.dk';
+        if not BlueIdeaSMSSetupEVAS.Password.HasValue then
+            BlueIdeaSMSSetupEVAS.setPassword('ITA4ever?');
+        if BlueIdeaSMSSetupEVAS."Access Token Endpoint" = '' then
+            BlueIdeaSMSSetupEVAS."Access Token Endpoint" := BlueIdeaSMSSetupEVAS.GetRequestAcessTokenUri();
+        if BlueIdeaSMSSetupEVAS.Endpoint = '' then
+            BlueIdeaSMSSetupEVAS.Endpoint := BlueIdeaSMSSetupEVAS.GetRequestSendSMSUri();
+        BlueIdeaSMSSetupEVAS.Modify();
     end;
 }
