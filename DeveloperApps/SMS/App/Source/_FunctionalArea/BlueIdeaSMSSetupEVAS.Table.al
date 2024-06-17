@@ -17,10 +17,6 @@ table 52001 "BlueIdea SMS Setup_EVAS"
         {
             Caption = 'Test mode', Comment = 'DAN="Testtilstand"';
         }
-        field(4; "Name of Sender"; Text[11])
-        {
-            Caption = 'Navn ved afsendelse', Comment = 'DAN="Navn ved afsendelse"';
-        }
         field(5; Username; Text[250])
         {
             Caption = 'User Name', Comment = 'DAN="Brugernavn"';

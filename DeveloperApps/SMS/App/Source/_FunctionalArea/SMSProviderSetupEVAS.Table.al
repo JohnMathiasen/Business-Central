@@ -16,6 +16,10 @@ table 52000 "SMS Provider Setup_EVAS"
         {
             Caption = 'Interface for Text Messages', Comment = 'DAN="SMS Interface"';
         }
+        field(4; "Name of Sender"; Text[11])
+        {
+            Caption = 'Navn ved afsendelse', Comment = 'DAN="Navn ved afsendelse"';
+        }
 
     }
     keys
