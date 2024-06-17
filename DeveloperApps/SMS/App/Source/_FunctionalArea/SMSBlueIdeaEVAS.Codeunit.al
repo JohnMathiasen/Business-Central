@@ -5,11 +5,12 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
 {
     var
         BlueIdeaSMSSetupEVAS: Record "BlueIdea SMS Setup_EVAS";
+        SMSProviderSetup: Record "SMS Provider Setup_EVAS";
         HttpClient: HttpClient;
         NoResponseTxt: Label 'Could not read response', Comment = 'DAN="kunne ikke løse svar"';
         SendFailureErr: Label 'Unable to request access token. Error Code %1\Message: %2', Comment = 'DAN="Access Token kunne ikke hentes. Fejlkode %1\Besked: %2"';
         GlobalSMSProviderCode: Code[20];
-        SetupRead: Boolean;
+        SetupRead, SMSProviderSetupRead : Boolean;
 
     /// <summary>
     /// GetAccessToken.
@@ -218,8 +219,8 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
 
     local procedure GetNameOfSender(): Text
     begin
-        GetSetup();
-        exit(BlueIdeaSMSSetupEVAS."Name of Sender");
+        GetProviderSetup();
+        exit(SMSProviderSetup."Name of Sender");
     end;
 
     local procedure GetTestMode(): Text
@@ -248,5 +249,13 @@ codeunit 52000 "SMS BlueIdea_EVAS" implements ISmsProvider_EVAS
 
         BlueIdeaSMSSetupEVAS.Get(GlobalSMSProviderCode);
         SetupRead := true;
+    end;
+
+    local procedure GetProviderSetup()
+    begin
+        if SMSProviderSetupRead then
+            exit;
+        SMSProviderSetup.Get(GlobalSMSProviderCode);
+        SMSProviderSetupRead := true;
     end;
 }

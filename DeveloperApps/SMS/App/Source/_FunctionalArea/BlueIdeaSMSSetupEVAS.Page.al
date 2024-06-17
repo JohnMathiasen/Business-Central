@@ -25,11 +25,6 @@ page 52001 "BlueIdea SMS Setup_EVAS"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the Navn ved afsendelse field.', Comment = '%DAN="Navn ved afsendelse"';
                 }
-                field(Username; Rec.Username)
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies the value of the User Name field.', Comment = '%DAN="Brugernavn"';
-                }
                 field(PasswordText; PasswordText)
                 {
                     ApplicationArea = All;

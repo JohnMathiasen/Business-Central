@@ -25,6 +25,11 @@ page 52000 "SMS Provider Setup_EVAS"
                     ApplicationArea = All;
                     ToolTip = 'Specifies the value of the SMS Provider field.', Comment = 'DAN="SMS-udbyder"';
                 }
+                field(Username; Rec.Username)
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the value of the User Name field.', Comment = 'DAN="Brugernavn"';
+                }
             }
         }
     }
