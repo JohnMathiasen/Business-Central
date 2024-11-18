@@ -18,10 +18,13 @@ page 50101 "Data Clean Subpage_EVAS"
                     LookupPageId = "Fields Lookup";
                     trigger OnLookup(var Text: Text): Boolean
                     var
+                        DataCleanHeader: Record "Data Clean Header_EVAS";
                         Field: Record Field;
                     begin
+                        DataCleanHeader.get(Rec.Code);
                         Field.SetRange(TableNo, Rec."Table No.");
-                        Field.SetFilter(Type, '%1|%2', Field.Type::Text, Field.Type::Code);
+                        if DataCleanHeader.Type = DataCleanHeader.Type::Clean then
+                            Field.SetFilter(Type, '%1|%2', Field.Type::Text, Field.Type::Code);
                         if Page.RunModal(Page::"Fields Lookup", Field) = Action::LookupOK then
                             Text := format(Field."No.");
                         exit(Text <> '');

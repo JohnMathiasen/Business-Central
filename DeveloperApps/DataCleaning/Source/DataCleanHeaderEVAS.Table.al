@@ -25,6 +25,10 @@ table 50100 "Data Clean Header_EVAS"
             Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
             TableRelation = "Data Clean Group_EVAS"."Code";
         }
+        field(7; Type; Enum "Data Check Type_EVAS")
+        {
+            Caption = 'Type', Comment = 'DAN="Type"';
+        }
         field(10; Enabled; Boolean)
         {
             Caption = 'Enabled', Comment = 'DAN="Aktiv"';

@@ -141,30 +141,6 @@ codeunit 50100 "Process Data Clean"
         if DataCleanLine."Field No." = 0 then
             exit;
 
-        DocumentCharacterSet.SetRange(Code, DataCleanLine.Code);
-        DocumentCharacterSet.SetRange("Table No.", DataCleanLine."Table No.");
-        DocumentCharacterSet.SetRange("Field No.", DataCleanLine."Field No.");
-        DocumentCharacterSet.SetFilter("CharacterSet Code", '<>%1', '');
-        if DocumentCharacterSet.IsEmpty then
-            exit;
-
-        DocumentCharacterSet.FindSet();
-        repeat
-            CharacterSet.Get(DocumentCharacterSet."CharacterSet Code");
-            case CharacterSet.Type of
-                CharacterSet.Type::"Clean Invalid":
-                    if not ValidList.Contains(DocumentCharacterSet."CharacterSet Code") then
-                        ValidList.Add(DocumentCharacterSet."CharacterSet Code");
-                CharacterSet.Type::Remove:
-                    if not RemoveList.Contains(DocumentCharacterSet."CharacterSet Code") then
-                        RemoveList.Add(DocumentCharacterSet."CharacterSet Code");
-                CharacterSet.Type::Replace:
-                    if not ReplaceList.Contains(DocumentCharacterSet."CharacterSet Code") then
-                        ReplaceList.Add(DocumentCharacterSet."CharacterSet Code");
-
-            end;
-        until DocumentCharacterSet.Next() = 0;
-
         FieldRef := RecRef.Field(DataCleanLine."Field No.");
 
         if not (FieldRef.Type in [FieldRef.Type::Code, FieldRef.Type::Text]) then
@@ -172,6 +148,26 @@ codeunit 50100 "Process Data Clean"
 
         Value := FieldRef.Value;
         NewValue := Value;
+
+        DocumentCharacterSet.SetRange(Code, DataCleanLine.Code);
+        DocumentCharacterSet.SetRange("Table No.", DataCleanLine."Table No.");
+        DocumentCharacterSet.SetRange("Field No.", DataCleanLine."Field No.");
+        DocumentCharacterSet.SetFilter("CharacterSet Code", '<>%1', '');
+        if DocumentCharacterSet.FindSet() then
+            repeat
+                CharacterSet.Get(DocumentCharacterSet."CharacterSet Code");
+                case CharacterSet.Type of
+                    CharacterSet.Type::"Clean Invalid":
+                        if not ValidList.Contains(DocumentCharacterSet."CharacterSet Code") then
+                            ValidList.Add(DocumentCharacterSet."CharacterSet Code");
+                    CharacterSet.Type::Remove:
+                        if not RemoveList.Contains(DocumentCharacterSet."CharacterSet Code") then
+                            RemoveList.Add(DocumentCharacterSet."CharacterSet Code");
+                    CharacterSet.Type::Replace:
+                        if not ReplaceList.Contains(DocumentCharacterSet."CharacterSet Code") then
+                            ReplaceList.Add(DocumentCharacterSet."CharacterSet Code");
+                end;
+            until DocumentCharacterSet.Next() = 0;
 
         if RemoveList.Count > 0 then
             foreach CharaterSetCode in RemoveList do begin
