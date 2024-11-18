@@ -48,4 +48,19 @@ page 50101 "Data Clean Subpage_EVAS"
             }
         }
     }
+    actions
+    {
+        area(Processing)
+        {
+            action(ShowLogEntries)
+            {
+                ApplicationArea = All;
+                Caption = 'Show Log', Comment = 'DAN = "Vis log"';
+                ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
+                Image = Log;
+                RunObject = page "Data Clean Log_EVAS";
+                RunPageLink = Code = field(Code), "Table No." = field("Table No."), "Field No." = field("Field No.");
+            }
+        }
+    }
 }
