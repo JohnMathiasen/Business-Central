@@ -51,6 +51,8 @@ page 50100 "Data Clean Document_EVAS"
             { }
             actionref(PostData; Post)
             { }
+            actionref(ShowLog; ShowLogEntries)
+            { }
         }
         area(Processing)
         {
@@ -88,7 +90,7 @@ page 50100 "Data Clean Document_EVAS"
         }
         area(Navigation)
         {
-            action(ShowLog)
+            action(ShowLogEntries)
             {
                 ApplicationArea = All;
                 Caption = 'Show Log', Comment = 'DAN = "Vis log"';
