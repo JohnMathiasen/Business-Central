@@ -12,6 +12,7 @@ table 50104 "Data Clean Log_EVAS"
         field(3; "Code"; Code[20])
         {
             Caption = 'Code', Comment = 'DAN="Kode"';
+            TableRelation = "Data Clean Header_EVAS"."Code";
         }
         field(4; "Table No."; Integer)
         {
@@ -22,6 +23,11 @@ table 50104 "Data Clean Log_EVAS"
         {
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
+        }
+        field(6; "Data Clean Group Code"; Code[10])
+        {
+            Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
+            TableRelation = "Data Clean Group_EVAS"."Code";
         }
         field(12; "Old Value"; Text[2048])
         {
@@ -66,7 +72,7 @@ table 50104 "Data Clean Log_EVAS"
         }
     }
 
-    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
+    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
     var
         DataCleanLog: Record "Data Clean Log_EVAS";
     begin
@@ -75,6 +81,7 @@ table 50104 "Data Clean Log_EVAS"
         DataCleanLog.Code := NewCode;
         DataCleanLog."Table No." := NewTableNo;
         DataCleanLog."Field No." := NewFieldNo;
+        DataCleanLog."Data Clean Group Code" := NewGroup;
         DataCleanLog."Old Value" := OldValue;
         DataCleanLog."New Value" := NewValue;
         DataCleanLog."SystemID Ref." := SystemIDRef;
@@ -89,5 +96,20 @@ table 50104 "Data Clean Log_EVAS"
             exit(DataCleanLog."Entry No." + 1)
         else
             exit(1);
+    end;
+
+    internal procedure ShowRecord()
+    var
+        PageManagement: Codeunit "Page Management";
+        RecRef: RecordRef;
+        NoRelatedRecordMsg: Label 'There are no related records to display.', Comment = 'DAN="Der er ingen relaterede poster at vise."';
+    begin
+        if "Entry No." = 0 then
+            exit;
+        RecRef.Open("Table No.");
+        RecRef.GetBySystemId("SystemID Ref.");
+
+        if not PageManagement.PageRun(RecRef.RecordId) then
+            Message(NoRelatedRecordMsg);
     end;
 }

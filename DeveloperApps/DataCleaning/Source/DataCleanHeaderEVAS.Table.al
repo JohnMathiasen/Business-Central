@@ -20,6 +20,11 @@ table 50100 "Data Clean Header_EVAS"
             Caption = 'Table No.', Comment = 'DAN="Tabelnr."';
             TableRelation = AllObjWithCaption."Object ID" where("Object Type" = const(Table));
         }
+        field(5; "Data Clean Group Code"; Code[10])
+        {
+            Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
+            TableRelation = "Data Clean Group_EVAS"."Code";
+        }
         field(10; Enabled; Boolean)
         {
             Caption = 'Enabled', Comment = 'DAN="Aktiv"';
