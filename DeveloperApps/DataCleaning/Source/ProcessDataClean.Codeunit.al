@@ -99,19 +99,19 @@ codeunit 50100 "Process Data Clean"
         Fieldref.SetFilter('>=%1', FromDT);
         if RecRef.FindSet(false) then
             repeat
-                CleanRecord(RecRef, DataCleanLine);
+                CleanRecord(RecRef, DataCleanHeader, DataCleanLine);
             until RecRef.Next() = 0;
     end;
 
-    local procedure CleanRecord(var RecRef: RecordRef; var DataCleanLine: Record "Data Clean Line_EVAS")
+    local procedure CleanRecord(var RecRef: RecordRef; DataCleanHeader: Record "Data Clean Header_EVAS"; var DataCleanLine: Record "Data Clean Line_EVAS")
     begin
         if DataCleanLine.FindSet() then
             repeat
-                Cleanfield(RecRef, DataCleanLine);
+                Cleanfield(RecRef, DataCleanHeader, DataCleanLine);
             until DataCleanLine.Next() = 0;
     end;
 
-    local procedure Cleanfield(var RecRef: RecordRef; DataCleanLine: Record "Data Clean Line_EVAS")
+    local procedure Cleanfield(var RecRef: RecordRef; DataCleanHeader: Record "Data Clean Header_EVAS"; DataCleanLine: Record "Data Clean Line_EVAS")
     var
         DocumentCharacterSet: Record "Document Character Set_EVAS";
         CharacterSet: Record CharacterSet_EVAS;
@@ -174,7 +174,7 @@ codeunit 50100 "Process Data Clean"
             NewValue := CheckCharacterSet(NewValue, DataCleanLine);
 
         if NewValue <> Value then
-            CreateLog(Value, NewValue, RecRef, DataCleanLine);
+            CreateLog(Value, NewValue, RecRef, DataCleanHeader, DataCleanLine);
     end;
 
     local procedure RemoveCharacters(Value: Text[2048]; DocumentCharacterSet: Record "Document Character Set_EVAS"): Text[2048]
@@ -227,7 +227,7 @@ codeunit 50100 "Process Data Clean"
         exit(NewValue);
     end;
 
-    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; DataCleanLine: Record "Data Clean Line_EVAS")
+    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; DataCleanHeader: Record "Data Clean Header_EVAS"; DataCleanLine: Record "Data Clean Line_EVAS")
     var
         DataCleanLog: Record "Data Clean Log_EVAS";
         FieldRef: FieldRef;
@@ -235,7 +235,7 @@ codeunit 50100 "Process Data Clean"
         if Oldvalue = NewValue then
             exit;
         FieldRef := RecRef.Field(RecRef.SystemIdNo);
-        DataCleanLog.InsertLogEntry(DataCleanLine.Code, DataCleanLine."Table No.", DataCleanLine."Field No.", OldValue, NewValue, FieldRef.Value);
+        DataCleanLog.InsertLogEntry(DataCleanLine.Code, DataCleanLine."Table No.", DataCleanLine."Field No.", DataCleanHeader."Data Clean Group Code", OldValue, NewValue, FieldRef.Value);
     end;
 
     local procedure GetCombinedKey(var DataCleanLine: Record "Data Clean Line_EVAS") KeyValue: Code[50]

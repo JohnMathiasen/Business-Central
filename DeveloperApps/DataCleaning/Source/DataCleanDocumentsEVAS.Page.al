@@ -26,6 +26,14 @@ page 50102 "Data Clean Documents_EVAS"
                 {
                     ToolTip = 'Specifies the value of the Table No. field.', Comment = 'DAN="Tabelnr."';
                 }
+                field("Data Clean Group"; Rec."Data Clean Group Code")
+                {
+                    ToolTip = 'Specifies the value of the Data Clean Group field.', Comment = 'DAN="Datavaskgruppe"';
+                }
+                field(Enabled; Rec.Enabled)
+                {
+                    ToolTip = 'Specifies the value of the Enabled field.', Comment = 'DAN="Aktiv"';
+                }
             }
         }
     }

@@ -23,6 +23,12 @@ table 50104 "Data Clean Log_EVAS"
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
         }
+        field(6; "Data Clean Group Code"; Code[10])
+        {
+            Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
+            TableRelation = "Data Clean Group_EVAS"."Code";
+        }
+
         field(12; "Old Value"; Text[2048])
         {
             Caption = 'Old Value', Comment = 'DAN="Gammel værdi"';
@@ -66,7 +72,7 @@ table 50104 "Data Clean Log_EVAS"
         }
     }
 
-    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
+    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
     var
         DataCleanLog: Record "Data Clean Log_EVAS";
     begin
@@ -75,6 +81,7 @@ table 50104 "Data Clean Log_EVAS"
         DataCleanLog.Code := NewCode;
         DataCleanLog."Table No." := NewTableNo;
         DataCleanLog."Field No." := NewFieldNo;
+        DataCleanLog."Data Clean Group Code" := NewGroup;
         DataCleanLog."Old Value" := OldValue;
         DataCleanLog."New Value" := NewValue;
         DataCleanLog."SystemID Ref." := SystemIDRef;

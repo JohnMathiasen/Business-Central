@@ -7,5 +7,6 @@ permissionset 50100 "DataClean_ADM_EVAS"
         tabledata "Data Clean Line_EVAS" = RMID,
         tabledata "CharacterSet_EVAS" = RMID,
         tabledata "Document Character Set_EVAS" = RMID,
-        tabledata "Data Clean Log_EVAS" = RMID;
+        tabledata "Data Clean Log_EVAS" = RMID,
+        tabledata "Data Clean Group_EVAS" = RMID;
 }
