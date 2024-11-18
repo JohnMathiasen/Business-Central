@@ -57,6 +57,8 @@ codeunit 50100 "Process Data Clean"
         RecRef: RecordRef;
         FieldRef: FieldRef;
         OldSystemId: Guid;
+        SaveValue: Boolean;
+        CurrentValue: Text[2048];
     begin
         DataCleanLog.Copy(NewDataCleanLog);
         if DataCleanLog.IsEmpty then
@@ -66,20 +68,27 @@ codeunit 50100 "Process Data Clean"
         DataCleanLog.SetRange(Blocked, false);
         if DataCleanLog.FindSet(true) then
             repeat
+                SaveValue := false;
                 if (RecRef.Number = 0) or (RecRef.Number <> DataCleanLog."Table No.") then begin
                     if RecRef.Number <> 0 then begin
-                        RecRef.Modify(false);
+                        if SaveValue then
+                            RecRef.Modify(false);
                         RecRef.Close();
                     end;
                     RecRef.Open(DataCleanLog."Table No.");
                     RecRef.GetBySystemId(DataCleanLog."SystemID Ref.");
                 end else
                     if OldSystemId <> DataCleanLog."SystemID Ref." then begin
-                        RecRef.Modify(false);
+                        if SaveValue then
+                            RecRef.Modify(false);
                         RecRef.GetBySystemId(DataCleanLog."SystemID Ref.");
                     end else begin
                         FieldRef := RecRef.Field(DataCleanLog."Field No.");
-                        FieldRef.Value := DataCleanLog."New Value";
+                        CurrentValue := FieldRef.Value;
+                        if CurrentValue <> DataCleanLog."New Value" then begin
+                            FieldRef.Value := DataCleanLog."New Value";
+                            SaveValue := true;
+                        end;
                     end;
                 OldSystemId := DataCleanLog."SystemID Ref.";
             until DataCleanLog.Next() = 0;
