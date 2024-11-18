@@ -12,6 +12,7 @@ table 50104 "Data Clean Log_EVAS"
         field(3; "Code"; Code[20])
         {
             Caption = 'Code', Comment = 'DAN="Kode"';
+            TableRelation = "Data Clean Header_EVAS"."Code";
         }
         field(4; "Table No."; Integer)
         {
@@ -95,5 +96,20 @@ table 50104 "Data Clean Log_EVAS"
             exit(DataCleanLog."Entry No." + 1)
         else
             exit(1);
+    end;
+
+    internal procedure ShowRecord()
+    var
+        PageManagement: Codeunit "Page Management";
+        RecRef: RecordRef;
+        NoRelatedRecordMsg: Label 'There are no related records to display.', Comment = 'DAN="Der er ingen relaterede poster at vise."';
+    begin
+        if "Entry No." = 0 then
+            exit;
+        RecRef.Open("Table No.");
+        RecRef.GetBySystemId("SystemID Ref.");
+
+        if not PageManagement.PageRun(RecRef.RecordId) then
+            Message(NoRelatedRecordMsg);
     end;
 }

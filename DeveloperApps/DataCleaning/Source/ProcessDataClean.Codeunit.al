@@ -58,7 +58,6 @@ codeunit 50100 "Process Data Clean"
         FieldRef: FieldRef;
         OldSystemId: Guid;
         SaveValue: Boolean;
-        CurrentValue: Text[2048];
     begin
         DataCleanLog.Copy(NewDataCleanLog);
         if DataCleanLog.IsEmpty then
@@ -72,7 +71,7 @@ codeunit 50100 "Process Data Clean"
                 if (RecRef.Number = 0) or (RecRef.Number <> DataCleanLog."Table No.") then begin
                     if RecRef.Number <> 0 then begin
                         if SaveValue then
-                            RecRef.Modify(false);
+                            UpdateValue(DataCleanLog, RecRef);
                         RecRef.Close();
                     end;
                     RecRef.Open(DataCleanLog."Table No.");
@@ -84,14 +83,15 @@ codeunit 50100 "Process Data Clean"
                         RecRef.GetBySystemId(DataCleanLog."SystemID Ref.");
                     end else begin
                         FieldRef := RecRef.Field(DataCleanLog."Field No.");
-                        CurrentValue := FieldRef.Value;
-                        if CurrentValue <> DataCleanLog."New Value" then begin
-                            FieldRef.Value := DataCleanLog."New Value";
-                            SaveValue := true;
-                        end;
+                        SaveValue := IsValueChanged(DataCleanLog, FieldRef);
                     end;
                 OldSystemId := DataCleanLog."SystemID Ref.";
             until DataCleanLog.Next() = 0;
+        FieldRef := RecRef.Field(DataCleanLog."Field No.");
+        SaveValue := IsValueChanged(DataCleanLog, FieldRef);
+        if SaveValue then
+            UpdateValue(DataCleanLog, RecRef);
+        RecRef.Close();
     end;
 
     internal procedure CleanDataTable(var NewDataCleanHeader: Record "Data Clean Header_EVAS"; FromDT: DateTime)
@@ -257,5 +257,25 @@ codeunit 50100 "Process Data Clean"
         CombinedKeyLbl: Label 'T%1F%2', Comment = 'DAN="T%1F%2"';
     begin
         KeyValue := StrSubstNo(CombinedKeyLbl, DataCleanLine."Table No.", DataCleanLine."Field No.");
+    end;
+
+    local procedure IsValueChanged(DataCleanLog: Record "Data Clean Log_EVAS"; var FieldRef: FieldRef): Boolean
+    var
+        CurrentValue: Text[2048];
+    begin
+        CurrentValue := FieldRef.Value;
+        if CurrentValue <> DataCleanLog."New Value" then begin
+            FieldRef.Value := DataCleanLog."New Value";
+            exit(true);
+        end;
+        exit(false);
+    end;
+
+    local procedure UpdateValue(DataCleanLog: Record "Data Clean Log_EVAS"; var RecRef: RecordRef)
+    begin
+        RecRef.Modify(false);
+        DataCleanLog.Transferred := true;
+        DataCleanLog."Transferred DT" := CurrentDateTime;
+        DataCleanLog.Modify(true);
     end;
 }

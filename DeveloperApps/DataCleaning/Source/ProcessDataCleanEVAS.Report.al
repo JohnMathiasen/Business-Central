@@ -17,25 +17,6 @@ report 50100 "Process Data Clean_EVAS"
             end;
         }
     }
-    requestpage
-    {
-        layout
-        {
-            area(Content)
-            {
-                group(GroupName)
-                {
-                }
-            }
-        }
-        actions
-        {
-            area(Processing)
-            {
-            }
-        }
-    }
-
 
     local procedure ProcessCleanData(DataCleanHeader: Record "Data Clean Header_EVAS")
     var

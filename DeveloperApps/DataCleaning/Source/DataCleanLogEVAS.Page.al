@@ -5,6 +5,7 @@ page 50105 "Data Clean Log_EVAS"
     PageType = List;
     SourceTable = "Data Clean Log_EVAS";
     UsageCategory = History;
+    Editable = false;
 
     layout
     {
@@ -48,6 +49,24 @@ page 50105 "Data Clean Log_EVAS"
                 {
                     ToolTip = 'Specifies the value of the Entry No. field.', Comment = '%';
                 }
+            }
+        }
+    }
+    actions
+    {
+        area(Navigation)
+        {
+            action(OpenRelatedRecord)
+            {
+                ApplicationArea = Invoicing, Suite;
+                Caption = 'Open Related Record', Comment = 'DAN="Åbn relateret post"';
+                Image = View;
+                ToolTip = 'Open the record that is associated with this activity.', Comment = 'DAN="Åbn posten, der er relateret til denne aktivitet"';
+
+                trigger OnAction()
+                begin
+                    Rec.ShowRecord();
+                end;
             }
         }
     }

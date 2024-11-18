@@ -36,6 +36,7 @@ page 50100 "Data Clean Document_EVAS"
             }
             part(Lines; "Data Clean Subpage_EVAS")
             {
+                Caption = 'Fields', Comment = 'DAN="Felter"';
                 SubPageLink = Code = field("Code"), "Table No." = field("Table No.");
             }
         }
@@ -77,11 +78,11 @@ page 50100 "Data Clean Document_EVAS"
 
                 trigger OnAction()
                 var
-                    DataCleanHeader: Record "Data Clean Header_EVAS";
+                    DataCleanLog: Record "Data Clean Log_EVAS";
                 begin
-                    DataCleanHeader.SetRange(Code, Rec.Code);
-                    DataCleanHeader.SetRange("Table No.", Rec."Table No.");
-                    Report.Run(Report::"Post Data Clean_EVAS", true, false, DataCleanHeader);
+                    DataCleanLog.SetRange(Code, Rec.Code);
+                    DataCleanLog.SetRange("Table No.", Rec."Table No.");
+                    Report.Run(Report::"Post Data Clean_EVAS", true, false, DataCleanLog);
                 end;
             }
         }
