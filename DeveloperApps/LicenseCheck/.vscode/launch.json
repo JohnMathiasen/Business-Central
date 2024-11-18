@@ -22,8 +22,8 @@
         {
             "type": "al",
             "request": "launch",
-            "name": "Dev CACBC-22-CU2-DK Container",
-            "server": "http://CACBC-22-CU2-DK",
+            "name": "Dev CACBC-24-CU1-DK Container",
+            "server": "http://CACBC-24-CU1-DK",
             "serverInstance": "BC",
             "tenant": "default",
             "authentication": "UserPassword",
@@ -41,8 +41,8 @@
         {
             "type": "al",
             "request": "launch",
-            "name": "Dev CACBC-20-CU5-DK Container",
-            "server": "http://CACBC-20-CU5-DK",
+            "name": "Dev CACBC-24-CU1-DK Container",
+            "server": "http://CACBC-24-CU1-DK",
             "serverInstance": "BC",
             "tenant": "default",
             "authentication": "UserPassword",
@@ -61,8 +61,8 @@
         {
             "type": "al",
             "request": "attach",
-            "name": "Attach Dev CACBC-20-CU5-DK Container",
-            "server": "http://CACBC-20-CU5-DK",
+            "name": "Attach Dev CACBC-24-CU1-DK Container",
+            "server": "http://CACBC-24-CU1-DK",
             "serverInstance": "BC",
             "tenant": "default",
             "authentication": "UserPassword",
