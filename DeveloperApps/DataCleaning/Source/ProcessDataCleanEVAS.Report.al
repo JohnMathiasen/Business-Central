@@ -9,7 +9,7 @@ report 50100 "Process Data Clean_EVAS"
         dataitem(DataCleanHeader; "Data Clean Header_EVAS")
         {
             DataItemTableView = sorting(Code);
-            RequestFilterFields = Code;
+            RequestFilterFields = Code, "Data Clean Group Code";
 
             trigger OnAfterGetRecord()
             begin

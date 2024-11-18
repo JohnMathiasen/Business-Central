@@ -85,22 +85,27 @@ codeunit 50100 "Process Data Clean"
             until DataCleanLog.Next() = 0;
     end;
 
-    internal procedure CleanDataTable(DataCleanHeader: Record "Data Clean Header_EVAS"; FromDT: DateTime)
+    internal procedure CleanDataTable(var NewDataCleanHeader: Record "Data Clean Header_EVAS"; FromDT: DateTime)
     var
+        DataCleanHeader: Record "Data Clean Header_EVAS";
         DataCleanLine: Record "Data Clean Line_EVAS";
         RecRef: RecordRef;
         Fieldref: FieldRef;
     begin
-        DataCleanLine.SetRange("Code", DataCleanHeader.Code);
-        DataCleanLine.SetRange("Table No.", DataCleanHeader."Table No.");
-
-        RecRef.Open(DataCleanHeader."Table No.");
-        Fieldref := RecRef.Field(2000000003);
-        Fieldref.SetFilter('>=%1', FromDT);
-        if RecRef.FindSet(false) then
+        DataCleanHeader.Copy(NewDataCleanHeader);
+        if DataCleanHeader.FindSet() then
             repeat
-                CleanRecord(RecRef, DataCleanHeader, DataCleanLine);
-            until RecRef.Next() = 0;
+                DataCleanLine.SetRange("Code", DataCleanHeader.Code);
+                DataCleanLine.SetRange("Table No.", DataCleanHeader."Table No.");
+
+                RecRef.Open(DataCleanHeader."Table No.");
+                Fieldref := RecRef.Field(2000000003);
+                Fieldref.SetFilter('>=%1', FromDT);
+                if RecRef.FindSet(false) then
+                    repeat
+                        CleanRecord(RecRef, DataCleanHeader, DataCleanLine);
+                    until RecRef.Next() = 0;
+            until DataCleanHeader.Next() = 0;
     end;
 
     local procedure CleanRecord(var RecRef: RecordRef; DataCleanHeader: Record "Data Clean Header_EVAS"; var DataCleanLine: Record "Data Clean Line_EVAS")
