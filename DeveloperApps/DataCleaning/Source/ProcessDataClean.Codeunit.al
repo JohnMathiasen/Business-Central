@@ -106,14 +106,15 @@ codeunit 50100 "Process Data Clean"
             repeat
                 DataCleanLine.SetRange("Code", DataCleanHeader.Code);
                 DataCleanLine.SetRange("Table No.", DataCleanHeader."Table No.");
-
-                RecRef.Open(DataCleanHeader."Table No.");
-                Fieldref := RecRef.Field(2000000003);
-                Fieldref.SetFilter('>=%1', FromDT);
-                if RecRef.FindSet(false) then
-                    repeat
-                        CleanRecord(RecRef, DataCleanHeader, DataCleanLine);
-                    until RecRef.Next() = 0;
+                if not DataCleanLine.IsEmpty then begin
+                    RecRef.Open(DataCleanHeader."Table No.");
+                    Fieldref := RecRef.Field(2000000003);
+                    Fieldref.SetFilter('>=%1', FromDT);
+                    if RecRef.FindSet(false) then
+                        repeat
+                            CleanRecord(RecRef, DataCleanHeader, DataCleanLine);
+                        until RecRef.Next() = 0;
+                end;
             until DataCleanHeader.Next() = 0;
     end;
 

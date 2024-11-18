@@ -19,10 +19,12 @@ table 50101 "Data Clean Line_EVAS"
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
         }
-        field(4; "Characterset Code"; Code[20])
+        field(10; "Character Set exist"; Boolean)
         {
-            Caption = 'Characterset Code', Comment = 'DAN="Tegnsæt Kode"';
-            TableRelation = CharacterSet_EVAS.Code;
+            Caption = 'Character Set exist', Comment = 'DAN="Tegnsæt eksisterer"';
+            FieldClass = FlowField;
+            CalcFormula = exist("Document Character Set_EVAS" where(Code = field(Code), "Table No." = field("Table No."), "Field No." = field("Field No.")));
+            Editable = false;
         }
     }
     keys

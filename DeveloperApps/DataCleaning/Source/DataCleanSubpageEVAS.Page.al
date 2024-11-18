@@ -4,6 +4,7 @@ page 50101 "Data Clean Subpage_EVAS"
     Caption = 'Data Clean Subpage', Comment = 'DAN="Datavask Subpage"';
     PageType = ListPart;
     SourceTable = "Data Clean Line_EVAS";
+    DelayedInsert = true;
 
     layout
     {
@@ -20,6 +21,7 @@ page 50101 "Data Clean Subpage_EVAS"
                         Field: Record Field;
                     begin
                         Field.SetRange(TableNo, Rec."Table No.");
+                        Field.SetFilter(Type, '%1|%2', Field.Type::Text, Field.Type::Code);
                         if Page.RunModal(Page::"Fields Lookup", Field) = Action::LookupOK then
                             Text := format(Field."No.");
                         exit(Text <> '');
@@ -43,6 +45,21 @@ page 50101 "Data Clean Subpage_EVAS"
                         DocumentCharacterSetsPage.Run();
                     end;
                 }
+            }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(ShowLogEntries)
+            {
+                ApplicationArea = All;
+                Caption = 'Show Log', Comment = 'DAN = "Vis log"';
+                ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
+                Image = Log;
+                RunObject = page "Data Clean Log_EVAS";
+                RunPageLink = Code = field(Code), "Table No." = field("Table No."), "Field No." = field("Field No.");
             }
         }
     }
