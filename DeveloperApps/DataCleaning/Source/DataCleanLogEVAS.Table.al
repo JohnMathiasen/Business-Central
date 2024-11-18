@@ -28,7 +28,6 @@ table 50104 "Data Clean Log_EVAS"
             Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
             TableRelation = "Data Clean Group_EVAS"."Code";
         }
-
         field(12; "Old Value"; Text[2048])
         {
             Caption = 'Old Value', Comment = 'DAN="Gammel værdi"';

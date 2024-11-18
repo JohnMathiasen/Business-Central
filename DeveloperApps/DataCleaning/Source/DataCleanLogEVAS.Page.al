@@ -24,6 +24,10 @@ page 50105 "Data Clean Log_EVAS"
                 {
                     ToolTip = 'Specifies the value of the Field No. field.', Comment = '%DAN="Felt nr."';
                 }
+                field("Data Clean Group Code"; Rec."Data Clean Group Code")
+                {
+                    ToolTip = 'Specifies the value of the Data Clean Group Code field.', Comment = 'DAN="Datavaskgruppekode"';
+                }
                 field("Old Value"; Rec."Old Value")
                 {
                     ToolTip = 'Specifies the value of the Old Value field.', Comment = '%DAN="Gammel værdi"';
