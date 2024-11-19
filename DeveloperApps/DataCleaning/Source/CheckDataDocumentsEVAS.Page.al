@@ -1,12 +1,12 @@
-page 50102 "Data Clean Documents_EVAS"
+page 50102 "Check Data Documents_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Data Clean Documents', Comment = 'DAN="Datavaskdokumenter"';
+    Caption = 'Check Data Documents', Comment = 'DAN="Datakontroldokumenter"';
     PageType = List;
-    SourceTable = "Data Clean Header_EVAS";
+    SourceTable = "Chack Data Header_EVAS";
     UsageCategory = Lists;
     Editable = false;
-    CardPageId = "Data Clean Document_EVAS";
+    CardPageId = "Check Data Document_EVAS";
 
     layout
     {
@@ -58,11 +58,11 @@ page 50102 "Data Clean Documents_EVAS"
                 Image = Process;
                 trigger OnAction()
                 var
-                    DataCleanHeader: Record "Data Clean Header_EVAS";
+                    DataCleanHeader: Record "Chack Data Header_EVAS";
                 begin
                     DataCleanHeader.SetRange(Code, Rec.Code);
                     DataCleanHeader.SetRange("Table No.", Rec."Table No.");
-                    Report.Run(Report::"Process Data Clean_EVAS", true, false, DataCleanHeader);
+                    Report.Run(Report::"Process Data Check_EVAS", true, false, DataCleanHeader);
                 end;
             }
             action(Post)
@@ -74,7 +74,7 @@ page 50102 "Data Clean Documents_EVAS"
 
                 trigger OnAction()
                 var
-                    DataCleanLog: Record "Data Clean Log_EVAS";
+                    DataCleanLog: Record "Check Data Log_EVAS";
                 begin
                     DataCleanLog.SetRange(Code, Rec.Code);
                     DataCleanLog.SetRange("Table No.", Rec."Table No.");
@@ -90,7 +90,7 @@ page 50102 "Data Clean Documents_EVAS"
                 Caption = 'Show Log', Comment = 'DAN = "Vis log"';
                 ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
                 Image = Log;
-                RunObject = page "Data Clean Log_EVAS";
+                RunObject = page "Check Data Log_EVAS";
                 RunPageLink = Code = field(Code), "Table No." = field("Table No.");
             }
         }

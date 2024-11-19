@@ -1,9 +1,9 @@
-table 50105 "Data Clean Group_EVAS"
+table 50105 "Check Data Group_EVAS"
 {
-    Caption = 'Data Clean Group', Comment = 'DAN="Datavask Gruppe"';
+    Caption = 'Check Data Group', Comment = 'DAN="Datakontrolgruppe"';
     DataClassification = CustomerContent;
-    LookupPageId = "Data Clean Groups_EVAS";
-    DrillDownPageId = "Data Clean Groups_EVAS";
+    LookupPageId = "Check Data Groups_EVAS";
+    DrillDownPageId = "Check Data Groups_EVAS";
 
     fields
     {

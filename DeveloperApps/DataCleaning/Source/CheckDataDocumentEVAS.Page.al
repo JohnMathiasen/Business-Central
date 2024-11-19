@@ -1,9 +1,9 @@
-page 50100 "Data Clean Document_EVAS"
+page 50100 "Check Data Document_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Data Clean Document', Comment = 'DAN="Datavaskdokument"';
+    Caption = 'Check Data Document', Comment = 'DAN="Datakontroldokument"';
     PageType = Document;
-    SourceTable = "Data Clean Header_EVAS";
+    SourceTable = "Chack Data Header_EVAS";
     UsageCategory = None;
     layout
     {
@@ -34,7 +34,7 @@ page 50100 "Data Clean Document_EVAS"
                     ToolTip = 'Specifies the value of the Enabled field.', Comment = 'DAN="Aktiv"';
                 }
             }
-            part(Lines; "Data Clean Subpage_EVAS")
+            part(Lines; "Check Data Subpage_EVAS")
             {
                 Caption = 'Fields', Comment = 'DAN="Felter"';
                 SubPageLink = Code = field("Code"), "Table No." = field("Table No.");
@@ -64,11 +64,11 @@ page 50100 "Data Clean Document_EVAS"
                 Image = Process;
                 trigger OnAction()
                 var
-                    DataCleanHeader: Record "Data Clean Header_EVAS";
+                    DataCleanHeader: Record "Chack Data Header_EVAS";
                 begin
                     DataCleanHeader.SetRange(Code, Rec.Code);
                     DataCleanHeader.SetRange("Table No.", Rec."Table No.");
-                    Report.Run(Report::"Process Data Clean_EVAS", true, false, DataCleanHeader);
+                    Report.Run(Report::"Process Data Check_EVAS", true, false, DataCleanHeader);
                 end;
             }
             action(Post)
@@ -80,7 +80,7 @@ page 50100 "Data Clean Document_EVAS"
 
                 trigger OnAction()
                 var
-                    DataCleanLog: Record "Data Clean Log_EVAS";
+                    DataCleanLog: Record "Check Data Log_EVAS";
                 begin
                     DataCleanLog.SetRange(Code, Rec.Code);
                     DataCleanLog.SetRange("Table No.", Rec."Table No.");
@@ -96,7 +96,7 @@ page 50100 "Data Clean Document_EVAS"
                 Caption = 'Show Log', Comment = 'DAN = "Vis log"';
                 ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
                 Image = Log;
-                RunObject = page "Data Clean Log_EVAS";
+                RunObject = page "Check Data Log_EVAS";
                 RunPageLink = Code = field(Code), "Table No." = field("Table No.");
             }
         }

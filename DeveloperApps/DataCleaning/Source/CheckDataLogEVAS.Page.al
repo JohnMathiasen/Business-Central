@@ -1,9 +1,9 @@
-page 50105 "Data Clean Log_EVAS"
+page 50105 "Check Data Log_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Data Clean Log', Comment = 'DAN="Datavask log"';
+    Caption = 'Check Data Log', Comment = 'DAN="Data kontrol log"';
     PageType = List;
-    SourceTable = "Data Clean Log_EVAS";
+    SourceTable = "Check Data Log_EVAS";
     UsageCategory = History;
     Editable = false;
 

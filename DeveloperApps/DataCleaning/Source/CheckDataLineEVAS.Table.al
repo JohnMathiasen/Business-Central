@@ -1,6 +1,6 @@
-table 50101 "Data Clean Line_EVAS"
+table 50101 "Check Data Line_EVAS"
 {
-    Caption = 'Data Clean  Line', Comment = 'DAN="Datavasklinje"';
+    Caption = 'Check Data Line', Comment = 'DAN="Datakontrollinje"';
     DataClassification = CustomerContent;
 
     fields

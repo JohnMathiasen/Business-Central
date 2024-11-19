@@ -1,9 +1,9 @@
-page 50101 "Data Clean Subpage_EVAS"
+page 50101 "Check Data Subpage_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Data Clean Subpage', Comment = 'DAN="Datavask Subpage"';
+    Caption = 'Check Data Subpage', Comment = 'DAN="Datakontrol Subpage"';
     PageType = ListPart;
-    SourceTable = "Data Clean Line_EVAS";
+    SourceTable = "Check Data Line_EVAS";
     DelayedInsert = true;
 
     layout
@@ -18,7 +18,7 @@ page 50101 "Data Clean Subpage_EVAS"
                     LookupPageId = "Fields Lookup";
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Data Clean Header_EVAS";
+                        DataCleanHeader: Record "Chack Data Header_EVAS";
                         Field: Record Field;
                     begin
                         DataCleanHeader.get(Rec.Code);
@@ -61,7 +61,7 @@ page 50101 "Data Clean Subpage_EVAS"
                 Caption = 'Show Log', Comment = 'DAN = "Vis log"';
                 ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
                 Image = Log;
-                RunObject = page "Data Clean Log_EVAS";
+                RunObject = page "Check Data Log_EVAS";
                 RunPageLink = Code = field(Code), "Table No." = field("Table No."), "Field No." = field("Field No.");
             }
         }

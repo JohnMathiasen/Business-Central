@@ -34,7 +34,7 @@ page 50104 "Document Character Sets_EVAS"
 
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Data Clean Header_EVAS";
+                        DataCleanHeader: Record "Chack Data Header_EVAS";
                         CharacterSet: Record CharacterSet_EVAS;
                     begin
                         DataCleanHeader.Get(Rec.Code);
