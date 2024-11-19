@@ -1,6 +1,6 @@
-table 50104 "Data Clean Log_EVAS"
+table 50104 "Check Data Log_EVAS"
 {
-    Caption = 'Data Clean Log', Comment = 'DAN="Datavask log"';
+    Caption = 'Check Data Log', Comment = 'DAN="Data kontrol log"';
     DataClassification = CustomerContent;
 
     fields
@@ -12,7 +12,7 @@ table 50104 "Data Clean Log_EVAS"
         field(3; "Code"; Code[20])
         {
             Caption = 'Code', Comment = 'DAN="Kode"';
-            TableRelation = "Data Clean Header_EVAS"."Code";
+            TableRelation = "Chack Data Header_EVAS"."Code";
         }
         field(4; "Table No."; Integer)
         {
@@ -27,7 +27,7 @@ table 50104 "Data Clean Log_EVAS"
         field(6; "Data Clean Group Code"; Code[10])
         {
             Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
-            TableRelation = "Data Clean Group_EVAS"."Code";
+            TableRelation = "Check Data Group_EVAS"."Code";
         }
         field(12; "Old Value"; Text[2048])
         {
@@ -74,7 +74,7 @@ table 50104 "Data Clean Log_EVAS"
 
     internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
     var
-        DataCleanLog: Record "Data Clean Log_EVAS";
+        DataCleanLog: Record "Check Data Log_EVAS";
     begin
         DataCleanLog.Init();
         DataCleanLog."Entry No." := GetNextEntryNo();
@@ -90,7 +90,7 @@ table 50104 "Data Clean Log_EVAS"
 
     local procedure GetNextEntryNo(): Integer
     var
-        DataCleanLog: Record "Data Clean Log_EVAS";
+        DataCleanLog: Record "Check Data Log_EVAS";
     begin
         if DataCleanLog.FindLast() then
             exit(DataCleanLog."Entry No." + 1)

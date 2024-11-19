@@ -6,7 +6,7 @@ report 50101 "Post Data Clean_EVAS"
     ProcessingOnly = true;
     dataset
     {
-        dataitem(DataCleanLog; "Data Clean Log_EVAS")
+        dataitem(DataCleanLog; "Check Data Log_EVAS")
         {
             DataItemTableView = sorting(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.") where(Transferred = const(false), Blocked = const(false));
             RequestFilterFields = Code, "Table No.", "Field No.";
@@ -14,7 +14,7 @@ report 50101 "Post Data Clean_EVAS"
 
             trigger OnAfterGetRecord()
             var
-                ProcessDataClean: Codeunit "Process Data Clean";
+                ProcessDataClean: Codeunit "Process Data Check";
             begin
                 ProcessDataClean.PostDataCleaning(DataCleanLog);
             end;

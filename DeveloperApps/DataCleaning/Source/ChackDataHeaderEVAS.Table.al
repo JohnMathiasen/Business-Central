@@ -1,9 +1,9 @@
-table 50100 "Data Clean Header_EVAS"
+table 50100 "Chack Data Header_EVAS"
 {
-    Caption = 'Data Clean Header', Comment = 'DAN="Datavaskhoved"';
+    Caption = 'Check Data Header', Comment = 'DAN="Datakontrolhoved"';
     DataClassification = CustomerContent;
-    LookupPageId = "Data Clean Documents_EVAS";
-    DrillDownPageId = "Data Clean Documents_EVAS";
+    LookupPageId = "Check Data Documents_EVAS";
+    DrillDownPageId = "Check Data Documents_EVAS";
 
     fields
     {
@@ -23,7 +23,11 @@ table 50100 "Data Clean Header_EVAS"
         field(5; "Data Clean Group Code"; Code[10])
         {
             Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
-            TableRelation = "Data Clean Group_EVAS"."Code";
+            TableRelation = "Check Data Group_EVAS"."Code";
+        }
+        field(7; Type; Enum "Data Check Type_EVAS")
+        {
+            Caption = 'Type', Comment = 'DAN="Type"';
         }
         field(10; Enabled; Boolean)
         {

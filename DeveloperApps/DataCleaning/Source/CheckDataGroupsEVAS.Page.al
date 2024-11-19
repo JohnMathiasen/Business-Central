@@ -1,9 +1,9 @@
-page 50107 "Data Clean Groups_EVAS"
+page 50107 "Check Data Groups_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Data Clean Groups', Comment = 'DAN="Datavask Grupper"';
+    Caption = 'Check Data Groups', Comment = 'DAN="Datakontrolgrupper"';
     PageType = List;
-    SourceTable = "Data Clean Group_EVAS";
+    SourceTable = "Check Data Group_EVAS";
     UsageCategory = Lists;
 
     layout
