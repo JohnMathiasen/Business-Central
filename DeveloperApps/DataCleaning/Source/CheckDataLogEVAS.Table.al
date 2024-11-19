@@ -24,10 +24,14 @@ table 50104 "Check Data Log_EVAS"
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
         }
-        field(6; "Data Clean Group Code"; Code[10])
+        field(6; "Check Data Group Code"; Code[10])
         {
-            Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
+            Caption = 'Check Data Group Code', Comment = 'DAN="Datakontrolgruppekode"';
             TableRelation = "Check Data Group_EVAS"."Code";
+        }
+        field(7; Type; Enum "Check Data Type_EVAS")
+        {
+            Caption = 'Type', Comment = 'DAN="Type"';
         }
         field(12; "Old Value"; Text[2048])
         {
@@ -48,6 +52,10 @@ table 50104 "Check Data Log_EVAS"
         field(16; "Transferred DT"; DateTime)
         {
             Caption = 'Transferred Datetime', Comment = 'DAN="Overført dato"';
+        }
+        field(17; "Invalid Characters"; Text[2048])
+        {
+            Caption = 'Invalid Characters', Comment = 'DAN="Ugyldige tegn"';
         }
         field(18; Blocked; Boolean)
         {
@@ -72,28 +80,34 @@ table 50104 "Check Data Log_EVAS"
         }
     }
 
-    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
+    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; NewType: Enum "Check Data Type_EVAS"; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
     begin
-        DataCleanLog.Init();
-        DataCleanLog."Entry No." := GetNextEntryNo();
-        DataCleanLog.Code := NewCode;
-        DataCleanLog."Table No." := NewTableNo;
-        DataCleanLog."Field No." := NewFieldNo;
-        DataCleanLog."Data Clean Group Code" := NewGroup;
-        DataCleanLog."Old Value" := OldValue;
-        DataCleanLog."New Value" := NewValue;
-        DataCleanLog."SystemID Ref." := SystemIDRef;
-        DataCleanLog.Insert(true);
+        CheckDataLog.Init();
+        CheckDataLog."Entry No." := GetNextEntryNo();
+        CheckDataLog.Code := NewCode;
+        CheckDataLog."Table No." := NewTableNo;
+        CheckDataLog."Field No." := NewFieldNo;
+        CheckDataLog."Check Data Group Code" := NewGroup;
+        CheckDataLog.Type := NewType;
+        CheckDataLog."Old Value" := OldValue;
+        case CheckDataLog.Type of
+            CheckDataLog.Type::Clean:
+                CheckDataLog."New Value" := NewValue;
+            CheckDataLog.Type::Check:
+                CheckDataLog."Invalid Characters" := NewValue;
+        end;
+        CheckDataLog."SystemID Ref." := SystemIDRef;
+        CheckDataLog.Insert(true);
     end;
 
     local procedure GetNextEntryNo(): Integer
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
     begin
-        if DataCleanLog.FindLast() then
-            exit(DataCleanLog."Entry No." + 1)
+        if CheckDataLog.FindLast() then
+            exit(CheckDataLog."Entry No." + 1)
         else
             exit(1);
     end;
