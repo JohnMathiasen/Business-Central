@@ -10,133 +10,133 @@ codeunit 50100 "Process Data Check"
     var
         CombinedValidCharacterSet: Dictionary of [Code[50], Text];
 
-    internal procedure FindDataForCleaning(var DataCleanHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
+    internal procedure FindDataForCleaning(var CheckDataHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
     begin
-        if not DataCleanHeader.Enabled then
+        if not CheckDataHeader.Enabled then
             exit;
-        CheckDataTable(DataCleanHeader, FromDT);
+        CheckDataTable(CheckDataHeader, FromDT);
     end;
 
-    internal procedure PostDataCleaning(DataCleanHeader: Record "Check Data Header_EVAS")
+    internal procedure PostDataCleaning(CheckDataHeader: Record "Check Data Header_EVAS")
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
     begin
-        DataCleanLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
-        DataCleanLog.SetRange(Code, DataCleanHeader.Code);
-        DataCleanLog.SetRange("Table No.", DataCleanHeader."Table No.");
-        if DataCleanLog.IsEmpty then
+        CheckDataLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
+        CheckDataLog.SetRange(Code, CheckDataHeader.Code);
+        CheckDataLog.SetRange("Table No.", CheckDataHeader."Table No.");
+        if CheckDataLog.IsEmpty then
             exit;
-        DataCleanLog.FindFirst();
-        PostDataCleaning(DataCleanLog);
+        CheckDataLog.FindFirst();
+        PostDataCleaning(CheckDataLog);
     end;
 
-    internal procedure PostDataCleaning(DataCleanLine: Record "Check Data Line_EVAS")
+    internal procedure PostDataCleaning(CheckDataLine: Record "Check Data Line_EVAS")
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
     begin
-        DataCleanLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
-        DataCleanLog.SetRange(Code, DataCleanLine.Code);
-        DataCleanLog.SetRange("Table No.", DataCleanLine."Table No.");
-        DataCleanLog.SetRange("Field No.", DataCleanLine."Field No.");
-        if DataCleanLog.IsEmpty then
+        CheckDataLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
+        CheckDataLog.SetRange(Code, CheckDataLine.Code);
+        CheckDataLog.SetRange("Table No.", CheckDataLine."Table No.");
+        CheckDataLog.SetRange("Field No.", CheckDataLine."Field No.");
+        if CheckDataLog.IsEmpty then
             exit;
-        DataCleanLog.FindFirst();
-        PostDataCleaning(DataCleanLog);
+        CheckDataLog.FindFirst();
+        PostDataCleaning(CheckDataLog);
     end;
 
     internal procedure PostDataCleaning()
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
     begin
-        PostDataCleaning(DataCleanLog);
+        PostDataCleaning(CheckDataLog);
     end;
 
-    internal procedure PostDataCleaning(var NewDataCleanLog: Record "Check Data Log_EVAS")
+    internal procedure PostDataCleaning(var NewCheckDataLog: Record "Check Data Log_EVAS")
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
         RecRef: RecordRef;
         FieldRef: FieldRef;
         OldSystemId: Guid;
         SaveValue: Boolean;
     begin
-        DataCleanLog.Copy(NewDataCleanLog);
-        if DataCleanLog.IsEmpty then
+        CheckDataLog.Copy(NewCheckDataLog);
+        if CheckDataLog.IsEmpty then
             exit;
-        DataCleanLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
-        DataCleanLog.SetRange(Transferred, false);
-        DataCleanLog.SetRange(Blocked, false);
-        if DataCleanLog.FindSet(true) then
+        CheckDataLog.SetCurrentKey(Transferred, Blocked, Code, "Table No.", "SystemID Ref.", "Field No.");
+        CheckDataLog.SetRange(Transferred, false);
+        CheckDataLog.SetRange(Blocked, false);
+        if CheckDataLog.FindSet(true) then
             repeat
                 SaveValue := false;
-                if (RecRef.Number = 0) or (RecRef.Number <> DataCleanLog."Table No.") then begin
+                if (RecRef.Number = 0) or (RecRef.Number <> CheckDataLog."Table No.") then begin
                     if RecRef.Number <> 0 then begin
                         if SaveValue then
-                            UpdateValue(DataCleanLog, RecRef);
+                            UpdateValue(CheckDataLog, RecRef);
                         RecRef.Close();
                     end;
-                    RecRef.Open(DataCleanLog."Table No.");
-                    RecRef.GetBySystemId(DataCleanLog."SystemID Ref.");
+                    RecRef.Open(CheckDataLog."Table No.");
+                    RecRef.GetBySystemId(CheckDataLog."SystemID Ref.");
                 end else
-                    if OldSystemId <> DataCleanLog."SystemID Ref." then begin
+                    if OldSystemId <> CheckDataLog."SystemID Ref." then begin
                         if SaveValue then
                             RecRef.Modify(false);
-                        RecRef.GetBySystemId(DataCleanLog."SystemID Ref.");
+                        RecRef.GetBySystemId(CheckDataLog."SystemID Ref.");
                     end else begin
-                        FieldRef := RecRef.Field(DataCleanLog."Field No.");
-                        SaveValue := IsValueChanged(DataCleanLog, FieldRef);
+                        FieldRef := RecRef.Field(CheckDataLog."Field No.");
+                        SaveValue := IsValueChanged(CheckDataLog, FieldRef);
                     end;
-                OldSystemId := DataCleanLog."SystemID Ref.";
-            until DataCleanLog.Next() = 0;
-        FieldRef := RecRef.Field(DataCleanLog."Field No.");
-        SaveValue := IsValueChanged(DataCleanLog, FieldRef);
+                OldSystemId := CheckDataLog."SystemID Ref.";
+            until CheckDataLog.Next() = 0;
+        FieldRef := RecRef.Field(CheckDataLog."Field No.");
+        SaveValue := IsValueChanged(CheckDataLog, FieldRef);
         if SaveValue then
-            UpdateValue(DataCleanLog, RecRef);
+            UpdateValue(CheckDataLog, RecRef);
         RecRef.Close();
     end;
 
-    internal procedure CheckDataTable(var NewDataCleanHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
+    internal procedure CheckDataTable(var NewCheckDataHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
     var
-        DataCleanHeader: Record "Check Data Header_EVAS";
-        DataCleanLine: Record "Check Data Line_EVAS";
+        CheckDataHeader: Record "Check Data Header_EVAS";
+        CheckDataLine: Record "Check Data Line_EVAS";
         RecRef: RecordRef;
         Fieldref: FieldRef;
     begin
-        DataCleanHeader.Copy(NewDataCleanHeader);
-        if DataCleanHeader.FindSet() then
+        CheckDataHeader.Copy(NewCheckDataHeader);
+        if CheckDataHeader.FindSet() then
             repeat
-                DataCleanLine.SetRange("Code", DataCleanHeader.Code);
-                DataCleanLine.SetRange("Table No.", DataCleanHeader."Table No.");
-                if not DataCleanLine.IsEmpty then begin
-                    RecRef.Open(DataCleanHeader."Table No.");
+                CheckDataLine.SetRange("Code", CheckDataHeader.Code);
+                CheckDataLine.SetRange("Table No.", CheckDataHeader."Table No.");
+                if not CheckDataLine.IsEmpty then begin
+                    RecRef.Open(CheckDataHeader."Table No.");
                     Fieldref := RecRef.Field(2000000003);
                     Fieldref.SetFilter('>=%1', FromDT);
                     if RecRef.FindSet(false) then
                         repeat
-                            CheckRecord(RecRef, DataCleanHeader, DataCleanLine);
+                            CheckRecord(RecRef, CheckDataHeader, CheckDataLine);
                         until RecRef.Next() = 0;
                 end;
-            until DataCleanHeader.Next() = 0;
+            until CheckDataHeader.Next() = 0;
     end;
 
-    local procedure CheckRecord(var RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; var DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure CheckRecord(var RecRef: RecordRef; CheckDataHeader: Record "Check Data Header_EVAS"; var CheckDataLine: Record "Check Data Line_EVAS")
     begin
-        if DataCleanLine.FindSet() then
+        if CheckDataLine.FindSet() then
             repeat
-                Checkfield(RecRef, DataCleanHeader, DataCleanLine);
-            until DataCleanLine.Next() = 0;
+                Checkfield(RecRef, CheckDataHeader, CheckDataLine);
+            until CheckDataLine.Next() = 0;
     end;
 
-    local procedure Checkfield(var RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure Checkfield(var RecRef: RecordRef; CheckDataHeader: Record "Check Data Header_EVAS"; CheckDataLine: Record "Check Data Line_EVAS")
     var
         DocumentCharacterSet: Record "Document Character Set_EVAS";
         FieldRef: FieldRef;
         Value: Text[2048];
         NewValue: Text[2048];
     begin
-        if DataCleanLine."Field No." = 0 then
+        if CheckDataLine."Field No." = 0 then
             exit;
 
-        FieldRef := RecRef.Field(DataCleanLine."Field No.");
+        FieldRef := RecRef.Field(CheckDataLine."Field No.");
 
         if not (FieldRef.Type in [FieldRef.Type::Code, FieldRef.Type::Text]) then
             exit;
@@ -144,15 +144,15 @@ codeunit 50100 "Process Data Check"
         Value := FieldRef.Value;
         NewValue := Value;
 
-        DocumentCharacterSet.SetRange(Code, DataCleanLine.Code);
-        DocumentCharacterSet.SetRange("Table No.", DataCleanLine."Table No.");
-        DocumentCharacterSet.SetRange("Field No.", DataCleanLine."Field No.");
+        DocumentCharacterSet.SetRange(Code, CheckDataLine.Code);
+        DocumentCharacterSet.SetRange("Table No.", CheckDataLine."Table No.");
+        DocumentCharacterSet.SetRange("Field No.", CheckDataLine."Field No.");
         DocumentCharacterSet.SetFilter("CharacterSet Code", '<>%1', '');
-        case DataCleanHeader.Type of
-            DataCleanHeader.Type::Check:
-                CheckDataField(DocumentCharacterSet, DataCleanLine, NewValue);
-            DataCleanHeader.Type::Clean:
-                CleanDataField(DocumentCharacterSet, DataCleanLine, NewValue);
+        case CheckDataHeader.Type of
+            CheckDataHeader.Type::Check:
+                CheckDataField(DocumentCharacterSet, CheckDataLine, NewValue);
+            CheckDataHeader.Type::Clean:
+                CleanDataField(DocumentCharacterSet, CheckDataLine, NewValue);
         end;
 
         // if DocumentCharacterSet.FindSet() then
@@ -195,10 +195,10 @@ codeunit 50100 "Process Data Check"
         //     NewValue := CheckCharacterSet(NewValue, DataCleanLine);
 
         if NewValue <> Value then
-            CreateLog(Value, NewValue, RecRef, DataCleanHeader, DataCleanLine);
+            CreateLog(Value, NewValue, RecRef, CheckDataHeader, CheckDataLine);
     end;
 
-    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; DataCleanLine: Record "Check Data Line_EVAS"; Value: Text[2048])
+    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; Value: Text[2048])
     var
         CharacterSet: Record CharacterSet_EVAS;
         ValidList: List of [Code[20]];
@@ -217,7 +217,7 @@ codeunit 50100 "Process Data Check"
             until DocumentCharacterSet.Next() = 0;
 
         if ValidList.Count > 0 then
-            NewValue := CheckCharacterSet(Value, DataCleanLine);
+            NewValue := CheckCharacterSet(Value, CheckDataLine);
         ErrorCharacters := DelChr(Value, '<=>', NewValue);
 
         if RegexList.Count > 0 then
@@ -227,7 +227,7 @@ codeunit 50100 "Process Data Check"
             end;
     end;
 
-    local procedure CleanDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; DataCleanLine: Record "Check Data Line_EVAS"; NewValue: Text[2048])
+    local procedure CleanDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; NewValue: Text[2048])
     var
         CharacterSet: Record CharacterSet_EVAS;
         ReplaceList: List of [Code[20]];
@@ -261,7 +261,7 @@ codeunit 50100 "Process Data Check"
             end;
 
         if ValidList.Count > 0 then
-            NewValue := CheckCharacterSet(NewValue, DataCleanLine);
+            NewValue := CheckCharacterSet(NewValue, CheckDataLine);
 
     end;
 
@@ -298,18 +298,18 @@ codeunit 50100 "Process Data Check"
         exit(NewValue);
     end;
 
-    local procedure CheckCharacterSet(Value: Text[2048]; DataCleanLine: Record "Check Data Line_EVAS"): Text[2048]
+    local procedure CheckCharacterSet(Value: Text[2048]; CheckDataLine: Record "Check Data Line_EVAS"): Text[2048]
     var
         NewValue: Text[2048];
         CheckValue: Text[2048];
         ValidCharacters: Text;
     begin
         NewValue := Value;
-        if not CombinedValidCharacterSet.Get(GetCombinedKey(DataCleanLine), ValidCharacters) then
-            ValidCharacters := DataCleanLine.GetCombineCharacterSets();
+        if not CombinedValidCharacterSet.Get(GetCombinedKey(CheckDataLine), ValidCharacters) then
+            ValidCharacters := CheckDataLine.GetCombineCharacterSets();
 
-        if not CombinedValidCharacterSet.ContainsKey(GetCombinedKey(DataCleanLine)) then
-            CombinedValidCharacterSet.Add(GetCombinedKey(DataCleanLine), ValidCharacters);
+        if not CombinedValidCharacterSet.ContainsKey(GetCombinedKey(CheckDataLine)) then
+            CombinedValidCharacterSet.Add(GetCombinedKey(CheckDataLine), ValidCharacters);
 
         CheckValue := DelChr(Value, '<=>', ValidCharacters);
         if CheckValue <> '' then
@@ -317,42 +317,42 @@ codeunit 50100 "Process Data Check"
         exit(NewValue);
     end;
 
-    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; CheckDataHeader: Record "Check Data Header_EVAS"; CheckDataLine: Record "Check Data Line_EVAS")
     var
-        DataCleanLog: Record "Check Data Log_EVAS";
+        CheckDataLog: Record "Check Data Log_EVAS";
         FieldRef: FieldRef;
     begin
         if Oldvalue = NewValue then
             exit;
         FieldRef := RecRef.Field(RecRef.SystemIdNo);
-        DataCleanLog.InsertLogEntry(DataCleanLine.Code, DataCleanLine."Table No.", DataCleanLine."Field No.", DataCleanHeader."Data Clean Group Code", DataCleanHeader.Type, OldValue, NewValue, FieldRef.Value);
+        CheckDataLog.InsertLogEntry(CheckDataLine.Code, CheckDataLine."Table No.", CheckDataLine."Field No.", CheckDataHeader."Check Data Group Code", CheckDataHeader.Type, OldValue, NewValue, FieldRef.Value);
     end;
 
-    local procedure GetCombinedKey(var DataCleanLine: Record "Check Data Line_EVAS") KeyValue: Code[50]
+    local procedure GetCombinedKey(var CheckDataLine: Record "Check Data Line_EVAS") KeyValue: Code[50]
     var
         CombinedKeyLbl: Label 'T%1F%2', Comment = 'DAN="T%1F%2"';
     begin
-        KeyValue := StrSubstNo(CombinedKeyLbl, DataCleanLine."Table No.", DataCleanLine."Field No.");
+        KeyValue := StrSubstNo(CombinedKeyLbl, CheckDataLine."Table No.", CheckDataLine."Field No.");
     end;
 
-    local procedure IsValueChanged(DataCleanLog: Record "Check Data Log_EVAS"; var FieldRef: FieldRef): Boolean
+    local procedure IsValueChanged(CheckDataLog: Record "Check Data Log_EVAS"; var FieldRef: FieldRef): Boolean
     var
         CurrentValue: Text[2048];
     begin
         CurrentValue := FieldRef.Value;
-        if CurrentValue <> DataCleanLog."New Value" then begin
-            FieldRef.Value := DataCleanLog."New Value";
+        if CurrentValue <> CheckDataLog."New Value" then begin
+            FieldRef.Value := CheckDataLog."New Value";
             exit(true);
         end;
         exit(false);
     end;
 
-    local procedure UpdateValue(DataCleanLog: Record "Check Data Log_EVAS"; var RecRef: RecordRef)
+    local procedure UpdateValue(CheckDataLog: Record "Check Data Log_EVAS"; var RecRef: RecordRef)
     begin
         RecRef.Modify(false);
-        DataCleanLog.Transferred := true;
-        DataCleanLog."Transferred DT" := CurrentDateTime;
-        DataCleanLog.Modify(true);
+        CheckDataLog.Transferred := true;
+        CheckDataLog."Transferred DT" := CurrentDateTime;
+        CheckDataLog.Modify(true);
     end;
 
     local procedure CheckRegex(NewValue: Text[2048]; CharacterSet: Record CharacterSet_EVAS; var ResultTxt: Text[2048])

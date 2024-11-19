@@ -1,29 +1,29 @@
 report 50100 "Process Data Check_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Process Data Clean', Comment = 'DAN="Proces datavask"';
+    Caption = 'Process Check Data', Comment = 'DAN="Proces datakontrol"';
     UsageCategory = Tasks;
     ProcessingOnly = true;
     dataset
     {
-        dataitem(DataCleanHeader; "Check Data Header_EVAS")
+        dataitem(CheckDataHeader; "Check Data Header_EVAS")
         {
             DataItemTableView = sorting(Code);
-            RequestFilterFields = Code, "Data Clean Group Code";
+            RequestFilterFields = Code, "Check Data Group Code";
 
             trigger OnAfterGetRecord()
             begin
-                ProcessCleanData(DataCleanHeader);
+                ProcessCleanData(CheckDataHeader);
             end;
         }
     }
 
-    local procedure ProcessCleanData(DataCleanHeader: Record "Check Data Header_EVAS")
+    local procedure ProcessCleanData(CheckDataHeader: Record "Check Data Header_EVAS")
     var
         ProcessDataClean: Codeunit "Process Data Check";
         FromDT: DateTime;
     begin
         FromDT := CreateDateTime(CalcDate('<-36M>', Today), 0T);
-        ProcessDataClean.FindDataForCleaning(DataCleanHeader, FromDT);
+        ProcessDataClean.FindDataForCleaning(CheckDataHeader, FromDT);
     end;
 }

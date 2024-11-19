@@ -34,11 +34,11 @@ page 50104 "Document Character Sets_EVAS"
 
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Check Data Header_EVAS";
+                        CheckDataHeader: Record "Check Data Header_EVAS";
                         CharacterSet: Record CharacterSet_EVAS;
                     begin
-                        DataCleanHeader.Get(Rec.Code);
-                        if DataCleanHeader.Type = DataCleanHeader.Type::Clean then
+                        CheckDataHeader.Get(Rec.Code);
+                        if CheckDataHeader.Type = CheckDataHeader.Type::Clean then
                             CharacterSet.SetFilter(Type, '<>%1', CharacterSet.Type::Regex)
                         else
                             CharacterSet.SetFilter(Type, '%1|%2', CharacterSet.Type::"Invalid", CharacterSet.Type::Regex);

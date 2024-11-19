@@ -18,10 +18,10 @@ page 50101 "Check Data Subpage_EVAS"
                     LookupPageId = "Fields Lookup";
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Check Data Header_EVAS";
+                        CheckDataHeader: Record "Check Data Header_EVAS";
                         Field: Record Field;
                     begin
-                        DataCleanHeader.get(Rec.Code);
+                        CheckDataHeader.get(Rec.Code);
                         Field.SetRange(TableNo, Rec."Table No.");
                         if Page.RunModal(Page::"Fields Lookup", Field) = Action::LookupOK then
                             Text := format(Field."No.");

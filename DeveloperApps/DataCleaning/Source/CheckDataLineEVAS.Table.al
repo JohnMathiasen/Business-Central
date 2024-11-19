@@ -39,6 +39,15 @@ table 50101 "Check Data Line_EVAS"
         }
     }
 
+    trigger OnDelete()
+    var
+        DocumentCharacterSet: Record "Document Character Set_EVAS";
+    begin
+        DocumentCharacterSet.SetRange(Code, Code);
+        DocumentCharacterSet.SetRange("Table No.", "Table No.");
+        DocumentCharacterSet.SetRange("Field No.", "Field No.");
+        DocumentCharacterSet.DeleteAll(true);
+    end;
     internal procedure InitLine()
     var
         CheckDataHeader: Record "Check Data Header_EVAS";
