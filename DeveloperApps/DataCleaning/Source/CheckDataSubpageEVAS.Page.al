@@ -23,8 +23,6 @@ page 50101 "Check Data Subpage_EVAS"
                     begin
                         DataCleanHeader.get(Rec.Code);
                         Field.SetRange(TableNo, Rec."Table No.");
-                        if DataCleanHeader.Type = DataCleanHeader.Type::Clean then
-                            Field.SetFilter(Type, '%1|%2', Field.Type::Text, Field.Type::Code);
                         if Page.RunModal(Page::"Fields Lookup", Field) = Action::LookupOK then
                             Text := format(Field."No.");
                         exit(Text <> '');
@@ -48,21 +46,6 @@ page 50101 "Check Data Subpage_EVAS"
                         DocumentCharacterSetsPage.Run();
                     end;
                 }
-            }
-        }
-    }
-    actions
-    {
-        area(Processing)
-        {
-            action(ShowLogEntries)
-            {
-                ApplicationArea = All;
-                Caption = 'Show Log', Comment = 'DAN = "Vis log"';
-                ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
-                Image = Log;
-                RunObject = page "Check Data Log_EVAS";
-                RunPageLink = Code = field(Code), "Table No." = field("Table No."), "Field No." = field("Field No.");
             }
         }
     }
