@@ -29,23 +29,21 @@ page 50105 "Check Data Log_EVAS"
                 {
                     ToolTip = 'Specifies the value of the Check Data Group Code field.', Comment = 'DAN="Datakontrolgruppekode"';
                 }
-                field("Old Value"; Rec."Old Value")
-                {
-                    ToolTip = 'Specifies the value of the Old Value field.', Comment = 'DAN="Gammel værdi"';
-                }
                 field(Type; Rec.Type)
                 {
                     ToolTip = 'Specifies the value of the Type field.', Comment = 'DAN="Type"';
                 }
+                field("Old Value"; Rec."Old Value")
+                {
+                    ToolTip = 'Specifies the value of the Old Value field.', Comment = 'DAN="Gammel værdi"';
+                }
                 field("New Value"; Rec."New Value")
                 {
                     ToolTip = 'Specifies the value of the New Value field.', Comment = '%DAN="Ny værdi"';
-                    Visible = Rec.type = Rec.Type::Clean;
                 }
                 field("Invalid Characters"; Rec."Invalid Characters")
                 {
                     ToolTip = 'Specifies the value of the Invalid Characters field.', Comment = 'DAN="Ugyldige tegn"';
-                    Visible = Rec.type = Rec.Type::Check;
                 }
                 field(Transferred; Rec.Transferred)
                 {

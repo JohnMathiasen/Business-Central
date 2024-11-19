@@ -106,6 +106,7 @@ codeunit 50100 "Process Data Check"
             repeat
                 CheckDataLine.SetRange("Code", CheckDataHeader.Code);
                 CheckDataLine.SetRange("Table No.", CheckDataHeader."Table No.");
+                CheckDataLine.SetFilter("Field No.", '<>%1', 0);
                 if not CheckDataLine.IsEmpty then begin
                     RecRef.Open(CheckDataHeader."Table No.");
                     Fieldref := RecRef.Field(2000000003);
@@ -144,6 +145,9 @@ codeunit 50100 "Process Data Check"
         Value := FieldRef.Value;
         NewValue := Value;
 
+        if Value = '' then
+            exit;
+
         DocumentCharacterSet.SetRange(Code, CheckDataLine.Code);
         DocumentCharacterSet.SetRange("Table No.", CheckDataLine."Table No.");
         DocumentCharacterSet.SetRange("Field No.", CheckDataLine."Field No.");
@@ -155,59 +159,20 @@ codeunit 50100 "Process Data Check"
                 CleanDataField(DocumentCharacterSet, CheckDataLine, NewValue);
         end;
 
-        // if DocumentCharacterSet.FindSet() then
-        // repeat
-        //     CharacterSet.Get(DocumentCharacterSet."CharacterSet Code");
-        //     case DataCleanHeader.Type of
-        //         DataCleanHeader.Type::Check:
-        //             case CharacterSet.Type of
-        //                 CharacterSet.Type::"Invalid":
-        //                     AddToCharacterSetList(CharacterSet, ValidList);
-        //                 CharacterSet.Type::Regex:
-        //                     AddToCharacterSetList(CharacterSet, RegexList);
-        //             end;
-        //         DataCleanHeader.Type::Clean:
-        //             case CharacterSet.Type of
-        //                 CharacterSet.Type::"Invalid":
-        //                     AddToCharacterSetList(CharacterSet, ValidList);
-        //                 CharacterSet.Type::Remove:
-        //                     AddToCharacterSetList(CharacterSet, RemoveList);
-        //                 CharacterSet.Type::Replace:
-        //                     AddToCharacterSetList(CharacterSet, ReplaceList);
-        //             end;
-        //     end;
-
-        // until DocumentCharacterSet.Next() = 0;
-
-        // if RemoveList.Count > 0 then
-        //     foreach CharaterSetCode in RemoveList do begin
-        //         DocumentCharacterSet.Get(DataCleanLine.Code, DataCleanLine."Table No.", DataCleanLine."Field No.", CharaterSetCode);
-        //         NewValue := RemoveCharacters(NewValue, CharacterSet);
-        //     end;
-
-        // if ReplaceList.Count > 0 then
-        //     foreach CharaterSetCode in ReplaceList do begin
-        //         DocumentCharacterSet.Get(DataCleanLine.Code, DataCleanLine."Table No.", DataCleanLine."Field No.", CharaterSetCode);
-        //         NewValue := ReplaceCharacters(NewValue, CharacterSet);
-        //     end;
-
-        // if ValidList.Count > 0 then
-        //     NewValue := CheckCharacterSet(NewValue, DataCleanLine);
-
         if NewValue <> Value then
             CreateLog(Value, NewValue, RecRef, CheckDataHeader, CheckDataLine);
     end;
 
-    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; Value: Text[2048])
+    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var Value: Text[2048])
     var
         CharacterSet: Record CharacterSet_EVAS;
-        ValidList: List of [Code[20]];
-        RegexList: List of [Code[20]];
         CharaterSetCode: Code[20];
+        RegexList, ValidList : List of [Code[20]];
         ErrorCharacters, NewValue : Text[2048];
     begin
         if DocumentCharacterSet.FindSet() then
             repeat
+                CharacterSet.Get(DocumentCharacterSet."CharacterSet Code");
                 case CharacterSet.Type of
                     CharacterSet.Type::"Invalid":
                         AddToCharacterSetList(CharacterSet, ValidList);
@@ -216,24 +181,25 @@ codeunit 50100 "Process Data Check"
                 end;
             until DocumentCharacterSet.Next() = 0;
 
-        if ValidList.Count > 0 then
+        if ValidList.Count > 0 then begin
             NewValue := CheckCharacterSet(Value, CheckDataLine);
-        ErrorCharacters := DelChr(Value, '<=>', NewValue);
+            ErrorCharacters := DelChr(Value, '<=>', NewValue);
+        end;
 
         if RegexList.Count > 0 then
             foreach CharaterSetCode in RegexList do begin
                 CharacterSet.Get(CharaterSetCode);
                 CheckRegex(Value, CharacterSet, ErrorCharacters);
             end;
+
+        Value := ErrorCharacters;
     end;
 
-    local procedure CleanDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; NewValue: Text[2048])
+    local procedure CleanDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var NewValue: Text[2048])
     var
         CharacterSet: Record CharacterSet_EVAS;
-        ReplaceList: List of [Code[20]];
-        RemoveList: List of [Code[20]];
-        ValidList: List of [Code[20]];
         CharaterSetCode: Code[20];
+        RemoveList, ReplaceList, ValidList : List of [Code[20]];
     begin
         if DocumentCharacterSet.FindSet() then
             repeat
@@ -262,7 +228,6 @@ codeunit 50100 "Process Data Check"
 
         if ValidList.Count > 0 then
             NewValue := CheckCharacterSet(NewValue, CheckDataLine);
-
     end;
 
     local procedure AddToCharacterSetList(CharacterSet: Record CharacterSet_EVAS; var CharactersetList: List of [Code[20]])
@@ -358,24 +323,10 @@ codeunit 50100 "Process Data Check"
     local procedure CheckRegex(NewValue: Text[2048]; CharacterSet: Record CharacterSet_EVAS; var ResultTxt: Text[2048])
     var
         Regex: Codeunit Regex;
-        Character: Char;
-        I: Integer;
-        ErrorCharacters: Text[2048];
     begin
-        Regex.Regex(CharacterSet."Character set");
-        for I := 1 to StrLen(NewValue) do begin
-            Character := NewValue[I];
-            if not Regex.IsMatch(Character) then
-                ErrorCharacters := DelChr(NewValue, Character);
-        end;
-
-        if ErrorCharacters = '' then
+        if Regex.IsMatch(NewValue, CharacterSet."Character set") then
             exit;
 
-        for I := 1 to StrLen(ErrorCharacters) do begin
-            Character := ErrorCharacters[I];
-            if not ResultTxt.Contains(Character) then
-                ResultTxt += Character;
-        end;
+        ResultTxt := 'Fejl';
     end;
 }

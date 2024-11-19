@@ -101,7 +101,7 @@ page 50100 "Check Data Document_EVAS"
                 ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
                 Image = Log;
                 RunObject = page "Check Data Log_EVAS";
-                RunPageLink = Code = field(Code);
+                RunPageLink = Code = field(Code), "Table No." = field("Table No."), Type = field(Type);
             }
         }
     }

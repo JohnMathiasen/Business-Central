@@ -30,16 +30,16 @@ table 50103 "Document Character Set_EVAS"
             trigger OnValidate()
             var
                 CharacterSet: Record CharacterSet_EVAS;
-                CheckDataHeader: Record "Check Data Header_EVAS";
+                DataCleanHeader: Record "Check Data Header_EVAS";
                 CleanDocInvalidCharacterSetErr: Label 'The character set is not valid for a clean document.', Comment = 'DAN="Tegnsættet er ikke gyldigt for et datavask dokument."';
                 CheckDocInvalidCharacterSetErr: Label 'The character set is not valid for a check document.', Comment = 'DAN="Tegnsættet er ikke gyldigt for et kontrol dokument."';
             begin
                 if Rec."CharacterSet Code" <> '' then begin
                     CharacterSet.Get(Rec."CharacterSet Code");
-                    CheckDataHeader.Get(Rec.Code);
-                    if ((CheckDataHeader.Type = CheckDataHeader.Type::Clean) and (CharacterSet.Type <> CharacterSet.Type::Regex)) then
+                    DataCleanHeader.Get(Rec.Code);
+                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Clean) and (CharacterSet.Type <> CharacterSet.Type::Regex)) then
                         Error(CleanDocInvalidCharacterSetErr);
-                    if ((CheckDataHeader.Type = CheckDataHeader.Type::Check) and (CharacterSet.Type in [CharacterSet.Type::"Invalid", CharacterSet.Type::Regex])) then
+                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Check) and (CharacterSet.Type in [CharacterSet.Type::Remove, CharacterSet.Type::Replace])) then
                         Error(CheckDocInvalidCharacterSetErr);
                 end;
             end;

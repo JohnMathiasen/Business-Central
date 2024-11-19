@@ -18,7 +18,7 @@ report 50100 "Process Data Check_EVAS"
         }
     }
 
-    local procedure ProcessCleanData(CheckDataHeader: Record "Check Data Header_EVAS")
+    local procedure ProcessCleanData(var CheckDataHeader: Record "Check Data Header_EVAS")
     var
         ProcessDataClean: Codeunit "Process Data Check";
         FromDT: DateTime;
