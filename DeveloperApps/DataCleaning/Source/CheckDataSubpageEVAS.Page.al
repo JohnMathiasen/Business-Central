@@ -18,7 +18,7 @@ page 50101 "Check Data Subpage_EVAS"
                     LookupPageId = "Fields Lookup";
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Chack Data Header_EVAS";
+                        DataCleanHeader: Record "Check Data Header_EVAS";
                         Field: Record Field;
                     begin
                         DataCleanHeader.get(Rec.Code);
@@ -49,4 +49,8 @@ page 50101 "Check Data Subpage_EVAS"
             }
         }
     }
+    trigger OnNewRecord(BelowxRec: Boolean)
+    begin
+        Rec.InitLine();
+    end;
 }

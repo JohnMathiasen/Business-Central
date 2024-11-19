@@ -3,7 +3,7 @@ page 50100 "Check Data Document_EVAS"
     ApplicationArea = All;
     Caption = 'Check Data Document', Comment = 'DAN="Datakontroldokument"';
     PageType = Document;
-    SourceTable = "Chack Data Header_EVAS";
+    SourceTable = "Check Data Header_EVAS";
     UsageCategory = None;
     layout
     {
@@ -64,7 +64,7 @@ page 50100 "Check Data Document_EVAS"
                 Image = Process;
                 trigger OnAction()
                 var
-                    DataCleanHeader: Record "Chack Data Header_EVAS";
+                    DataCleanHeader: Record "Check Data Header_EVAS";
                 begin
                     DataCleanHeader.SetRange(Code, Rec.Code);
                     DataCleanHeader.SetRange("Table No.", Rec."Table No.");

@@ -6,7 +6,7 @@ report 50100 "Process Data Check_EVAS"
     ProcessingOnly = true;
     dataset
     {
-        dataitem(DataCleanHeader; "Chack Data Header_EVAS")
+        dataitem(DataCleanHeader; "Check Data Header_EVAS")
         {
             DataItemTableView = sorting(Code);
             RequestFilterFields = Code, "Data Clean Group Code";
@@ -18,7 +18,7 @@ report 50100 "Process Data Check_EVAS"
         }
     }
 
-    local procedure ProcessCleanData(DataCleanHeader: Record "Chack Data Header_EVAS")
+    local procedure ProcessCleanData(DataCleanHeader: Record "Check Data Header_EVAS")
     var
         ProcessDataClean: Codeunit "Process Data Check";
         FromDT: DateTime;

@@ -1,6 +1,6 @@
 codeunit 50100 "Process Data Check"
 {
-    TableNo = "Chack Data Header_EVAS";
+    TableNo = "Check Data Header_EVAS";
 
     trigger OnRun()
     begin
@@ -10,14 +10,14 @@ codeunit 50100 "Process Data Check"
     var
         CombinedValidCharacterSet: Dictionary of [Code[50], Text];
 
-    internal procedure FindDataForCleaning(var DataCleanHeader: Record "Chack Data Header_EVAS"; FromDT: DateTime)
+    internal procedure FindDataForCleaning(var DataCleanHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
     begin
         if not DataCleanHeader.Enabled then
             exit;
         CleanDataTable(DataCleanHeader, FromDT);
     end;
 
-    internal procedure PostDataCleaning(DataCleanHeader: Record "Chack Data Header_EVAS")
+    internal procedure PostDataCleaning(DataCleanHeader: Record "Check Data Header_EVAS")
     var
         DataCleanLog: Record "Check Data Log_EVAS";
     begin
@@ -94,9 +94,9 @@ codeunit 50100 "Process Data Check"
         RecRef.Close();
     end;
 
-    internal procedure CleanDataTable(var NewDataCleanHeader: Record "Chack Data Header_EVAS"; FromDT: DateTime)
+    internal procedure CleanDataTable(var NewDataCleanHeader: Record "Check Data Header_EVAS"; FromDT: DateTime)
     var
-        DataCleanHeader: Record "Chack Data Header_EVAS";
+        DataCleanHeader: Record "Check Data Header_EVAS";
         DataCleanLine: Record "Check Data Line_EVAS";
         RecRef: RecordRef;
         Fieldref: FieldRef;
@@ -118,7 +118,7 @@ codeunit 50100 "Process Data Check"
             until DataCleanHeader.Next() = 0;
     end;
 
-    local procedure CleanRecord(var RecRef: RecordRef; DataCleanHeader: Record "Chack Data Header_EVAS"; var DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure CleanRecord(var RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; var DataCleanLine: Record "Check Data Line_EVAS")
     begin
         if DataCleanLine.FindSet() then
             repeat
@@ -126,7 +126,7 @@ codeunit 50100 "Process Data Check"
             until DataCleanLine.Next() = 0;
     end;
 
-    local procedure Cleanfield(var RecRef: RecordRef; DataCleanHeader: Record "Chack Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure Cleanfield(var RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
     var
         DocumentCharacterSet: Record "Document Character Set_EVAS";
         CharacterSet: Record CharacterSet_EVAS;
@@ -238,7 +238,7 @@ codeunit 50100 "Process Data Check"
         exit(NewValue);
     end;
 
-    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; DataCleanHeader: Record "Chack Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
+    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; DataCleanHeader: Record "Check Data Header_EVAS"; DataCleanLine: Record "Check Data Line_EVAS")
     var
         DataCleanLog: Record "Check Data Log_EVAS";
         FieldRef: FieldRef;

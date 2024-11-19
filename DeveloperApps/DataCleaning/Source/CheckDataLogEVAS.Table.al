@@ -12,7 +12,7 @@ table 50104 "Check Data Log_EVAS"
         field(3; "Code"; Code[20])
         {
             Caption = 'Code', Comment = 'DAN="Kode"';
-            TableRelation = "Chack Data Header_EVAS"."Code";
+            TableRelation = "Check Data Header_EVAS"."Code";
         }
         field(4; "Table No."; Integer)
         {

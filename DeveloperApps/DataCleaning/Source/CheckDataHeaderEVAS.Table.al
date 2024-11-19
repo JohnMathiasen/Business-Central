@@ -1,4 +1,4 @@
-table 50100 "Chack Data Header_EVAS"
+table 50100 "Check Data Header_EVAS"
 {
     Caption = 'Check Data Header', Comment = 'DAN="Datakontrolhoved"';
     DataClassification = CustomerContent;
@@ -25,7 +25,7 @@ table 50100 "Chack Data Header_EVAS"
             Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
             TableRelation = "Check Data Group_EVAS"."Code";
         }
-        field(7; Type; Enum "Data Check Type_EVAS")
+        field(7; Type; Enum "Check Data Type_EVAS")
         {
             Caption = 'Type', Comment = 'DAN="Type"';
         }
