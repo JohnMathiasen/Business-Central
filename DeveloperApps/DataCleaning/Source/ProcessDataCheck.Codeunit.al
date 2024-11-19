@@ -157,7 +157,7 @@ codeunit 50100 "Process Data Check"
             repeat
                 CharacterSet.Get(DocumentCharacterSet."CharacterSet Code");
                 case CharacterSet.Type of
-                    CharacterSet.Type::"Clean Invalid":
+                    CharacterSet.Type::"Invalid":
                         if not ValidList.Contains(DocumentCharacterSet."CharacterSet Code") then
                             ValidList.Add(DocumentCharacterSet."CharacterSet Code");
                     CharacterSet.Type::Remove:

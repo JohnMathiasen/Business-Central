@@ -39,7 +39,7 @@ table 50103 "Document Character Set_EVAS"
                     DataCleanHeader.Get(Rec.Code);
                     if ((DataCleanHeader.Type = DataCleanHeader.Type::Clean) and (CharacterSet.Type <> CharacterSet.Type::Regex)) then
                         Error(CleanDocInvalidCharacterSetErr);
-                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Check) and (CharacterSet.Type in [CharacterSet.Type::"Clean Invalid", CharacterSet.Type::Regex])) then
+                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Check) and (CharacterSet.Type in [CharacterSet.Type::"Invalid", CharacterSet.Type::Regex])) then
                         Error(CheckDocInvalidCharacterSetErr);
                 end;
             end;

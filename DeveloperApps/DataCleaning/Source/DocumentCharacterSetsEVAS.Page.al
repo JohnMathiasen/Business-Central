@@ -41,7 +41,7 @@ page 50104 "Document Character Sets_EVAS"
                         if DataCleanHeader.Type = DataCleanHeader.Type::Clean then
                             CharacterSet.SetFilter(Type, '<>%1', CharacterSet.Type::Regex)
                         else
-                            CharacterSet.SetFilter(Type, '%1|%2', CharacterSet.Type::"Clean Invalid", CharacterSet.Type::Regex);
+                            CharacterSet.SetFilter(Type, '%1|%2', CharacterSet.Type::"Invalid", CharacterSet.Type::Regex);
                         if Page.RunModal(Page::CharacterSets_EVAS, CharacterSet) = Action::LookupOK then
                             Text := CharacterSet."Code";
                         exit(Text <> '');

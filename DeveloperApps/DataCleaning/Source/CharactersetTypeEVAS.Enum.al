@@ -1,10 +1,10 @@
-enum 50100 "Data Clean Type_EVAS"
+enum 50100 "Characterset Type_EVAS"
 {
     Extensible = true;
 
-    value(0; "Clean Invalid")
+    value(0; "Invalid")
     {
-        Caption = 'Clean Invalid Character', Comment = 'DAN="Rens ugyldige tegn"';
+        Caption = 'Invalid Character', Comment = 'DAN="Ugyldige tegn"';
     }
     value(1; Remove)
     {
