@@ -19,6 +19,13 @@ table 50101 "Check Data Line_EVAS"
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
         }
+        field(4; Name; Text[100])
+        {
+            Caption = 'Name', Comment = 'DAN="Navn"';
+            FieldClass = FlowField;
+            CalcFormula = lookup(Field."Field Caption" where(TableNo = field("Table No."), "No." = field("Field No.")));
+            Editable = false;
+        }
         field(7; Type; Enum "Check Data Type_EVAS")
         {
             Caption = 'Type', Comment = 'DAN="Type"';

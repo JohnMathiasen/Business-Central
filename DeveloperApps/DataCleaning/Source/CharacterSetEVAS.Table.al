@@ -136,11 +136,13 @@ table 50102 "CharacterSet_EVAS"
         NumberDescLbl: Label 'Numbers', Comment = 'DAN = "Tal"';
         DKDescLbl: Label 'DK Letters', Comment = 'DAN = "DK alfabet"';
         AddDKDescLbl: Label 'Add. DK Letters', Comment = 'DAN = "Tilføjet DK alfabet"';
+        BCphoneLbl: Label 'BC Phone No.', Comment = 'DAN = "BC Telefonnr."';
         NewType: Enum "Characterset Type_EVAS";
     begin
         CreateCharacterSet(GetNumberCharacterSetCode(), NewType::"Invalid", NumberDescLbl, GetNumberCharacterSetContent());
         CreateCharacterSet(GetDKCharacterSetCode(), NewType::"Invalid", DKDescLbl, GetDKCharacterSetContent());
         CreateCharacterSet(GetAddDKCharacterSetCode(), NewType::"Invalid", AddDKDescLbl, GetAddDKCharacterSetContent());
+        CreateCharacterSet(GetBCPhoneNumberCharacterSetCode(), NewType::Regex, BCphoneLbl, GetBCPhoneNumberCharacterSetContent());
     end;
 
 
@@ -216,5 +218,19 @@ table 50102 "CharacterSet_EVAS"
         SpaceLbl: Label ' ', Locked = true;
     begin
         exit(CharacterSetContentLbl + UpperCase(CharacterSetContentLbl) + SpaceLbl);
+    end;
+
+    local procedure GetBCPhoneNumberCharacterSetCode(): Code[20]
+    var
+        CharacterSetCodeLbl: Label 'BCPHONENO', Locked = true;
+    begin
+        exit(CharacterSetCodeLbl);
+    end;
+
+    local procedure GetBCPhoneNumberCharacterSetContent(): Text[2048]
+    var
+        CharacterSetContentLbl: Label '^[\(\)\-\+0-9 ]*$', Locked = true;
+    begin
+        exit(CharacterSetContentLbl);
     end;
 }
