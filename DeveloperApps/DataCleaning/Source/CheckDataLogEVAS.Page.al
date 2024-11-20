@@ -41,10 +41,6 @@ page 50105 "Check Data Log_EVAS"
                 {
                     ToolTip = 'Specifies the value of the New Value field.', Comment = '%DAN="Ny værdi"';
                 }
-                field("Invalid Characters"; Rec."Invalid Characters")
-                {
-                    ToolTip = 'Specifies the value of the Invalid Characters field.', Comment = 'DAN="Ugyldige tegn"';
-                }
                 field(Transferred; Rec.Transferred)
                 {
                     ToolTip = 'Specifies the value of the Transferred field.', Comment = 'DAN="Overført"';

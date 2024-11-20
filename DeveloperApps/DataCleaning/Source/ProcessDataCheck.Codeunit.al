@@ -133,6 +133,7 @@ codeunit 50100 "Process Data Check"
         FieldRef: FieldRef;
         Value: Text[2048];
         NewValue: Text[2048];
+        ValidValue: Boolean;
     begin
         if CheckDataLine."Field No." = 0 then
             exit;
@@ -154,21 +155,22 @@ codeunit 50100 "Process Data Check"
         DocumentCharacterSet.SetFilter("CharacterSet Code", '<>%1', '');
         case CheckDataHeader.Type of
             CheckDataHeader.Type::Check:
-                CheckDataField(DocumentCharacterSet, CheckDataLine, NewValue);
+                ValidValue := CheckDataField(DocumentCharacterSet, CheckDataLine, NewValue);
             CheckDataHeader.Type::Clean:
                 CleanDataField(DocumentCharacterSet, CheckDataLine, NewValue);
         end;
 
         if NewValue <> Value then
-            CreateLog(Value, NewValue, RecRef, CheckDataHeader, CheckDataLine);
+            CreateLog(Value, NewValue, ValidValue, RecRef, CheckDataHeader, CheckDataLine);
     end;
 
-    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var Value: Text[2048])
+    local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var NewValue: Text[2048]): Boolean
     var
         CharacterSet: Record CharacterSet_EVAS;
         CharaterSetCode: Code[20];
         RegexList, ValidList : List of [Code[20]];
-        ErrorCharacters, NewValue : Text[2048];
+        OldValue: Text[2048];
+        Valid: Boolean;
     begin
         if DocumentCharacterSet.FindSet() then
             repeat
@@ -181,18 +183,21 @@ codeunit 50100 "Process Data Check"
                 end;
             until DocumentCharacterSet.Next() = 0;
 
+        OldValue := NewValue;
+
         if ValidList.Count > 0 then begin
-            NewValue := CheckCharacterSet(Value, CheckDataLine);
-            ErrorCharacters := DelChr(Value, '<=>', NewValue);
+            NewValue := CheckCharacterSet(NewValue, CheckDataLine);
+            Valid := NewValue = OldValue;
         end;
 
         if RegexList.Count > 0 then
             foreach CharaterSetCode in RegexList do begin
                 CharacterSet.Get(CharaterSetCode);
-                CheckRegex(Value, CharacterSet, ErrorCharacters);
+                if not CheckRegex(NewValue, CharacterSet) then
+                    Valid := false;
             end;
 
-        Value := ErrorCharacters;
+        exit(Valid);
     end;
 
     local procedure CleanDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var NewValue: Text[2048])
@@ -282,7 +287,14 @@ codeunit 50100 "Process Data Check"
         exit(NewValue);
     end;
 
-    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; RecRef: RecordRef; CheckDataHeader: Record "Check Data Header_EVAS"; CheckDataLine: Record "Check Data Line_EVAS")
+    local procedure CheckRegex(NewValue: Text[2048]; CharacterSet: Record CharacterSet_EVAS): Boolean
+    var
+        Regex: Codeunit Regex;
+    begin
+        exit(Regex.IsMatch(NewValue, CharacterSet."Character set"));
+    end;
+
+    local procedure CreateLog(Oldvalue: Text[2048]; NewValue: Text[2048]; ValidValue: Boolean; RecRef: RecordRef; CheckDataHeader: Record "Check Data Header_EVAS"; CheckDataLine: Record "Check Data Line_EVAS")
     var
         CheckDataLog: Record "Check Data Log_EVAS";
         FieldRef: FieldRef;
@@ -290,7 +302,7 @@ codeunit 50100 "Process Data Check"
         if Oldvalue = NewValue then
             exit;
         FieldRef := RecRef.Field(RecRef.SystemIdNo);
-        CheckDataLog.InsertLogEntry(CheckDataLine.Code, CheckDataLine."Table No.", CheckDataLine."Field No.", CheckDataHeader."Check Data Group Code", CheckDataHeader.Type, OldValue, NewValue, FieldRef.Value);
+        CheckDataLog.InsertLogEntry(CheckDataLine.Code, CheckDataLine."Table No.", CheckDataLine."Field No.", CheckDataHeader."Check Data Group Code", CheckDataHeader.Type, OldValue, NewValue, ValidValue, FieldRef.Value);
     end;
 
     local procedure GetCombinedKey(var CheckDataLine: Record "Check Data Line_EVAS") KeyValue: Code[50]
@@ -318,15 +330,5 @@ codeunit 50100 "Process Data Check"
         CheckDataLog.Transferred := true;
         CheckDataLog."Transferred DT" := CurrentDateTime;
         CheckDataLog.Modify(true);
-    end;
-
-    local procedure CheckRegex(NewValue: Text[2048]; CharacterSet: Record CharacterSet_EVAS; var ResultTxt: Text[2048])
-    var
-        Regex: Codeunit Regex;
-    begin
-        if Regex.IsMatch(NewValue, CharacterSet."Character set") then
-            exit;
-
-        ResultTxt := 'Fejl';
     end;
 }

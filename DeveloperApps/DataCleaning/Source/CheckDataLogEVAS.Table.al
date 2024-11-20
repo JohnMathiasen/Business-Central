@@ -53,9 +53,9 @@ table 50104 "Check Data Log_EVAS"
         {
             Caption = 'Transferred Datetime', Comment = 'DAN="Overført dato"';
         }
-        field(17; "Invalid Characters"; Text[2048])
+        field(17; Valid; Boolean)
         {
-            Caption = 'Invalid Characters', Comment = 'DAN="Ugyldige tegn"';
+            Caption = 'Valid', Comment = 'DAN="Gyldig"';
         }
         field(18; Blocked; Boolean)
         {
@@ -80,7 +80,7 @@ table 50104 "Check Data Log_EVAS"
         }
     }
 
-    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; NewType: Enum "Check Data Type_EVAS"; OldValue: Text[2048]; NewValue: Text[2048]; SystemIDRef: Guid)
+    internal procedure InsertLogEntry(NewCode: Code[20]; NewTableNo: Integer; NewFieldNo: Integer; NewGroup: Code[10]; NewType: Enum "Check Data Type_EVAS"; OldValue: Text[2048]; NewValue: Text[2048]; ValidValue: Boolean; SystemIDRef: Guid)
     var
         CheckDataLog: Record "Check Data Log_EVAS";
     begin
@@ -92,11 +92,12 @@ table 50104 "Check Data Log_EVAS"
         CheckDataLog."Check Data Group Code" := NewGroup;
         CheckDataLog.Type := NewType;
         CheckDataLog."Old Value" := OldValue;
+        CheckDataLog."New Value" := NewValue;
         case CheckDataLog.Type of
-            CheckDataLog.Type::Clean:
-                CheckDataLog."New Value" := NewValue;
             CheckDataLog.Type::Check:
-                CheckDataLog."Invalid Characters" := NewValue;
+                CheckDataLog.Valid := ValidValue;
+            CheckDataLog.Type::Clean:
+                CheckDataLog.Valid := NewValue = OldValue;
         end;
         CheckDataLog."SystemID Ref." := SystemIDRef;
         CheckDataLog.Insert(true);
