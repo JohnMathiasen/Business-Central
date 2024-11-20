@@ -9,6 +9,4 @@ permissionset 50101 "DataClean_BASE_EVAS"
         tabledata "Document Character Set_EVAS" = Rmid,
         tabledata "Check Data Log_EVAS" = Rmid,
         tabledata "Check Data Group_EVAS" = Rmid;
-        tabledata "Check Data Log_EVAS" = Rmid,
-        tabledata "Check Data Group_EVAS" = Rmid;
 }

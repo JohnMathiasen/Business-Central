@@ -9,6 +9,4 @@ permissionset 50100 "DataClean_ADM_EVAS"
         tabledata "Document Character Set_EVAS" = RMID,
         tabledata "Check Data Log_EVAS" = RMID,
         tabledata "Check Data Group_EVAS" = RMID;
-        tabledata "Check Data Log_EVAS" = RMID,
-        tabledata "Check Data Group_EVAS" = RMID;
 }
