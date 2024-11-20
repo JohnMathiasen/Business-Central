@@ -15,39 +15,47 @@ page 50105 "Check Data Log_EVAS"
             {
                 field("Code"; Rec."Code")
                 {
-                    ToolTip = 'Specifies the value of the Code field.', Comment = '%DAN="Kode"';
+                    ToolTip = 'Specifies the value of the Code field.', Comment = 'DAN="Kode"';
                 }
                 field("Table No."; Rec."Table No.")
                 {
-                    ToolTip = 'Specifies the value of the Table No. field.', Comment = '%DAN="Tabelnr."';
+                    ToolTip = 'Specifies the value of the Table No. field.', Comment = 'DAN="Tabelnr."';
                 }
                 field("Field No."; Rec."Field No.")
                 {
-                    ToolTip = 'Specifies the value of the Field No. field.', Comment = '%DAN="Felt nr."';
+                    ToolTip = 'Specifies the value of the Field No. field.', Comment = 'DAN="Felt nr."';
                 }
-                field("Data Clean Group Code"; Rec."Data Clean Group Code")
+                field("Check Data Group Code"; Rec."Check Data Group Code")
                 {
-                    ToolTip = 'Specifies the value of the Data Clean Group Code field.', Comment = 'DAN="Datavaskgruppekode"';
+                    ToolTip = 'Specifies the value of the Check Data Group Code field.', Comment = 'DAN="Datakontrolgruppekode"';
+                }
+                field(Type; Rec.Type)
+                {
+                    ToolTip = 'Specifies the value of the Type field.', Comment = 'DAN="Type"';
                 }
                 field("Old Value"; Rec."Old Value")
                 {
-                    ToolTip = 'Specifies the value of the Old Value field.', Comment = '%DAN="Gammel værdi"';
+                    ToolTip = 'Specifies the value of the Old Value field.', Comment = 'DAN="Gammel værdi"';
                 }
                 field("New Value"; Rec."New Value")
                 {
-                    ToolTip = 'Specifies the value of the New Value field.', Comment = '%DAN="Ny værdi"';
+                    ToolTip = 'Specifies the value of the New Value field.', Comment = 'DAN="Ny værdi"';
+                }
+                field(Valid; Rec.Valid)
+                {
+                    ToolTip = 'Specifies the value of the Valid field.', Comment = 'DAN="Gyldig"';
                 }
                 field(Transferred; Rec.Transferred)
                 {
-                    ToolTip = 'Specifies the value of the Transferred field.', Comment = '%DAN="Overført"';
+                    ToolTip = 'Specifies the value of the Transferred field.', Comment = 'DAN="Overført"';
                 }
                 field("Transferred DT"; Rec."Transferred DT")
                 {
-                    ToolTip = 'Specifies the value of the Transferred Datetime field.', Comment = '%DAN="Overført dato"';
+                    ToolTip = 'Specifies the value of the Transferred Datetime field.', Comment = 'DAN="Overført dato"';
                 }
                 field("Entry No."; Rec."Entry No.")
                 {
-                    ToolTip = 'Specifies the value of the Entry No. field.', Comment = '%';
+                    ToolTip = 'Specifies the value of the Entry No. field.', Comment = 'DAN="løbenr."';
                 }
             }
         }

@@ -15,7 +15,7 @@ table 50102 "CharacterSet_EVAS"
         {
             Caption = 'Description', Comment = 'DAN="Beskrivelse"';
         }
-        field(3; "Type"; Enum "Data Clean Type_EVAS")
+        field(3; "Type"; Enum "Characterset Type_EVAS")
         {
             Caption = 'Type', comment = 'DAN="Type"';
         }
@@ -136,16 +136,16 @@ table 50102 "CharacterSet_EVAS"
         NumberDescLbl: Label 'Numbers', Comment = 'DAN = "Tal"';
         DKDescLbl: Label 'DK Letters', Comment = 'DAN = "DK alfabet"';
         AddDKDescLbl: Label 'Add. DK Letters', Comment = 'DAN = "Tilføjet DK alfabet"';
-        NewType: Enum "Data Clean Type_EVAS";
+        NewType: Enum "Characterset Type_EVAS";
     begin
-        CreateCharacterSet(GetNumberCharacterSetCode(), NewType::"Clean Invalid", NumberDescLbl, GetNumberCharacterSetContent());
-        CreateCharacterSet(GetDKCharacterSetCode(), NewType::"Clean Invalid", DKDescLbl, GetDKCharacterSetContent());
-        CreateCharacterSet(GetAddDKCharacterSetCode(), NewType::"Clean Invalid", AddDKDescLbl, GetAddDKCharacterSetContent());
+        CreateCharacterSet(GetNumberCharacterSetCode(), NewType::"Invalid", NumberDescLbl, GetNumberCharacterSetContent());
+        CreateCharacterSet(GetDKCharacterSetCode(), NewType::"Invalid", DKDescLbl, GetDKCharacterSetContent());
+        CreateCharacterSet(GetAddDKCharacterSetCode(), NewType::"Invalid", AddDKDescLbl, GetAddDKCharacterSetContent());
     end;
 
 
 
-    local procedure CreateCharacterSet(NewCode: Code[20]; NewType: Enum "Data Clean Type_EVAS"; NewDescription: Text[100]; NewCharacterset: Text[2048])
+    local procedure CreateCharacterSet(NewCode: Code[20]; NewType: Enum "Characterset Type_EVAS"; NewDescription: Text[100]; NewCharacterset: Text[2048])
     var
         CharacterSet: Record "CharacterSet_EVAS";
     begin
@@ -156,7 +156,7 @@ table 50102 "CharacterSet_EVAS"
         CreateDefault(NewCode, NewType, NewDescription, NewCharacterset);
     end;
 
-    local procedure CreateDefault(NewCode: Code[20]; NewType: Enum "Data Clean Type_EVAS"; NewDescription: Text[100]; NewCharacterset: Text[2048])
+    local procedure CreateDefault(NewCode: Code[20]; NewType: Enum "Characterset Type_EVAS"; NewDescription: Text[100]; NewCharacterset: Text[2048])
     begin
         Init();
         Code := NewCode;

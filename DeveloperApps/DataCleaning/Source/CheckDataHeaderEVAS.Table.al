@@ -1,4 +1,4 @@
-table 50100 "Chack Data Header_EVAS"
+table 50100 "Check Data Header_EVAS"
 {
     Caption = 'Check Data Header', Comment = 'DAN="Datakontrolhoved"';
     DataClassification = CustomerContent;
@@ -20,14 +20,26 @@ table 50100 "Chack Data Header_EVAS"
             Caption = 'Table No.', Comment = 'DAN="Tabelnr."';
             TableRelation = AllObjWithCaption."Object ID" where("Object Type" = const(Table));
         }
-        field(5; "Data Clean Group Code"; Code[10])
+        field(5; "Check Data Group Code"; Code[10])
         {
-            Caption = 'Data Clean Group Code', Comment = 'DAN="Datavaskgruppekode"';
+            Caption = 'Check Data Group Code', Comment = 'DAN="Datakontrolgruppekode"';
             TableRelation = "Check Data Group_EVAS"."Code";
         }
-        field(7; Type; Enum "Data Check Type_EVAS")
+        field(7; Type; Enum "Check Data Type_EVAS")
         {
             Caption = 'Type', Comment = 'DAN="Type"';
+            trigger OnValidate()
+            var
+                CheckDataLine: Record "Check Data Line_EVAS";
+                DeleteLinesLbl: Label 'Do you want to delete Lines for %1 %2', Comment = 'DAN="Vil du slette linjer for %1 %2"';
+            begin
+                if Type <> xRec."Type" then begin
+                    CheckDataLine.SetRange("Code", Code);
+                    if not CheckDataLine.iseMpty then
+                        if confirm(DeleteLinesLbl, false, Rec.TableCaption, Rec.Code) then
+                            CheckDataLine.DeleteAll(true);
+                end;
+            end;
         }
         field(10; Enabled; Boolean)
         {

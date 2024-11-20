@@ -19,6 +19,10 @@ table 50101 "Check Data Line_EVAS"
             Caption = 'Field No.', Comment = 'DAN="Felt nr."';
             TableRelation = Field."No." where(TableNo = field("Table No."), Type = filter(Text | Code));
         }
+        field(7; Type; Enum "Check Data Type_EVAS")
+        {
+            Caption = 'Type', Comment = 'DAN="Type"';
+        }
         field(10; "Character Set exist"; Boolean)
         {
             Caption = 'Character Set exist', Comment = 'DAN="Tegnsæt eksisterer"';
@@ -35,6 +39,25 @@ table 50101 "Check Data Line_EVAS"
         }
     }
 
+    trigger OnDelete()
+    var
+        DocumentCharacterSet: Record "Document Character Set_EVAS";
+    begin
+        DocumentCharacterSet.SetRange(Code, Code);
+        DocumentCharacterSet.SetRange("Table No.", "Table No.");
+        DocumentCharacterSet.SetRange("Field No.", "Field No.");
+        DocumentCharacterSet.DeleteAll(true);
+    end;
+    internal procedure InitLine()
+    var
+        CheckDataHeader: Record "Check Data Header_EVAS";
+    begin
+        if Code = '' then
+            exit;
+        CheckDataHeader.Get(Code);
+        Type := CheckDataHeader.Type;
+
+    end;
     internal procedure GetFieldCharacterSets(): Text
     var
         DocumentCharacterSet: Record "Document Character Set_EVAS";

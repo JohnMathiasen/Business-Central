@@ -18,17 +18,24 @@ page 50101 "Check Data Subpage_EVAS"
                     LookupPageId = "Fields Lookup";
                     trigger OnLookup(var Text: Text): Boolean
                     var
-                        DataCleanHeader: Record "Chack Data Header_EVAS";
+                        CheckDataHeader: Record "Check Data Header_EVAS";
                         Field: Record Field;
                     begin
-                        DataCleanHeader.get(Rec.Code);
+                        CheckDataHeader.Get(Rec.Code);
                         Field.SetRange(TableNo, Rec."Table No.");
+                        Field.SetRange(Class, Field.Class::Normal);
+                        case CheckDataHeader.Type of
+                            CheckDataHeader.Type::Clean:
+                                Field.SetFilter(Type, '%1|%2', Field.Type::Code, Field.Type::"Text");
+                            CheckDataHeader.Type::Check:
+                                Field.SetFilter(Type, '%1', Field.Type::Text);
+                        end;
                         if Page.RunModal(Page::"Fields Lookup", Field) = Action::LookupOK then
                             Text := format(Field."No.");
                         exit(Text <> '');
                     end;
                 }
-                field("Character Sets"; Rec.GetFieldCharacterSets())
+                field("Character Sets"; CharacterSets)
                 {
                     Caption = 'Character Sets', Comment = 'DAN="Tegnsæt"';
                     ToolTip = 'Specifies the value of the Character Sets field.', Comment = 'DAN="Tegnsæt"';
@@ -43,10 +50,24 @@ page 50101 "Check Data Subpage_EVAS"
 
                         DocumentCharacterSetsPage.SetLookupMode(true);
                         DocumentCharacterSetsPage.SetTableView(DocumentCharacterSet);
-                        DocumentCharacterSetsPage.Run();
+                        DocumentCharacterSetsPage.RunModal();
+                        CharacterSets := Rec.GetFieldCharacterSets();
+                        CurrPage.Update(false);
                     end;
                 }
             }
         }
     }
+    trigger OnNewRecord(BelowxRec: Boolean)
+    begin
+        Rec.InitLine();
+    end;
+
+    trigger OnAfterGetRecord()
+    begin
+        CharacterSets := Rec.GetFieldCharacterSets()
+    end;
+
+    var
+        CharacterSets: Text;
 }

@@ -3,7 +3,7 @@ page 50102 "Check Data Documents_EVAS"
     ApplicationArea = All;
     Caption = 'Check Data Documents', Comment = 'DAN="Datakontroldokumenter"';
     PageType = List;
-    SourceTable = "Chack Data Header_EVAS";
+    SourceTable = "Check Data Header_EVAS";
     UsageCategory = Lists;
     Editable = false;
     CardPageId = "Check Data Document_EVAS";
@@ -26,9 +26,13 @@ page 50102 "Check Data Documents_EVAS"
                 {
                     ToolTip = 'Specifies the value of the Table No. field.', Comment = 'DAN="Tabelnr."';
                 }
-                field("Data Clean Group Code"; Rec."Data Clean Group Code")
+                field("Check Data Group Code"; Rec."Check Data Group Code")
                 {
-                    ToolTip = 'Specifies the value of the Data Clean Group Code field.', Comment = 'DAN="Datavaskgruppekode"';
+                    ToolTip = 'Specifies the value of the Check Data Group Code field.', Comment = 'DAN="Datakontrolgruppekode"';
+                }
+                field(Type; Rec.Type)
+                {
+                    ToolTip = 'Specifies the value of the Type field.', Comment = 'DAN="Type"';
                 }
                 field(Enabled; Rec.Enabled)
                 {
@@ -58,11 +62,11 @@ page 50102 "Check Data Documents_EVAS"
                 Image = Process;
                 trigger OnAction()
                 var
-                    DataCleanHeader: Record "Chack Data Header_EVAS";
+                    CheckDataHeader: Record "Check Data Header_EVAS";
                 begin
-                    DataCleanHeader.SetRange(Code, Rec.Code);
-                    DataCleanHeader.SetRange("Table No.", Rec."Table No.");
-                    Report.Run(Report::"Process Data Check_EVAS", true, false, DataCleanHeader);
+                    CheckDataHeader.SetRange(Code, Rec.Code);
+                    CheckDataHeader.SetRange("Table No.", Rec."Table No.");
+                    Report.Run(Report::"Process Data Check_EVAS", true, false, CheckDataHeader);
                 end;
             }
             action(Post)
@@ -74,11 +78,11 @@ page 50102 "Check Data Documents_EVAS"
 
                 trigger OnAction()
                 var
-                    DataCleanLog: Record "Check Data Log_EVAS";
+                    CheckDataLog: Record "Check Data Log_EVAS";
                 begin
-                    DataCleanLog.SetRange(Code, Rec.Code);
-                    DataCleanLog.SetRange("Table No.", Rec."Table No.");
-                    Report.Run(Report::"Post Data Clean_EVAS", true, false, DataCleanLog);
+                    CheckDataLog.SetRange(Code, Rec.Code);
+                    CheckDataLog.SetRange("Table No.", Rec."Table No.");
+                    Report.Run(Report::"Post Data Clean_EVAS", true, false, CheckDataLog);
                 end;
             }
         }
@@ -91,7 +95,7 @@ page 50102 "Check Data Documents_EVAS"
                 ToolTip = 'Show the data clean log.', Comment = 'DAN="Vis datavasklog"';
                 Image = Log;
                 RunObject = page "Check Data Log_EVAS";
-                RunPageLink = Code = field(Code), "Table No." = field("Table No.");
+                RunPageLink = Code = field(Code), "Table No." = field("Table No."), Type = field(Type);
             }
         }
     }

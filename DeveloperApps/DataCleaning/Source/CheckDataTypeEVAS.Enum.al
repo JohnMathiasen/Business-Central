@@ -1,4 +1,4 @@
-enum 50101 "Data Check Type_EVAS"
+enum 50101 "Check Data Type_EVAS"
 {
     Extensible = true;
 
