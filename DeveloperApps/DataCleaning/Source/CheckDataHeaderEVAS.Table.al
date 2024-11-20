@@ -45,10 +45,6 @@ table 50100 "Check Data Header_EVAS"
         {
             Caption = 'Enabled', Comment = 'DAN="Aktiv"';
         }
-        field(20; "Current FieldNo"; Integer)
-        {
-            Caption = 'Current FieldNo', Comment = 'DAN="Nuværende FeltNr."';
-        }
     }
     keys
     {
@@ -57,14 +53,4 @@ table 50100 "Check Data Header_EVAS"
             Clustered = true;
         }
     }
-
-    trigger OnInsert()
-    begin
-        "Current FieldNo" := 0;
-    end;
-
-    trigger OnModify()
-    begin
-        "Current FieldNo" := 0;
-    end;
 }
