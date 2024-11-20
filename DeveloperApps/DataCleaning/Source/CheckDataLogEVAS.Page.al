@@ -39,7 +39,11 @@ page 50105 "Check Data Log_EVAS"
                 }
                 field("New Value"; Rec."New Value")
                 {
-                    ToolTip = 'Specifies the value of the New Value field.', Comment = '%DAN="Ny værdi"';
+                    ToolTip = 'Specifies the value of the New Value field.', Comment = 'DAN="Ny værdi"';
+                }
+                field(Valid; Rec.Valid)
+                {
+                    ToolTip = 'Specifies the value of the Valid field.', Comment = 'DAN="Gyldig"';
                 }
                 field(Transferred; Rec.Transferred)
                 {

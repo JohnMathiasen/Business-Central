@@ -160,8 +160,7 @@ codeunit 50100 "Process Data Check"
                 CleanDataField(DocumentCharacterSet, CheckDataLine, NewValue);
         end;
 
-        if NewValue <> Value then
-            CreateLog(Value, NewValue, ValidValue, RecRef, CheckDataHeader, CheckDataLine);
+        CreateLog(Value, NewValue, ValidValue, RecRef, CheckDataHeader, CheckDataLine);
     end;
 
     local procedure CheckDataField(var DocumentCharacterSet: Record "Document Character Set_EVAS"; CheckDataLine: Record "Check Data Line_EVAS"; var NewValue: Text[2048]): Boolean
@@ -185,6 +184,7 @@ codeunit 50100 "Process Data Check"
 
         OldValue := NewValue;
 
+        Valid := true;
         if ValidList.Count > 0 then begin
             NewValue := CheckCharacterSet(NewValue, CheckDataLine);
             Valid := NewValue = OldValue;
@@ -299,8 +299,15 @@ codeunit 50100 "Process Data Check"
         CheckDataLog: Record "Check Data Log_EVAS";
         FieldRef: FieldRef;
     begin
-        if Oldvalue = NewValue then
-            exit;
+        case CheckDataHeader.Type of
+            CheckDataHeader.Type::Check:
+                if ValidValue then
+                    exit;
+            CheckDataHeader.Type::Clean:
+                if Oldvalue = NewValue then
+                    exit;
+        end;
+
         FieldRef := RecRef.Field(RecRef.SystemIdNo);
         CheckDataLog.InsertLogEntry(CheckDataLine.Code, CheckDataLine."Table No.", CheckDataLine."Field No.", CheckDataHeader."Check Data Group Code", CheckDataHeader.Type, OldValue, NewValue, ValidValue, FieldRef.Value);
     end;
