@@ -37,7 +37,7 @@ table 50103 "Document Character Set_EVAS"
                 if Rec."CharacterSet Code" <> '' then begin
                     CharacterSet.Get(Rec."CharacterSet Code");
                     DataCleanHeader.Get(Rec.Code);
-                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Clean) and (CharacterSet.Type <> CharacterSet.Type::Regex)) then
+                    if ((DataCleanHeader.Type = DataCleanHeader.Type::Clean) and (CharacterSet.Type = CharacterSet.Type::Regex)) then
                         Error(CleanDocInvalidCharacterSetErr);
                     if ((DataCleanHeader.Type = DataCleanHeader.Type::Check) and (CharacterSet.Type in [CharacterSet.Type::Remove, CharacterSet.Type::Replace])) then
                         Error(CheckDocInvalidCharacterSetErr);

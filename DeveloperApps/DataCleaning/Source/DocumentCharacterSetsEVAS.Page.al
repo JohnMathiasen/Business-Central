@@ -4,7 +4,7 @@ page 50104 "Document Character Sets_EVAS"
     Caption = 'Document Character Sets', Comment = 'DAN="Dokument Tegnsæt"';
     PageType = List;
     SourceTable = "Document Character Set_EVAS";
-    UsageCategory = Lists;
+    UsageCategory = None;
     DelayedInsert = true;
 
     layout
@@ -50,11 +50,6 @@ page 50104 "Document Character Sets_EVAS"
             }
         }
     }
-
-    trigger OnOpenPage()
-    begin
-
-    end;
 
     var
         UseAsLookup: Boolean;

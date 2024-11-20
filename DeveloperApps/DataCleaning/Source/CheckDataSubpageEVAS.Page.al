@@ -35,6 +35,10 @@ page 50101 "Check Data Subpage_EVAS"
                         exit(Text <> '');
                     end;
                 }
+                field(Name; Rec.Name)
+                {
+                    ToolTip = 'Specifies the value of the Name field.', Comment = 'DAN="Navn"';
+                }
                 field("Character Sets"; CharacterSets)
                 {
                     Caption = 'Character Sets', Comment = 'DAN="Tegnsæt"';
@@ -65,8 +69,10 @@ page 50101 "Check Data Subpage_EVAS"
 
     trigger OnAfterGetRecord()
     begin
-        CharacterSets := Rec.GetFieldCharacterSets()
+        CharacterSets := Rec.GetFieldCharacterSets();
+        CurrPage.Update(false);
     end;
+
 
     var
         CharacterSets: Text;

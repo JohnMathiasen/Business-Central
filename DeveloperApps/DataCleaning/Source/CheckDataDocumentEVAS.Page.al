@@ -42,6 +42,7 @@ page 50100 "Check Data Document_EVAS"
             {
                 Caption = 'Fields', Comment = 'DAN="Felter"';
                 SubPageLink = Code = field("Code"), "Table No." = field("Table No.");
+                UpdatePropagation = Both;
             }
         }
     }
