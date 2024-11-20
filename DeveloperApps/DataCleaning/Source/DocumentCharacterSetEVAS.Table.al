@@ -43,7 +43,13 @@ table 50103 "Document Character Set_EVAS"
                         Error(CheckDocInvalidCharacterSetErr);
                 end;
             end;
-
+        }
+        field(10; "Description"; Text[100])
+        {
+            Caption = 'Description', Comment = 'DAN="Beskrivelse"';
+            FieldClass = FlowField;
+            CalcFormula = lookup(CharacterSet_EVAS.Description where(Code = field("CharacterSet Code")));
+            editable = false;
         }
     }
     keys

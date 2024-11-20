@@ -4,6 +4,7 @@ page 50104 "Document Character Sets_EVAS"
     Caption = 'Document Character Sets', Comment = 'DAN="Dokument Tegnsæt"';
     PageType = List;
     SourceTable = "Document Character Set_EVAS";
+    DataCaptionExpression = GetDataCaption();
     UsageCategory = None;
     DelayedInsert = true;
 
@@ -47,6 +48,10 @@ page 50104 "Document Character Sets_EVAS"
                         exit(Text <> '');
                     end;
                 }
+                field(Description; Rec.Description)
+                {
+                    ToolTip = 'Specifies the value of the Description field.', Comment = 'DAN="Beskrivelse"';
+                }
             }
         }
     }
@@ -57,5 +62,12 @@ page 50104 "Document Character Sets_EVAS"
     internal procedure SetLookupMode(NewUseAsLookup: Boolean)
     begin
         UseAsLookup := NewUseAsLookup;
+    end;
+
+    local procedure GetDataCaption(): Text
+    var
+        DataCaptionLbl: Label '%1-%2-%3-%4', Comment = '%1=Code, %2=Table No., %3=Field No., %4=CharacterSet Code';
+    begin
+        exit(StrSubstNo(DataCaptionLbl, Rec."Code", Rec."Table No.", Rec."Field No.", Rec."CharacterSet Code"));
     end;
 }

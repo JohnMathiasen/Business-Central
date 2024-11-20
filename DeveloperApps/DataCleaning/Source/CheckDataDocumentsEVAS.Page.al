@@ -1,7 +1,7 @@
 page 50102 "Check Data Documents_EVAS"
 {
     ApplicationArea = All;
-    Caption = 'Check Data Documents', Comment = 'DAN="Datakontroldokumenter"';
+    Caption = 'Check Data Documents', Comment = 'DAN="Datakontrol dokumenter"';
     PageType = List;
     SourceTable = "Check Data Header_EVAS";
     UsageCategory = Lists;
