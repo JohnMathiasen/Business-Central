@@ -152,7 +152,7 @@ codeunit 50500 "Sort/Search List_EVAS"
     /// <param name="SearchValue"></param>
     /// <param name="SearchMethod"></param>
     /// <returns></returns>
-    procedure Search(var List: List of [Decimal]; SearchValue: Integer; SearchMethod: Enum "Search Method"): Integer
+    procedure Search(var List: List of [Decimal]; SearchValue: Decimal; SearchMethod: Enum "Search Method"): Integer
     var
         SortListofIntDec: Codeunit "Sort List of Int/Dec_EVAS";
     begin
