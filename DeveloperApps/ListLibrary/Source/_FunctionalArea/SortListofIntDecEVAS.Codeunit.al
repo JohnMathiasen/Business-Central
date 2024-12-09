@@ -262,4 +262,71 @@ codeunit 50501 "Sort List of Int/Dec_EVAS"
             IntList.Add(List.Get(i));
         exit(IntList);
     end;
+
+    /// <summary>
+    /// Linear search is a method for finding a target value within a list of decimals. It sequentially checks each element of the list for the target value until a match is found or until all the elements have been searched.
+    /// Recommemded only for small lists - less than 100 items.
+    /// </summary>
+    /// <param name="List"></param>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    internal procedure LinearSearch(List: List of [Decimal]; Value: Integer): Integer
+    var
+        i: Integer;
+    begin
+        for i := 1 to List.Count do
+            if List.Get(i) = Value then
+                exit(i);
+    end;
+
+    /// <summary>
+    /// Linear search is a method for finding a target value within a list of integers. It sequentially checks each element of the list for the target value until a match is found or until all the elements have been searched.
+    /// Recommemded only for small lists - less than 100 items.
+    /// </summary>
+    /// <param name="List"></param>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    internal procedure LinearSearch(var List: List of [Integer]; Value: Integer): Integer
+    begin
+        exit(LinearSearch(TransferListofIntToDecimal(List), Value));
+    end;
+
+    /// <summary>
+    /// Binary search is a method for finding a target value within a sorted list of decimals. It compares the target value to the middle element of the list; if they are unequal, the half in which the target cannot lie is eliminated and the search continues on the remaining half until it is successful.
+    /// </summary>
+    /// <param name="List"></param>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    internal procedure BinarySearch(List: List of [Decimal]; Value: Decimal): Integer
+    var
+        low, high, mid : Integer;
+    begin
+        low := 1;
+        high := List.Count;
+
+        // Repeat until the pointers low and high meet each other
+        while low <= high do begin
+            mid := (low + high) div 2;
+            if List.Get(mid) = Value then
+                exit(mid)
+            else
+                if List.Get(mid) < Value then
+                    low := mid + 1
+                else
+                    high := mid - 1;
+        end;
+        exit(0);
+    end;
+
+    /// <summary>
+    /// Binary search is a method for finding a target value within a sorted list of integers. It compares the target value to the middle element of the list; if they are unequal, the half in which the target cannot lie is eliminated and the search continues on the remaining half until it is successful.
+    /// </summary>
+    /// <param name="List"></param>
+    /// <param name="Value"></param>
+    /// <returns></returns>
+    internal procedure BinarySearch(var List: List of [Integer]; Value: Integer): Integer
+    begin
+        exit(BinarySearch(TransferListofIntToDecimal(List), Value));
+    end;
+
 }

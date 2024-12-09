@@ -29,17 +29,24 @@ codeunit 50549 "Test List Sorting_EVAS"
         TestQuickSortofTime();
         TestQuickSortofDate();
         TestQuickSortofDateTime();
+
+        TestSearchListofInteger();
+        TestSearchListofDecimal();
+        TestSearchListofText();
+        TestSearchListofDate();
+        TestSearchListofTime();
+        TestSearchListofDateTime();
     end;
 
     var
-        SortList: Codeunit "Sort List_EVAS";
+        SortSearchList: Codeunit "Sort/Search List_EVAS";
 
     local procedure TestSelectionSortofInteger()
     var
         IntegerList: List of [Integer];
     begin
         IntegerList := CreateTestListofinteger();
-        SortList.Sort(IntegerList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(IntegerList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestSelectionSortofDecimal()
@@ -47,7 +54,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DecimalList: List of [Decimal];
     begin
         DecimalList := CreateTestListofDecimal();
-        SortList.Sort(DecimalList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(DecimalList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestSelectionSortofText()
@@ -55,7 +62,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TextList: List of [Text];
     begin
         TextList := CreateTestListofText();
-        SortList.Sort(TextList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(TextList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestSelectionSortofDateTime()
@@ -63,7 +70,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DTList: List of [DateTime];
     begin
         DTList := CreateTestListofDateTime();
-        SortList.Sort(DTList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(DTList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestSelectionSortofDate()
@@ -71,7 +78,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DList: List of [Date];
     begin
         DList := CreateTestListofDate();
-        SortList.Sort(DList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(DList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestSelectionSortofTime()
@@ -79,7 +86,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TList: List of [Time];
     begin
         TList := CreateTestListofTime();
-        SortList.Sort(TList, Enum::"Sorting Method"::Selection);
+        SortSearchList.Sort(TList, Enum::"Sorting Method"::Selection);
     end;
 
     local procedure TestbubbleSortofInt()
@@ -87,7 +94,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         IntegerList: List of [Integer];
     begin
         IntegerList := CreateTestListofinteger();
-        SortList.Sort(IntegerList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(IntegerList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestbubbleSortofDecimal()
@@ -95,7 +102,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DecimalList: List of [Decimal];
     begin
         DecimalList := CreateTestListofDecimal();
-        SortList.Sort(DecimalList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(DecimalList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestbubbleSortofText()
@@ -103,7 +110,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TextList: List of [Text];
     begin
         TextList := CreateTestListofText();
-        SortList.Sort(TextList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(TextList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestBubbleSortofDate()
@@ -111,7 +118,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DList: List of [Date];
     begin
         DList := CreateTestListofDate();
-        SortList.Sort(DList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(DList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestBubbleSortofTime()
@@ -119,7 +126,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TList: List of [Time];
     begin
         TList := CreateTestListofTime();
-        SortList.Sort(TList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(TList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestBubbleSortofDateTime()
@@ -127,7 +134,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DTList: List of [DateTime];
     begin
         DTList := CreateTestListofDateTime();
-        SortList.Sort(DTList, Enum::"Sorting Method"::Bubble);
+        SortSearchList.Sort(DTList, Enum::"Sorting Method"::Bubble);
     end;
 
     local procedure TestMergeSortofinteger()
@@ -135,7 +142,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         IntegerList: List of [Integer];
     begin
         IntegerList := CreateTestListofinteger();
-        SortList.Sort(IntegerList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(IntegerList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestMergeSortofDecimal()
@@ -143,7 +150,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DecimalList: List of [Decimal];
     begin
         DecimalList := CreateTestListofDecimal();
-        SortList.Sort(DecimalList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(DecimalList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestMergeSortofText()
@@ -151,7 +158,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TextList: List of [Text];
     begin
         TextList := CreateTestListofText();
-        SortList.Sort(TextList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(TextList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestMergeSortofDate()
@@ -159,7 +166,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DList: List of [Date];
     begin
         DList := CreateTestListofDate();
-        SortList.Sort(DList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(DList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestMergeSortofTime()
@@ -167,7 +174,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TList: List of [Time];
     begin
         TList := CreateTestListofTime();
-        SortList.Sort(TList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(TList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestMergeSortofDateTime()
@@ -175,7 +182,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DTList: List of [DateTime];
     begin
         DTList := CreateTestListofDateTime();
-        SortList.Sort(DTList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Sort(DTList, Enum::"Sorting Method"::Merge);
     end;
 
     local procedure TestQuickSortofInteger()
@@ -183,7 +190,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         IntegerList: List of [Integer];
     begin
         IntegerList := CreateTestListofinteger();
-        SortList.Sort(IntegerList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(IntegerList, Enum::"Sorting Method"::Quick);
     end;
 
     local procedure TestQuickSortofDecimal()
@@ -191,7 +198,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DecimalList: List of [Decimal];
     begin
         DecimalList := CreateTestListofDecimal();
-        SortList.Sort(DecimalList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(DecimalList, Enum::"Sorting Method"::Quick);
     end;
 
     local procedure TestQuickSortofText()
@@ -199,7 +206,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TextList: List of [Text];
     begin
         TextList := CreateTestListofText();
-        SortList.Sort(TextList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(TextList, Enum::"Sorting Method"::Quick);
     end;
 
     local procedure TestQuickSortofDate()
@@ -207,7 +214,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         DList: List of [Date];
     begin
         DList := CreateTestListofDate();
-        SortList.Sort(DList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(DList, Enum::"Sorting Method"::Quick);
     end;
 
     local procedure TestQuickSortofTime()
@@ -215,7 +222,7 @@ codeunit 50549 "Test List Sorting_EVAS"
         TList: List of [Time];
     begin
         TList := CreateTestListofTime();
-        SortList.Sort(TList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(TList, Enum::"Sorting Method"::Quick);
     end;
 
     local procedure TestQuickSortofDateTime()
@@ -223,7 +230,61 @@ codeunit 50549 "Test List Sorting_EVAS"
         DTList: List of [DateTime];
     begin
         DTList := CreateTestListofDateTime();
-        SortList.Sort(DTList, Enum::"Sorting Method"::Quick);
+        SortSearchList.Sort(DTList, Enum::"Sorting Method"::Quick);
+    end;
+
+    local procedure TestSearchListofInteger()
+    var
+        IntegerList: List of [Integer];
+    begin
+        IntegerList := CreateTestListofinteger();
+        SortSearchList.Sort(IntegerList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(IntegerList, 9, Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestSearchListofDecimal()
+    var
+        DecimalList: List of [Decimal];
+    begin
+        DecimalList := CreateTestListofDecimal();
+        SortSearchList.Sort(DecimalList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(DecimalList, 8.343, Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestSearchListofText()
+    var
+        TextList: List of [Text];
+    begin
+        TextList := CreateTestListofText();
+        SortSearchList.Sort(TextList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(TextList, 'Carrot', Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestSearchListofDate()
+    var
+        DList: List of [Date];
+    begin
+        DList := CreateTestListofDate();
+        SortSearchList.Sort(DList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(DList, 20150101D, Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestSearchListofTime()
+    var
+        TList: List of [Time];
+    begin
+        TList := CreateTestListofTime();
+        SortSearchList.Sort(TList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(TList, 003100T, Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestSearchListofDateTime()
+    var
+        DTList: List of [DateTime];
+    begin
+        DTList := CreateTestListofDateTime();
+        SortSearchList.Sort(DTList, Enum::"Sorting Method"::Merge);
+        SortSearchList.Search(DTList, CreateDateTime(20220519D, 210443T), Enum::"Search Method"::Binary);
     end;
 
     local procedure CreateTestListofinteger(): List of [Integer]
