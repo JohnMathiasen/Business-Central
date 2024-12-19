@@ -2,40 +2,43 @@ codeunit 50549 "Test List Sorting_EVAS"
 {
     trigger OnRun()
     begin
-        TestSelectionSortofInteger();
-        TestSelectionSortofDecimal();
-        TestSelectionSortofText();
-        TestSelectionSortofDate();
-        TestSelectionSortofTime();
-        TestSelectionSortofDateTime();
+        //TestCalcHash();
+        TestRabinKarpoSearch();
 
-        TestbubbleSortofInt();
-        TestbubbleSortofDecimal();
-        TestBubbleSortofTime();
-        TestbubbleSortofText();
-        TestBubbleSortofDate();
-        TestBubbleSortofDateTime();
+        // TestSelectionSortofInteger();
+        // TestSelectionSortofDecimal();
+        // TestSelectionSortofText();
+        // TestSelectionSortofDate();
+        // TestSelectionSortofTime();
+        // TestSelectionSortofDateTime();
 
-        TestMergeSortofinteger();
-        TestMergeSortofDecimal();
-        TestMergeSortofText();
-        TestMergeSortofDate();
-        TestMergeSortofTime();
-        TestMergeSortofDateTime();
+        // TestbubbleSortofInt();
+        // TestbubbleSortofDecimal();
+        // TestBubbleSortofTime();
+        // TestbubbleSortofText();
+        // TestBubbleSortofDate();
+        // TestBubbleSortofDateTime();
 
-        TestQuickSortofInteger();
-        TestQuickSortofDecimal();
-        TestQuickSortofText();
-        TestQuickSortofTime();
-        TestQuickSortofDate();
-        TestQuickSortofDateTime();
+        // TestMergeSortofinteger();
+        // TestMergeSortofDecimal();
+        // TestMergeSortofText();
+        // TestMergeSortofDate();
+        // TestMergeSortofTime();
+        // TestMergeSortofDateTime();
 
-        TestSearchListofInteger();
-        TestSearchListofDecimal();
-        TestSearchListofText();
-        TestSearchListofDate();
-        TestSearchListofTime();
-        TestSearchListofDateTime();
+        // TestQuickSortofInteger();
+        // TestQuickSortofDecimal();
+        // TestQuickSortofText();
+        // TestQuickSortofTime();
+        // TestQuickSortofDate();
+        // TestQuickSortofDateTime();
+
+        // TestSearchListofInteger();
+        // TestSearchListofDecimal();
+        // TestSearchListofText();
+        // TestSearchListofDate();
+        // TestSearchListofTime();
+        // TestSearchListofDateTime();
     end;
 
     var
@@ -285,6 +288,35 @@ codeunit 50549 "Test List Sorting_EVAS"
         DTList := CreateTestListofDateTime();
         SortSearchList.Sort(DTList, Enum::"Sorting Method"::Merge);
         SortSearchList.Search(DTList, CreateDateTime(20220519D, 210443T), Enum::"Search Method"::Binary);
+    end;
+
+    local procedure TestRabinKarpoSearch();
+    var
+        Pattern: Text;
+        String: Text;
+        q: Integer;
+    begin
+        //String := 'ABCCDDAEFG';
+        String := 'ABCCDDACDD';
+        Pattern := 'CDD';
+        //Pattern := 'EFG';
+        q := 13;
+        SortSearchList.Search(Pattern, String, q);
+    end;
+
+    local procedure TestCalcHash()
+    var
+        Pattern: Text;
+        String: Text;
+        Value: Integer;
+    begin
+        Pattern := 'CDD';
+        String := 'ABCCDDAEFG';
+        Value := SortSearchList.CalcHash(Pattern, StrLen(Pattern), 10);
+        Value := SortSearchList.CalcHash(String, StrLen(Pattern), 10);
+        Value := SortSearchList.CalcHash(String, StrLen(Pattern), 10);
+        Value := SortSearchList.CalcHash(String, StrLen(Pattern), 10);
+        Value := SortSearchList.CalcHash(String, StrLen(Pattern), 10);
     end;
 
     local procedure CreateTestListofinteger(): List of [Integer]

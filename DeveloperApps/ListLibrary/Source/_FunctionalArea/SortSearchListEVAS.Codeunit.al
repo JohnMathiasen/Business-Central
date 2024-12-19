@@ -239,4 +239,66 @@ codeunit 50500 "Sort/Search List_EVAS"
                 exit(SortListofDateTime.BinarySearch(List, SearchValue));
         end;
     end;
+
+    /// <summary>
+    /// Rabin-Karp - Search for a pattern in a text using the hash Calculation
+    /// </summary>
+    /// <param name="Pattern"></param>
+    /// <param name="String"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    procedure Search(Pattern: Text; String: Text; q: Integer): List of [Integer]
+    var
+        m, d, n, p, t, i, j : Integer;
+        PatternIndexList: List of [Integer];
+    begin
+        m := StrLen(Pattern);
+        n := StrLen(String);
+        p := 0;
+        t := 0;
+        i := 0;
+        j := 0;
+        d := 10;
+
+        //Calculate hash value for pattern and text
+        p := CalcHash(Pattern, m, d);
+        t := CalcHash(copystr(String, 1, m), m, d);
+
+
+        // Find the match
+        for i := 1 to n - m + 1 do begin
+            if p = t then begin
+                for j := 1 to m do
+                    if GetNumber(String, i + j - 1) <> GetNumber(Pattern, j) then
+                        break;
+
+                if j = m then
+                    PatternIndexList.Add(i);
+            end;
+
+            if i < n - m + 1 then
+                t := CalcHash(CopyStr(String, i + 1, m), m, d);
+        end;
+
+        exit(PatternIndexList);
+    end;
+
+
+    procedure CalcHash(Text: Text; PatternLegth: Integer; d: Integer): Integer
+    var
+        q, t, i : Integer;
+    begin
+        q := 13;
+        for i := 1 to PatternLegth do
+            t := (d * t + GetNumber(Text, i)) mod q;
+        exit(t);
+    end;
+
+    procedure GetNumber(Text: Text; i: Integer): Integer
+    var
+        c: Char;
+    begin
+        c := Text[i];
+        exit(c);
+    end;
 }
