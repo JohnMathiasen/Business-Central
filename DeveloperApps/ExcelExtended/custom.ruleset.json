@@ -1,0 +1,86 @@
+{
+    "name": "Custom ruleset",
+    "description": "Set some rules as hidden",
+    "rules": [
+        {
+            "id": "AA0139",
+            "action": "Hidden",
+            "justification": "Possible overflow assigning - https://github.com/microsoft/AL/issues/4838,  https://github.com/microsoft/AL/issues/5766"           
+        },
+        {
+            "id": "AA0205",
+            "action": "Hidden",
+            "justification": "Use of unassigned variable - Compiler does not detect when only doing a Rec.COPY(AnotherRec) operation. If init() is not performed, then we also compiler warnings - https://github.com/microsoft/AL/issues/5745"
+        },
+        {
+            "id": "AA0214",
+            "action": "Hidden",
+            "justification": "Forcing a modify on a record even when only doing a read operation - https://github.com/microsoft/AL/issues/5665"           
+        },
+        {
+            "id": "AA0215",
+            "action": "Hidden",
+            "justification": "Incorrect file name"
+        },
+        {
+            "id": "AA0217",
+            "action": "Hidden",
+            "justification": "StrSubstNo - using text or label - see https://github.com/microsoft/AL/issues/5765"
+        },
+        {
+            "id": "AA0218",
+            "action": "Hidden",
+            "justification": "Mandatory Tooltip property"
+        },
+        {
+            "id": "AA0225",
+            "action": "Hidden",
+            "justification": "Caption is mandatory even if ShowCaption= false - https://github.com/microsoft/AL/issues/5670"
+        },
+        {
+            "id": "AA0072",
+            "action": "Hidden",
+            "justification": "Not suffix variable"
+        },
+        {
+            "id": "AS0051",
+            "action": "Hidden",
+            "justification": "Customer On Premise app"
+        },
+        {
+            "id": "AS0084",
+            "action": "Hidden",
+            "justification": "Cop conflict"
+        },
+        {
+            "id": "AS0052",
+            "action": "Hidden",
+            "justification": "Url not needed"
+        },
+        {
+            "id": "AS0013",
+            "action": "Hidden",
+            "justification": "Cop conflict"
+        },
+        {
+            "id": "PTE0002",
+            "action": "Hidden",
+            "justification": "cop conflict"
+        },
+        {
+            "id": "AS0092",
+            "action": "Hidden",
+            "justification": "not needed"
+        },
+        {
+            "id": "AS0081",
+            "action": "Hidden",
+            "justification": "irrelevant InternalsVisibleTo warning"
+        },
+        {
+            "id": "PTE0012",
+            "action": "Hidden",
+            "justification": "irrelevant InternalsVisibleTo warning"
+        }
+    ]
+}
